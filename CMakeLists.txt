@@ -13,8 +13,31 @@ cmake_minimum_required(VERSION 3.5)
 
 project(fell)
 
-add_subdirectory(src/variable)
+include_directories(
+    include
+)
 
-add_executable(main src/main.cc)
+if(BUILD_FELL)
+    add_subdirectory(src/variable)
 
-target_link_libraries(main variable)
+    add_library(fell src/fell.cc)
+
+    target_link_libraries(fell variable)
+endif()
+
+
+if(BUILD_TESTS)
+    include_directories(
+        build
+    )
+
+    aux_source_directory(tests TESTS)
+
+    foreach(test ${TESTS})
+        string(REPLACE ".cc" "" new_name ${test})
+        get_filename_component(file_name ${new_name} NAME)
+
+        add_executable(${file_name} ${test})
+        target_link_libraries(${file_name} fell)
+    endforeach()
+endif(BUILD_TESTS)
