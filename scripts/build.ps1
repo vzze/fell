@@ -1,8 +1,8 @@
 param(
     [Parameter()]
     [Boolean]$BuildFell = $True,
-    [Boolean]$BuildTests = $False,
-    [Boolean]$RunTests = $False
+    [Boolean]$BuildTests = $True,
+    [Boolean]$RunTests = $True
 )
 
 $check_dir = Test-Path ./build -PathType Container
