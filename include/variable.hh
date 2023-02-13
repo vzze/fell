@@ -11,7 +11,7 @@ namespace fell {
             using var = variable*;
             std::any value;
 
-            variable(std::any var);
+            variable(std::any);
 
             virtual var operator + (const var &) = 0;
             virtual var operator - (const var &) = 0;

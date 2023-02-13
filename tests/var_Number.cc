@@ -15,7 +15,7 @@ void test_msg(std::string msg, var * a) {
     if(a == nullptr)
         std::cout << '\n';
     else
-        std::cout << std::any_cast<long double>(a->value) << '\n';
+        std::cout << std::any_cast<double>(a->value) << '\n';
 }
 
 std::vector<std::function<void(var*, var*)>> tests = {
@@ -84,8 +84,8 @@ int main() {
     var * a = new fell::types::number(21);
     var * b = new fell::types::number(21);
 
-    std::cout << "Variable a: " << std::any_cast<long double>(a->value) << '\n';
-    std::cout << "Variable b: " << std::any_cast<long double>(b->value) << "\n\n";
+    std::cout << "Variable a: " << std::any_cast<double>(a->value) << '\n';
+    std::cout << "Variable b: " << std::any_cast<double>(b->value) << "\n\n";
 
     for(auto test : tests)
         test(a, b);

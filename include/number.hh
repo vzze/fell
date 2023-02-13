@@ -6,7 +6,7 @@
 namespace fell {
     namespace types {
         struct number : public variable {
-            number(long double);
+            number(double);
 
             var operator + (const var &) override;
             var operator - (const var &) override;

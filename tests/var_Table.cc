@@ -17,7 +17,7 @@ void test_msg(std::string msg, var * a) {
         try {
             std::cout << std::any_cast<std::string>(a->value) << '\n';
         } catch(...) {
-            std::cout << std::any_cast<long double>(a->value) << '\n';
+            std::cout << std::any_cast<double>(a->value) << '\n';
         }
     }
 }
