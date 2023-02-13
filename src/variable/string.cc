@@ -10,15 +10,15 @@ fell::types::variable::var fell::types::string::operator + (const var & rhs) {
 }
 
 fell::types::variable::var fell::types::string::operator - (const var & rhs) {
-    throw "Variable of type string can't be minus'd";
+    throw "Variable of type String can't be minus'd";
 }
 
 fell::types::variable::var fell::types::string::operator * (const var & rhs) {
-    throw "Variable of type string can't be multiplied.";
+    throw "Variable of type String can't be multiplied.";
 }
 
 fell::types::variable::var fell::types::string::operator / (const var & rhs) {
-    throw "Variable of type string can't be divided.";
+    throw "Variable of type String can't be divided.";
 }
 
 fell::types::variable::var fell::types::string::operator > (const var & rhs) {
@@ -76,5 +76,5 @@ fell::types::variable::var fell::types::string::operator != (const var & rhs) {
 }
 
 fell::types::variable::var fell::types::string::operator [] (const var & offset) {
-    throw "No subscript operator on string.";
+    throw "No subscript operator on variable of type String.";
 }
