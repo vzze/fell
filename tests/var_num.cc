@@ -72,7 +72,7 @@ std::vector<std::function<void(var*, var*)>> tests = {
     [](var * a, var * b) {
         try {
             var * c = (*a)[b];
-            test_msg("Operator == : ", c);
+            test_msg("Operator [] : ", c);
             delete c;
         } catch(const char * e) {
             test_msg(std::string("Operator [] : ") + e, nullptr);
