@@ -42,7 +42,7 @@ fell::types::variable::var fell::types::table::operator != (const var & rhs) {
     throw "Variable of type Table can't be compared.";
 }
 
-fell::types::variable::var fell::types::table::operator [] (const var & rhs) {
+fell::types::variable::var & fell::types::table::operator [] (const var & rhs) {
     try {
         return std::any_cast<std::unordered_map<var, var>>(&this->value)->at(rhs);
     } catch(...) {

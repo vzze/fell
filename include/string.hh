@@ -23,7 +23,7 @@ namespace fell {
             var operator == (const var &) override;
             var operator != (const var &) override;
 
-            var operator [] (const var &) override;
+            var & operator [] (const var &) override;
         };
     }
 }

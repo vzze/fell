@@ -9,8 +9,8 @@
 
 namespace std {
     template<>
-    struct hash<fell::types::variable::var> {
-        std::size_t operator ()(fell::types::variable::var var) {
+    struct hash<const fell::types::variable::var &> {
+        std::size_t operator () (const fell::types::variable::var & var) {
             return std::hash<std::string>{}(
                 std::any_cast<std::string>(var->value)
             );
@@ -35,7 +35,7 @@ namespace fell {
             var operator == (const var &) override;
             var operator != (const var &) override;
 
-            var operator [] (const var &) override;
+            var & operator [] (const var &) override;
         };
     }
 }

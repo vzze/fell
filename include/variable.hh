@@ -25,7 +25,7 @@ namespace fell {
             virtual var operator == (const var &) = 0;
             virtual var operator != (const var &) = 0;
 
-            virtual var operator [] (const var &) = 0;
+            virtual var & operator [] (const var &) = 0;
 
             virtual ~variable();
         };
