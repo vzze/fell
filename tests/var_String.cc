@@ -25,39 +25,39 @@ void test_msg(std::string msg, var * a) {
 std::vector<std::function<void(var*, var*)>> tests = {
     [](var * a, var * b) {
         var * c = *a + b;
-        test_msg("Operator + : ", c);
+        test_msg("Operator +  : ", c);
         delete c;
     },
     [](var * a, var * b) {
         try {
             var * c = *a - b;
-            test_msg("Operator - : ", c);
+            test_msg("Operator -  : ", c);
             delete c;
         } catch(std::exception & e) {
-            test_msg(std::string("Operator - : ") + e.what(), nullptr);
+            test_msg(std::string("Operator -  : ") + e.what(), nullptr);
         }
     },
     [](var * a, var * b) {
         try {
             var * c = *a * b;
-            test_msg("Operator * : ", c);
+            test_msg("Operator *  : ", c);
             delete c;
         } catch(std::exception & e) {
-            test_msg(std::string("Operator * : ") + e.what(), nullptr);
+            test_msg(std::string("Operator *  : ") + e.what(), nullptr);
         }
     },
     [](var * a, var * b) {
         try {
             var * c = *a / b;
-            test_msg("Operator / : ", c);
+            test_msg("Operator /  : ", c);
             delete c;
         } catch(std::exception & e) {
-            test_msg(std::string("Operator / : ") + e.what(), nullptr);
+            test_msg(std::string("Operator /  : ") + e.what(), nullptr);
         }
     },
     [](var * a, var * b) {
         var * c = *a > b;
-        test_msg("Operator > : ", c);
+        test_msg("Operator >  : ", c);
         delete c;
     },
     [](var * a, var * b) {
@@ -67,7 +67,7 @@ std::vector<std::function<void(var*, var*)>> tests = {
     },
     [](var * a, var * b) {
         var * c = *a < b;
-        test_msg("Operator < : ", c);
+        test_msg("Operator <  : ", c);
         delete c;
     },
     [](var * a, var * b) {

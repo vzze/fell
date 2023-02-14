@@ -21,27 +21,27 @@ void test_msg(std::string msg, var * a) {
 std::vector<std::function<void(var*, var*)>> tests = {
     [](var * a, var * b) {
         var * c = *a + b;
-        test_msg("Operator + : ", c);
+        test_msg("Operator +  : ", c);
         delete c;
     },
     [](var * a, var * b) {
         var * c = *a - b;
-        test_msg("Operator - : ", c);
+        test_msg("Operator -  : ", c);
         delete c;
     },
     [](var * a, var * b) {
         var * c = *a * b;
-        test_msg("Operator * : ", c);
+        test_msg("Operator *  : ", c);
         delete c;
     },
     [](var * a, var * b) {
         var * c = *a / b;
-        test_msg("Operator / : ", c);
+        test_msg("Operator /  : ", c);
         delete c;
     },
     [](var * a, var * b) {
         var * c = *a > b;
-        test_msg("Operator > : ", c);
+        test_msg("Operator >  : ", c);
         delete c;
     },
     [](var * a, var * b) {
@@ -51,7 +51,7 @@ std::vector<std::function<void(var*, var*)>> tests = {
     },
     [](var * a, var * b) {
         var * c = *a < b;
-        test_msg("Operator < : ", c);
+        test_msg("Operator <  : ", c);
         delete c;
     },
     [](var * a, var * b) {
