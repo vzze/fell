@@ -85,5 +85,5 @@ fell::types::variable::var fell::types::number::operator != (const var & rhs) {
 }
 
 fell::types::variable::var & fell::types::number::operator [] (const var &) {
-    throw "No subscript operator on variable of type Number.";
+    throw std::runtime_error{"No subscript operator on variable of type Number."};
 }

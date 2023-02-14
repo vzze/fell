@@ -10,15 +10,15 @@ fell::types::variable::var fell::types::string::operator + (const var & rhs) {
 }
 
 fell::types::variable::var fell::types::string::operator - (const var &) {
-    throw "Variable of type String can't be minus'd";
+    throw std::runtime_error{"Variable of type String can't be minus'd"};
 }
 
 fell::types::variable::var fell::types::string::operator * (const var &) {
-    throw "Variable of type String can't be multiplied.";
+    throw std::runtime_error{"Variable of type String can't be multiplied."};
 }
 
 fell::types::variable::var fell::types::string::operator / (const var &) {
-    throw "Variable of type String can't be divided.";
+    throw std::runtime_error{"Variable of type String can't be divided."};
 }
 
 fell::types::variable::var fell::types::string::operator > (const var & rhs) {
@@ -76,5 +76,5 @@ fell::types::variable::var fell::types::string::operator != (const var & rhs) {
 }
 
 fell::types::variable::var & fell::types::string::operator [] (const var &) {
-    throw "No subscript operator on variable of type String.";
+    throw std::runtime_error{"No subscript operator on variable of type String."};
 }

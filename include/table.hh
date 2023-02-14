@@ -2,6 +2,8 @@
 #define TABLE_HH
 
 #include <unordered_map>
+#include <exception>
+#include <stdexcept>
 #include <string>
 
 #include "variable.hh"

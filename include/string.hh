@@ -2,6 +2,8 @@
 #define STRING_HH
 
 #include <string>
+#include <exception>
+#include <stdexcept>
 
 #include "variable.hh"
 #include "number.hh"

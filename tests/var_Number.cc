@@ -74,8 +74,8 @@ std::vector<std::function<void(var*, var*)>> tests = {
             var * c = (*a)[b];
             test_msg("Operator [] : ", c);
             delete c;
-        } catch(const char * e) {
-            test_msg(std::string("Operator [] : ") + e, nullptr);
+        } catch(std::exception & e) {
+            test_msg(std::string("Operator [] : ") + e.what(), nullptr);
         }
     },
 };

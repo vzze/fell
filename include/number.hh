@@ -1,6 +1,9 @@
 #ifndef NUMBER_HH
 #define NUMBER_HH
 
+#include <exception>
+#include <stdexcept>
+
 #include "variable.hh"
 
 namespace fell {
