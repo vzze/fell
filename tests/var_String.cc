@@ -15,9 +15,9 @@ void test_msg(std::string msg, var * a) {
         std::cout << '\n';
     else {
         try {
-            std::cout << std::any_cast<std::string>(a->value) << '\n';
+            std::cout << std::any_cast<fell::types::string::str>(a->value) << '\n';
         } catch(...) {
-            std::cout << std::any_cast<double>(a->value) << '\n';
+            std::cout << std::any_cast<fell::types::number::num>(a->value) << '\n';
         }
     }
 }
@@ -100,8 +100,8 @@ int main() {
     fell::types::variable * a = new fell::types::string("Hello ");
     fell::types::variable * b = new fell::types::string("World!");
 
-    std::cout << "Variable a: " << std::any_cast<std::string>(a->value) << '\n';
-    std::cout << "Variable b: " << std::any_cast<std::string>(b->value) << "\n\n";
+    std::cout << "Variable a: " << std::any_cast<fell::types::string::str>(a->value) << '\n';
+    std::cout << "Variable b: " << std::any_cast<fell::types::string::str>(b->value) << "\n\n";
 
     for(auto test : tests)
         test(a, b);
