@@ -1,6 +1,6 @@
 #include "table.hh"
 
-fell::types::table::table(std::unordered_map<std::string, variable::var> tbl) : variable(tbl) {}
+fell::types::table::table(tbl table) : variable(table) {}
 
 fell::types::variable::var fell::types::table::operator + (const var &) {
     throw std::runtime_error{"Variable of type Table can't be added."};
@@ -44,15 +44,26 @@ fell::types::variable::var fell::types::table::operator != (const var &) {
 
 fell::types::variable::var & fell::types::table::operator [] (const var & offset) {
     try {
-        return std::any_cast<std::unordered_map<std::string, var>>(&this->value)->at(*std::any_cast<std::string>(&offset->value));
+        return std::any_cast<tbl>(&this->value)->at(*std::any_cast<string::str>(&offset->value));
     } catch(...) {
-        (*std::any_cast<std::unordered_map<std::string, var>>(&this->value))[*std::any_cast<std::string>(&offset->value)] = nullptr;
+        (*std::any_cast<tbl>(&this->value))[*std::any_cast<string::str>(&offset->value)] = nullptr;
 
-        return std::any_cast<std::unordered_map<std::string, var>>(&this->value)->at(*std::any_cast<std::string>(&offset->value));
+        return std::any_cast<tbl>(&this->value)->at(*std::any_cast<string::str>(&offset->value));
+    }
+}
+
+fell::types::variable::var & fell::types::table::operator [] (const string::str offset) {
+    try {
+        return std::any_cast<tbl>(&this->value)->at(offset);
+    } catch(...) {
+        (*std::any_cast<tbl>(&this->value))[offset] = nullptr;
+
+        return std::any_cast<tbl>(&this->value)->at(offset);
     }
 }
 
 fell::types::table::~table() {
-    for(auto & [k, v] : *std::any_cast<std::unordered_map<std::string, variable::var>>(&this->value))
+    for(auto & [k, v] : *std::any_cast<tbl>(&this->value)) {
         delete v;
+    }
 }

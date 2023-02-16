@@ -1,6 +1,7 @@
 #include "table.hh"
 #include "string.hh"
 #include "number.hh"
+#include "override.hh"
 
 #include <exception>
 #include <iostream>
@@ -9,9 +10,9 @@
 #include <memory>
 #include <functional>
 
-using var = fell::types::variable;
+using var = fell::types::variable*;
 
-void test_msg(std::string msg, var * a) {
+void test_msg(std::string msg, var a) {
     std::cout << msg;
     if(a == nullptr)
         std::cout << '\n';
@@ -24,99 +25,94 @@ void test_msg(std::string msg, var * a) {
     }
 }
 
-std::vector<std::function<void(var*)>> tests = {
-    [](var * table) {
+std::vector<std::function<void(var&)>> tests = {
+    [](var & table) {
         try {
             *table + table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator +  : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
         try {
             *table - table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator -  : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
         try {
             *table * table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator *  : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
         try {
             *table / table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator /  : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
         try {
             [[maybe_unused]] auto s = *table > table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator >  : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
         try {
             [[maybe_unused]] auto s = *table >= table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator >= : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
         try {
             [[maybe_unused]] auto s = *table < table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator <  : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
         try {
             [[maybe_unused]] auto s = *table <= table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator <= : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
         try {
             [[maybe_unused]] auto s = *table == table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator == : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
         try {
             [[maybe_unused]] auto s = *table != table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator != : ") + e.what(), nullptr);
         }
     },
-    [](var * table) {
+    [](var & table) {
             test_msg("Operator [] :", nullptr);
-            var * key1 = new fell::types::string("Apple");
-            var * key2 = new fell::types::string("Apricot");
+
+            var key1 = new fell::types::string("Apple");
+            var key2 = new fell::types::string("Apricot");
+
+            (*table)[key1] = new fell::types::string("Cherry");
+            (*table)[key2] = new fell::types::string("Orange");
 
             test_msg("\tKey 1 : ", key1);
             test_msg("\tKey 2 : ", key2);
 
-            (*table)[key1] = new fell::types::number {42};
-            (*table)[key2] = new fell::types::string {"Cherry"};
-
-            delete key1; // this tests for dangling lifetime
-            delete key2;
-
-            key1 = new fell::types::string("Apple");
-            key2 = new fell::types::string("Apricot");
-
             test_msg("\tTable values: ", nullptr);
-            std::cout << "\t\t{ " << std::any_cast<std::string>(key1->value) << ", " << std::any_cast<double>((*table)[key1]->value) << " }\n";
+            std::cout << "\t\t{ " << std::any_cast<std::string>(key1->value) << ", " << std::any_cast<std::string>((*table)[key1]->value) << " }\n";
             std::cout << "\t\t{ " << std::any_cast<std::string>(key2->value) << ", " << std::any_cast<std::string>((*table)[key2]->value) << " }\n";
 
-            fell::types::override((*table)[key1], (*table)[key2]);
+            fell::util::override((*table)[key1], (*table)[key2]);
 
             std::cout << "\n\tOverriding value at Key 1 with value at Key 2:\n\n";
 

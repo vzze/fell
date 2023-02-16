@@ -11,7 +11,8 @@
 namespace fell {
     namespace types {
         struct string : public variable {
-            string(std::string = "");
+            using str = std::string;
+            string(str = "");
 
             var operator + (const var &) override;
             var operator - (const var &) override;
@@ -26,6 +27,7 @@ namespace fell {
             var operator != (const var &) override;
 
             var & operator [] (const var &) override;
+            var & operator [] (const str) override;
         };
     }
 }

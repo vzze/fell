@@ -22,10 +22,11 @@ include_directories(
 
 if(BUILD_FELL)
     add_subdirectory(src/variable)
+    add_subdirectory(src/util)
 
     add_library(fell src/fell.cc)
 
-    target_link_libraries(fell variable)
+    target_link_libraries(fell util variable)
 endif()
 
 

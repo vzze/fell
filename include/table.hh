@@ -8,11 +8,13 @@
 
 #include "variable.hh"
 #include "number.hh"
+#include "string.hh"
 
 namespace fell {
     namespace types {
         struct table : public variable {
-            table(std::unordered_map<std::string, variable::var> = {});
+            using tbl = std::unordered_map<std::string, variable::var>;
+            table(tbl = {});
 
             var operator + (const var &) override;
             var operator - (const var &) override;
@@ -27,6 +29,7 @@ namespace fell {
             var operator != (const var &) override;
 
             var & operator [] (const var &) override;
+            var & operator [] (const string::str) override;
 
             ~table();
         };
