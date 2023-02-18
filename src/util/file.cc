@@ -1,4 +1,4 @@
-#include "file.hh"
+#include "util.hh"
 
 std::string fell::util::get_file(const std::filesystem::path path) {
     std::ifstream f(path, std::ios::binary);

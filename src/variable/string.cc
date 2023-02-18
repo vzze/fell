@@ -1,12 +1,13 @@
-#include "string.hh"
+#include "variable.hh"
+#include "util.hh"
 
 fell::types::string::string(str str) : variable(str) {}
 
 fell::types::variable::var fell::types::string::operator + (const var & rhs) {
-    return new string{
-        *std::any_cast<str>(&this->value) +
-        *std::any_cast<str>(&rhs->value)
-    };
+    return util::make_var<string>(
+        util::get_value<str>(this) +
+        util::get_value<str>(rhs)
+    );
 }
 
 fell::types::variable::var fell::types::string::operator - (const var &) {
@@ -22,60 +23,64 @@ fell::types::variable::var fell::types::string::operator / (const var &) {
 }
 
 fell::types::variable::var fell::types::string::operator > (const var & rhs) {
-    return new number{
+    return util::make_var<number>(
         static_cast<number::num>(
-            *std::any_cast<str>(&this->value) >
-            *std::any_cast<str>(&rhs->value)
+            util::get_value<str>(this) >
+            util::get_value<str>(rhs)
         )
-    };
+    );
 }
 
 fell::types::variable::var fell::types::string::operator >= (const var & rhs) {
-    return new number{
+    return util::make_var<number>(
         static_cast<number::num>(
-            *std::any_cast<str>(&this->value) >=
-            *std::any_cast<str>(&rhs->value)
+            util::get_value<str>(this) >=
+            util::get_value<str>(rhs)
         )
-    };
+    );
 }
 
 fell::types::variable::var fell::types::string::operator < (const var & rhs) {
-    return new number{
+    return util::make_var<number>(
         static_cast<number::num>(
-            *std::any_cast<str>(&this->value) <
-            *std::any_cast<str>(&rhs->value)
+            util::get_value<str>(this) <
+            util::get_value<str>(rhs)
         )
-    };
+    );
 }
 
 fell::types::variable::var fell::types::string::operator <= (const var & rhs) {
-    return new number{
+    return util::make_var<number>(
         static_cast<number::num>(
-            *std::any_cast<str>(&this->value) <=
-            *std::any_cast<str>(&rhs->value)
+            util::get_value<str>(this) <=
+            util::get_value<str>(rhs)
         )
-    };
+    );
 }
 
 fell::types::variable::var fell::types::string::operator == (const var & rhs) {
-    return new number{
+    return util::make_var<number>(
         static_cast<number::num>(
-            *std::any_cast<str>(&this->value) ==
-            *std::any_cast<str>(&rhs->value)
+            util::get_value<str>(this) ==
+            util::get_value<str>(rhs)
         )
-    };
+    );
 }
 
 fell::types::variable::var fell::types::string::operator != (const var & rhs) {
-    return new number{
+    return util::make_var<number>(
         static_cast<number::num>(
-            *std::any_cast<str>(&this->value) !=
-            *std::any_cast<str>(&rhs->value)
+            util::get_value<str>(this) !=
+            util::get_value<str>(rhs)
         )
-    };
+    );
 }
 
 fell::types::variable::var & fell::types::string::operator [] (const var &) {
+    throw std::runtime_error{"No subscript operator on variable of type String."};
+}
+
+fell::types::variable::var & fell::types::string::operator [] (const var &&) {
     throw std::runtime_error{"No subscript operator on variable of type String."};
 }
 

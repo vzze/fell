@@ -1,4 +1,5 @@
-#include "table.hh"
+#include "variable.hh"
+#include "util.hh"
 
 fell::types::table::table(tbl table) : variable(table) {}
 
@@ -42,28 +43,33 @@ fell::types::variable::var fell::types::table::operator != (const var &) {
     throw std::runtime_error{"Variable of type Table can't be compared."};
 }
 
-fell::types::variable::var & fell::types::table::operator [] (const var & offset) {
+fell::types::variable::var & fell::types::table::operator [] (const var & key) {
     try {
-        return std::any_cast<tbl>(&this->value)->at(*std::any_cast<string::str>(&offset->value));
+        return util::get_value<tbl>(this)->at(util::get_value<string::str>(key));
     } catch(...) {
-        (*std::any_cast<tbl>(&this->value))[*std::any_cast<string::str>(&offset->value)] = nullptr;
-
-        return std::any_cast<tbl>(&this->value)->at(*std::any_cast<string::str>(&offset->value));
+        (*util::get_value<tbl>(this))[util::get_value<string::str>(key)] = nullptr;
+        return util::get_value<tbl>(this)->at(util::get_value<string::str>(key));
     }
 }
 
-fell::types::variable::var & fell::types::table::operator [] (const string::str offset) {
+fell::types::variable::var & fell::types::table::operator [] (const var && key) {
     try {
-        return std::any_cast<tbl>(&this->value)->at(offset);
+        return util::get_value<tbl>(this)->at(util::get_value<string::str>(key));
     } catch(...) {
-        (*std::any_cast<tbl>(&this->value))[offset] = nullptr;
+        (*util::get_value<tbl>(this))[util::get_value<string::str>(key)] = nullptr;
+        return util::get_value<tbl>(this)->at(util::get_value<string::str>(key));
+    }
+}
 
-        return std::any_cast<tbl>(&this->value)->at(offset);
+fell::types::variable::var & fell::types::table::operator [] (const string::str key) {
+    try {
+        return util::get_value<tbl>(this)->at(key);
+    } catch(...) {
+        (*util::get_value<tbl>(this))[key] = nullptr;
+        return util::get_value<tbl>(this)->at(key);
     }
 }
 
 fell::types::table::~table() {
-    for(auto & [k, v] : *std::any_cast<tbl>(&this->value)) {
-        delete v;
-    }
+    delete util::get_value<tbl>(this);
 }

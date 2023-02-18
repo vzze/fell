@@ -1,15 +1,16 @@
-#include "override.hh"
+#include "util.hh"
 
-void fell::util::override(types::variable::var & a, const types::variable::var b) {
-    delete a;
-
+void fell::util::override(types::variable::var & a, const types::variable::var & b) {
     try {
-        a = new types::number{std::any_cast<types::number::num>(b->value)};
+        a = make_var<types::number>(get_value<types::number::num>(b));
     } catch(...) {
         try {
-            a = new types::string{std::any_cast<types::string::str>(b->value)};
+            a = make_var<types::string>(get_value<types::string::str>(b));
         } catch(...) {
-            a = new types::table{std::any_cast<types::table::tbl>(b->value)};
+            a = make_var<types::table>();
+
+            for(const auto & kv : *get_value<types::table::tbl>(b))
+                override((*a)[kv.first], kv.second);
         }
     }
 }
