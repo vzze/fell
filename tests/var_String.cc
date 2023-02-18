@@ -30,21 +30,21 @@ std::vector<std::function<void(var&, var&)>> tests = {
     },
     [](var & a, var & b) {
         try {
-            *a - b;
+            [[maybe_unused]] var s = *a - b;
         } catch(std::exception & e) {
             test_msg(std::string("Operator -  : ") + e.what());
         }
     },
     [](var & a, var & b) {
         try {
-            *a * b;
+            [[maybe_unused]] var s = *a * b;
         } catch(std::exception & e) {
             test_msg(std::string("Operator *  : ") + e.what());
         }
     },
     [](var & a, var & b) {
         try {
-            *a / b;
+            [[maybe_unused]] var s = *a / b;
         } catch(std::exception & e) {
             test_msg(std::string("Operator /  : ") + e.what());
         }
