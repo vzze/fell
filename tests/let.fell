@@ -3,3 +3,5 @@ let y = 20 + true
 let z=x+y
 let a =z+x+y
 let b= x+z
+
+let c
