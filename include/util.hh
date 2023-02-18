@@ -14,6 +14,8 @@ namespace fell {
         void override(types::variable::var &, const types::variable::var &);
         std::string get_file(const std::filesystem::path);
 
+        std::string trim(const std::string);
+
         template<typename T, typename ... Args>
         inline types::variable::var make_var(Args && ... args) {
             return std::make_unique<T>(std::forward<Args>(args)...);

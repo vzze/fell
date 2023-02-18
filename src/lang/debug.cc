@@ -13,9 +13,14 @@ void fell::lang::dump_table(types::variable::var & table, std::string space) {
                 const auto & ref = util::get_value<types::string::str>(v);
                 std::cout << space << k << ": " << ref << '\n';
             } catch(...) {
-                std::cout << k << ":\n";
-                space += "  ";
-                dump_table(v, space);
+                try {
+                    [[maybe_unused]] const auto & ref = util::get_value<types::nihil::nil>(v);
+                    std::cout << space << k << ": " << "NIL" << '\n';
+                } catch(...) {
+                    std::cout << k << ":\n";
+                    space += "  ";
+                    dump_table(v, space);
+                }
             }
         }
     }

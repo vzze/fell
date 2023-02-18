@@ -23,11 +23,15 @@ include_directories(
 if(BUILD_FELL)
     add_subdirectory(src/variable)
     add_subdirectory(src/util)
+
     add_subdirectory(src/lang)
+    add_subdirectory(src/lexer)
 
-    add_library(fell src/fell.cc)
+    add_library(libfell src/lib.cc)
+    target_link_libraries(libfell lexer lang util variable)
 
-    target_link_libraries(fell lang util variable)
+    add_executable(fell src/interpreter.cc)
+    target_link_libraries(fell libfell)
 endif()
 
 
@@ -43,6 +47,6 @@ if(BUILD_TESTS)
         get_filename_component(file_name ${new_name} NAME)
 
         add_executable(${file_name} ${test})
-        target_link_libraries(${file_name} fell)
+        target_link_libraries(${file_name} libfell)
     endforeach()
 endif(BUILD_TESTS)

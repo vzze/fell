@@ -7,10 +7,14 @@ void fell::util::override(types::variable::var & a, const types::variable::var &
         try {
             a = make_var<types::string>(get_value<types::string::str>(b));
         } catch(...) {
-            a = make_var<types::table>();
+            try {
+                a = make_var<types::nihil>(get_value<types::nihil::nil>(b));
+            } catch(...) {
+                a = make_var<types::table>();
 
-            for(const auto & kv : *get_value<types::table::tbl>(b))
-                override((*a)[kv.first], kv.second);
+                for(const auto & kv : *get_value<types::table::tbl>(b))
+                    override((*a)[kv.first], kv.second);
+            }
         }
     }
 }

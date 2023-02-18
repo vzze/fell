@@ -18,7 +18,8 @@ namespace fell {
         }
 
         void parse_file(const std::filesystem::path);
-        types::variable::var solve_expression(std::string);
+        types::variable::var check_for_constant_expression(const std::string &&);
+        types::variable::var solve_expression(const std::string &&);
         void let(std::string &&);
     }
 }
