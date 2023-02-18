@@ -4,4 +4,6 @@ let z=x+y
 let a =z+x+y
 let b= x+z
 
+let a = 10
+
 let c

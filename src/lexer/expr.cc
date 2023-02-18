@@ -32,7 +32,7 @@ fell::types::variable::var fell::lex::solve_expression(const std::string && expr
                     if(ref == nullptr)
                         throw std::runtime_error{"Undefined variable: " + trim};
 
-                    util::override(intermediary, ref);
+                    util::copy(intermediary, ref);
                 }
 
                 return *intermediary + solve_expression(expr.substr(s + 1));
@@ -55,7 +55,7 @@ fell::types::variable::var fell::lex::solve_expression(const std::string && expr
                     if(ref == nullptr)
                         throw std::runtime_error{"Undefined variable: " + trim};
 
-                    util::override(intermediary, ref);
+                    util::copy(intermediary, ref);
                 }
 
                 return *intermediary - solve_expression(expr.substr(s + 1));
@@ -84,7 +84,7 @@ fell::types::variable::var fell::lex::solve_expression(const std::string && expr
                     if(ref == nullptr)
                         throw std::runtime_error{std::string{"Undefined variable: "} + util::trim(expr)};
 
-                    fell::util::override(v, ref);
+                    fell::util::copy(v, ref);
 
                     return v;
                 }

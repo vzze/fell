@@ -116,7 +116,7 @@ std::vector<std::function<void(var&)>> tests = {
         std::cout << "\t\t{ " << fell::util::get_value<fell::types::string::str>(key2) << ", "
             << fell::util::get_value<fell::types::string::str>((*table)[key2]) << " }\n";
 
-        fell::util::override((*table)[key1], (*table)[key2]);
+        fell::util::copy((*table)[key1], (*table)[key2]);
 
         std::cout << "\n\tOverriding value at Key 1 with value at Key 2:\n\n";
 

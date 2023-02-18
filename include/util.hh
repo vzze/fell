@@ -1,5 +1,5 @@
-#ifndef OVERRIDE_HH
-#define OVERRIDE_HH
+#ifndef UTIL_HH
+#define UTIL_HH
 
 #include <filesystem>
 #include <exception>
@@ -11,7 +11,7 @@
 
 namespace fell {
     namespace util {
-        void override(types::variable::var &, const types::variable::var &);
+        void copy(types::variable::var &, const types::variable::var &);
         std::string get_file(const std::filesystem::path);
 
         std::string trim(const std::string);
