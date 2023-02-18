@@ -128,7 +128,7 @@ std::vector<std::function<void(var&)>> tests = {
             << fell::util::get_value<fell::types::string::str>((*table)[key2]) << " }\n";
     },
     [](var & table) {
-        test_msg("Operator [std::string{}]: Key: \"Apricot\", Value: ", (*table)["Apricot"]);
+        test_msg("Operator [std::string]: Key: \"Apricot\", Value: ", (*table)["Apricot"]);
     }
 };
 
