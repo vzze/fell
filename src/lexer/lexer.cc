@@ -1,10 +1,18 @@
 #include "lexer.hh"
+#include "util.hh"
 
 #include <iostream>
 
 void fell::lex::parse_file(const std::filesystem::path path) {
-    const auto file = util::get_file(path);
+    std::string file;
 
+    try {
+        file = util::get_file(path);
+    } catch(std::exception & e) {
+        std::cout << e.what() << '\n';
+    }
+
+    fell::util::remove_comments(file);
 
     for(std::size_t i = 1; const auto _line : std::views::split(file, std::string_view{"\n"})) {
         const std::string_view line{_line.begin(), _line.end()};

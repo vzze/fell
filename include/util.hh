@@ -15,6 +15,7 @@ namespace fell {
         std::string get_file(const std::filesystem::path);
 
         std::string trim(const std::string);
+        void remove_comments(std::string &);
 
         template<typename T, typename ... Args>
         inline types::variable::var make_var(Args && ... args) {
