@@ -1,3 +1,4 @@
 #include "lang.hh"
+#include "util.hh"
 
-fell::types::variable * fell::lang::global_table = new fell::types::table();
+fell::types::variable::var fell::lang::global_table = fell::util::make_var<fell::types::table>();

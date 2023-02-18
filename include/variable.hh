@@ -105,6 +105,28 @@ namespace fell {
 
             ~table();
         };
+
+        struct nihil : public variable {
+            // underlying type stored in member value
+            using nil = std::nullptr_t;
+            nihil(nil = nullptr);
+
+            [[noreturn]] var operator + (const var &) override;
+            [[noreturn]] var operator - (const var &) override;
+            [[noreturn]] var operator * (const var &) override;
+            [[noreturn]] var operator / (const var &) override;
+
+            [[noreturn]] var operator >  (const var &) override;
+            [[noreturn]] var operator >= (const var &) override;
+            [[noreturn]] var operator <  (const var &) override;
+            [[noreturn]] var operator <= (const var &) override;
+            [[noreturn]] var operator == (const var &) override;
+            [[noreturn]] var operator != (const var &) override;
+
+            [[noreturn]] var & operator [] (const var &) override;
+            [[noreturn]] var & operator [] (const var &&) override;
+            [[noreturn]] var & operator [] (const string::str) override;
+        };
     }
 }
 

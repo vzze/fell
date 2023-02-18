@@ -1,5 +1,6 @@
 #include "variable.hh"
 #include "util.hh"
+#include "lang.hh"
 
 #include <exception>
 #include <iostream>
@@ -137,4 +138,8 @@ int main() {
 
     for(auto test : tests)
         test(table);
+
+    test_msg("\nLang dump_table func:\n");
+
+    fell::lang::dump_table(table);
 }
