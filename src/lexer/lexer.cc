@@ -16,7 +16,8 @@ void fell::lex::parse_file(const std::filesystem::path path) {
 
             }
         } catch(std::exception & e) {
-            std::cout << "LINE " << i << ": " << e.what() << '\n';
+            std::cout << path.filename().string() << " -> L" << i << ": " << line << '\n';
+            std::cout << "    " << e.what() << '\n';
             return;
         }
 

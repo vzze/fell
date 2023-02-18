@@ -4,7 +4,7 @@
 #include <iostream>
 
 void fell::lang::dump_table(types::variable::var & table, std::string space) {
-    for(auto & [k, v] : *fell::util::get_value<types::table::tbl>(table)) {
+    for(auto & [k, v] : *fell::util::get_value<types::table::tbl>(table))
         if(v == nullptr)
             std::cout << space << k << ": " << "UNDEFINED" << '\n';
         else
@@ -26,5 +26,4 @@ void fell::lang::dump_table(types::variable::var & table, std::string space) {
                     }
                 }
             }
-    }
 }
