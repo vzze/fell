@@ -1,15 +1,12 @@
 #include "lexer.hh"
 #include "util.hh"
 
-#include <iostream>
-
 fell::types::variable::var fell::lex::check_for_constant_expression(const std::string && expr) {
     return util::make_var<fell::types::number>(std::stod(expr));
 }
 
 fell::types::variable::var fell::lex::solve_expression(const std::string && expr) {
     const auto s = expr.find_first_of("(-+*/");
-    /* std::cout << expr << '\n'; */
     switch(expr[s]) {
         case '+':
             try {
