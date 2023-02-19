@@ -1,6 +1,7 @@
 #ifndef UTIL_HH
 #define UTIL_HH
 
+#include <type_traits>
 #include <filesystem>
 #include <exception>
 #include <stdexcept>
@@ -24,12 +25,36 @@ namespace fell {
 
         template<typename T>
         inline T & get_value(const types::variable::var & var) {
-            return std::any_cast<T&>(var->value);
+            try {
+                return std::any_cast<T&>(var->value);
+            } catch(...) { // Need to change bad_any_cast error into something more user friendly
+                if constexpr(std::is_same_v<T, types::number::num>) {
+                    throw std::runtime_error("Right hand variable is not convertible to Number.");
+                } else if constexpr(std::is_same_v<T, types::string::str>) {
+                    throw std::runtime_error("Right hand variable is not convertible to String.");
+                } else if constexpr(std::is_same_v<T, types::table::tbl>) {
+                    throw std::runtime_error("Right hand variable is not convertible to Table.");
+                } else if constexpr(std::is_same_v<T, types::nihil::nil>) {
+                    throw std::runtime_error("Right hand variable is not convertible to Nil.");
+                }
+            }
         }
 
         template<typename T>
         inline T & get_value(types::variable * var) {
-            return std::any_cast<T&>(var->value);
+            try {
+                return std::any_cast<T&>(var->value);
+            } catch(...) { // Same thing here as above
+                if constexpr(std::is_same_v<T, types::number::num>) {
+                    throw std::runtime_error("Right hand variable is not convertible to Number.");
+                } else if constexpr(std::is_same_v<T, types::string::str>) {
+                    throw std::runtime_error("Right hand variable is not convertible to String.");
+                } else if constexpr(std::is_same_v<T, types::table::tbl>) {
+                    throw std::runtime_error("Right hand variable is not convertible to Table.");
+                } else if constexpr(std::is_same_v<T, types::nihil::nil>) {
+                    throw std::runtime_error("Right hand variable is not convertible to Nil.");
+                }
+            }
         }
     }
 }

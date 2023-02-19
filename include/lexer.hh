@@ -26,6 +26,7 @@ namespace fell {
         types::variable::var check_for_constant_expression(const std::string);
         types::variable::var solve_expression(const std::string &&);
         void let(std::string);
+        void check_for_invalid_redefinition(const std::string &);
     }
 }
 

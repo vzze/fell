@@ -8,8 +8,6 @@ fell::types::variable::var fell::lex::check_for_constant_expression(const std::s
         return util::make_var<fell::types::number>(1);
     else if(expr == keywords::NIHIL)
         return util::make_var<fell::types::nihil>();
-    /* else if((*expr.rbegin() == '"' && *expr.begin() == '"') || (*expr.rbegin() == '\'' && *expr.begin() == '\'')) */
-    /*     return util::make_var<fell::types::string>(expr.data() + 1, expr.length() - 1); */
 
     return util::make_var<fell::types::number>(std::stod(expr));
 }
@@ -64,7 +62,27 @@ fell::types::variable::var fell::lex::solve_expression(const std::string && expr
             }
         break;
         case '%':
+            {
+                const auto trim = util::trim(expr.substr(0, s));
 
+                if(trim == "")
+                    throw std::runtime_error{"Extra symbol: %"};
+
+                types::variable::var intermediary;
+
+                try {
+                    intermediary = check_for_constant_expression(trim);
+                } catch(...) {
+                    const auto & ref = (*lang::global_table)[trim];
+
+                    if(ref == nullptr)
+                        throw std::runtime_error{"Undefined variable: " + trim};
+
+                    util::copy(intermediary, ref);
+                }
+
+                return *intermediary % solve_expression(expr.substr(s + 1));
+            }
         break;
         case '*':
 
