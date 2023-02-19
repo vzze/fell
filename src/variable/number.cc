@@ -31,6 +31,14 @@ fell::types::variable::var fell::types::number::operator / (const var & rhs) {
     );
 }
 
+fell::types::variable::var fell::types::number::operator % (const var & rhs) {
+    const auto & a = util::get_value<num>(this);
+    const auto & b = util::get_value<num>(rhs);
+    return fell::util::make_var<number>(
+        a - std::floor(a / b) * b
+    );
+}
+
 fell::types::variable::var fell::types::number::operator > (const var & rhs) {
     return fell::util::make_var<number>(
         static_cast<num>(

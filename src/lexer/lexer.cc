@@ -18,11 +18,18 @@ void fell::lex::parse_file(const std::filesystem::path path) {
         const std::string_view line{_line.begin(), _line.end()};
 
         try {
+            std::string editable_line{line.begin(), line.end()};
+
+            const auto counter = check_for_string_constant(editable_line);
+
             if(line.find(keywords::LET) != std::string_view::npos) {
-                let(std::string{line.begin(), line.end()});
+                let(editable_line);
             } else {
 
             }
+
+            clear_string_constants(counter);
+
         } catch(std::exception & e) {
             std::cout << path.filename().string() << " -> L" << i << ": " << line << '\n';
             std::cout << "    " << e.what() << '\n';

@@ -55,6 +55,13 @@ std::vector<std::function<void(var&)>> tests = {
     },
     [](var & table) {
         try {
+            [[maybe_unused]] auto s = *table % table;
+        } catch(std::exception & e) {
+            test_msg(std::string("Operator %  : ") + e.what());
+        }
+    },
+    [](var & table) {
+        try {
             [[maybe_unused]] auto s = *table > table;
         } catch(std::exception & e) {
             test_msg(std::string("Operator >  : ") + e.what());

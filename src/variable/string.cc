@@ -22,6 +22,10 @@ fell::types::variable::var fell::types::string::operator / (const var &) {
     throw std::runtime_error{"Variable of type String can't be divided."};
 }
 
+fell::types::variable::var fell::types::string::operator % (const var &) {
+    throw std::runtime_error{"Variable of type String can't have a remainder."};
+}
+
 fell::types::variable::var fell::types::string::operator > (const var & rhs) {
     return util::make_var<number>(
         static_cast<number::num>(

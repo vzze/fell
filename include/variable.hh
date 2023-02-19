@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <memory>
+#include <cmath>
 #include <any>
 
 namespace fell {
@@ -22,6 +23,7 @@ namespace fell {
             [[nodiscard]] virtual var operator - (const var &) = 0;
             [[nodiscard]] virtual var operator * (const var &) = 0;
             [[nodiscard]] virtual var operator / (const var &) = 0;
+            [[nodiscard]] virtual var operator % (const var &) = 0;
 
             [[nodiscard]] virtual var operator >  (const var &) = 0;
             [[nodiscard]] virtual var operator >= (const var &) = 0;
@@ -46,6 +48,7 @@ namespace fell {
             [[nodiscard]] var operator - (const var &) override;
             [[nodiscard]] var operator * (const var &) override;
             [[nodiscard]] var operator / (const var &) override;
+            [[nodiscard]] var operator % (const var &) override;
 
             [[nodiscard]] var operator >  (const var &) override;
             [[nodiscard]] var operator >= (const var &) override;
@@ -68,6 +71,7 @@ namespace fell {
             [[noreturn]] var operator - (const var &) override;
             [[noreturn]] var operator * (const var &) override;
             [[noreturn]] var operator / (const var &) override;
+            [[noreturn]] var operator % (const var &) override;
 
             [[nodiscard]] var operator >  (const var &) override;
             [[nodiscard]] var operator >= (const var &) override;
@@ -91,6 +95,7 @@ namespace fell {
             [[noreturn]] var operator - (const var &) override;
             [[noreturn]] var operator * (const var &) override;
             [[noreturn]] var operator / (const var &) override;
+            [[noreturn]] var operator % (const var &) override;
 
             [[noreturn]] var operator >  (const var &) override;
             [[noreturn]] var operator >= (const var &) override;
@@ -115,6 +120,7 @@ namespace fell {
             [[noreturn]] var operator - (const var &) override;
             [[noreturn]] var operator * (const var &) override;
             [[noreturn]] var operator / (const var &) override;
+            [[noreturn]] var operator % (const var &) override;
 
             [[noreturn]] var operator >  (const var &) override;
             [[noreturn]] var operator >= (const var &) override;

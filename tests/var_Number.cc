@@ -37,6 +37,10 @@ std::vector<std::function<void(var&, var&)>> tests = {
         test_msg("Operator /  : ", c);
     },
     [](var & a, var & b) {
+        var c = *a % b;
+        test_msg("Operator %  : ", c);
+    },
+    [](var & a, var & b) {
         var c = *a > b;
         test_msg("Operator >  : ", c);
     },

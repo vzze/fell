@@ -19,6 +19,10 @@ fell::types::variable::var fell::types::table::operator / (const var &) {
     throw std::runtime_error{"Variable of type Table can't be divided."};
 }
 
+fell::types::variable::var fell::types::table::operator % (const var &) {
+    throw std::runtime_error{"Variable of type Table can't have a remainder."};
+}
+
 fell::types::variable::var fell::types::table::operator > (const var &) {
     throw std::runtime_error{"Variable of type Table can't be compared."};
 }

@@ -1,0 +1,2 @@
+modulus: a - std::floor(a / b) * b
+error checking: extra tokens

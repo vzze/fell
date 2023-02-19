@@ -18,6 +18,10 @@ fell::types::variable::var fell::types::nihil::operator / (const var &) {
     throw std::runtime_error{"Nil variable can't be divided."};
 }
 
+fell::types::variable::var fell::types::nihil::operator % (const var &) {
+    throw std::runtime_error{"Nil variable can't have a remainder."};
+}
+
 fell::types::variable::var fell::types::nihil::operator > (const var &) {
     throw std::runtime_error{"Nil variable can't be compared."};
 }

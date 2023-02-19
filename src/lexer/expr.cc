@@ -8,12 +8,14 @@ fell::types::variable::var fell::lex::check_for_constant_expression(const std::s
         return util::make_var<fell::types::number>(1);
     else if(expr == keywords::NIHIL)
         return util::make_var<fell::types::nihil>();
+    /* else if((*expr.rbegin() == '"' && *expr.begin() == '"') || (*expr.rbegin() == '\'' && *expr.begin() == '\'')) */
+    /*     return util::make_var<fell::types::string>(expr.data() + 1, expr.length() - 1); */
 
     return util::make_var<fell::types::number>(std::stod(expr));
 }
 
 fell::types::variable::var fell::lex::solve_expression(const std::string && expr) {
-    const auto s = expr.find_first_of("(-+*/");
+    const auto s = expr.find_first_of("(-+*/%");
     switch(expr[s]) {
         case '+':
             {
@@ -60,6 +62,9 @@ fell::types::variable::var fell::lex::solve_expression(const std::string && expr
 
                 return *intermediary - solve_expression(expr.substr(s + 1));
             }
+        break;
+        case '%':
+
         break;
         case '*':
 

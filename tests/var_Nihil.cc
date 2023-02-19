@@ -55,6 +55,13 @@ std::vector<std::function<void(var&)>> tests = {
     },
     [](var & nil) {
         try {
+            [[maybe_unused]] auto s = *nil % nil;
+        } catch(std::exception & e) {
+            test_msg(std::string("Operator %  : ") + e.what());
+        }
+    },
+    [](var & nil) {
+        try {
             [[maybe_unused]] auto s = *nil > nil;
         } catch(std::exception & e) {
             test_msg(std::string("Operator >  : ") + e.what());

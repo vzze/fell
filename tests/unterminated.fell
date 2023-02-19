@@ -1,0 +1,3 @@
+let a = "this"
+let b = a + " is "
+let c = b + "the " + "best + "thing " + "ever"
