@@ -20,33 +20,29 @@ include_directories(
     include
 )
 
-if(BUILD_FELL)
-    add_subdirectory(src/variable)
-    add_subdirectory(src/util)
+add_subdirectory(src/variable)
+add_subdirectory(src/util)
 
-    add_subdirectory(src/lang)
-    add_subdirectory(src/lexer)
+add_subdirectory(src/lang)
+add_subdirectory(src/lexer)
 
-    add_library(libfell src/lib.cc)
-    target_link_libraries(libfell lexer lang util variable)
+add_library(libfell src/lib.cc)
+target_link_libraries(libfell lexer lang util variable)
 
-    add_executable(fell src/interpreter.cc)
-    target_link_libraries(fell libfell)
-endif()
+add_executable(fell src/interpreter.cc)
+target_link_libraries(fell libfell)
 
 
-if(BUILD_TESTS)
-    include_directories(
-        build
-    )
+include_directories(
+    build
+)
 
-    aux_source_directory(tests TESTS)
+aux_source_directory(tests TESTS)
 
-    foreach(test ${TESTS})
-        string(REPLACE ".cc" "" new_name ${test})
-        get_filename_component(file_name ${new_name} NAME)
+foreach(test ${TESTS})
+    string(REPLACE ".cc" "" new_name ${test})
+    get_filename_component(file_name ${new_name} NAME)
 
-        add_executable(${file_name} ${test})
-        target_link_libraries(${file_name} libfell)
-    endforeach()
-endif(BUILD_TESTS)
+    add_executable(${file_name} ${test})
+    target_link_libraries(${file_name} libfell)
+endforeach()
