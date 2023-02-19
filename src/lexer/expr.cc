@@ -14,75 +14,37 @@ fell::types::variable::var fell::lex::check_for_constant_expression(const std::s
 
 fell::types::variable::var fell::lex::solve_expression(const std::string && expr) {
     const auto s = expr.find_first_of("(-+*/%");
+
+    const auto trim = util::trim(expr.substr(0, s));
+
+    if(trim == "")
+        throw std::runtime_error{"Extra symbol."};
+
+    if(trim.find(' ') != std::string::npos)
+        throw std::runtime_error("Extra keyword.");
+
+    types::variable::var intermediary;
+
+    try {
+        intermediary = check_for_constant_expression(trim);
+    } catch(...) {
+        const auto & ref = (*lang::global_table)[trim];
+
+        if(ref == nullptr)
+            throw std::runtime_error{"Undefined variable: " + trim};
+
+        util::copy(intermediary, ref);
+    }
+
     switch(expr[s]) {
         case '+':
-            {
-                const auto trim = util::trim(expr.substr(0, s));
-
-                if(trim == "")
-                    throw std::runtime_error{"Extra symbol: +"};
-
-                types::variable::var intermediary;
-
-                try {
-                    intermediary = check_for_constant_expression(trim);
-                } catch(...) {
-                    const auto & ref = (*lang::global_table)[trim];
-
-                    if(ref == nullptr)
-                        throw std::runtime_error{"Undefined variable: " + trim};
-
-                    util::copy(intermediary, ref);
-                }
-
-                return *intermediary + solve_expression(expr.substr(s + 1));
-            }
+            return *intermediary + solve_expression(expr.substr(s + 1));
         break;
         case '-':
-            {
-                const auto trim = util::trim(expr.substr(0, s));
-
-                if(trim == "")
-                    throw std::runtime_error{"Extra symbol: -"};
-
-                types::variable::var intermediary;
-
-                try {
-                    intermediary = check_for_constant_expression(trim);
-                } catch(...) {
-                    const auto & ref = (*lang::global_table)[trim];
-
-                    if(ref == nullptr)
-                        throw std::runtime_error{"Undefined variable: " + trim};
-
-                    util::copy(intermediary, ref);
-                }
-
-                return *intermediary - solve_expression(expr.substr(s + 1));
-            }
+            return *intermediary - solve_expression(expr.substr(s + 1));
         break;
         case '%':
-            {
-                const auto trim = util::trim(expr.substr(0, s));
-
-                if(trim == "")
-                    throw std::runtime_error{"Extra symbol: %"};
-
-                types::variable::var intermediary;
-
-                try {
-                    intermediary = check_for_constant_expression(trim);
-                } catch(...) {
-                    const auto & ref = (*lang::global_table)[trim];
-
-                    if(ref == nullptr)
-                        throw std::runtime_error{"Undefined variable: " + trim};
-
-                    util::copy(intermediary, ref);
-                }
-
-                return *intermediary % solve_expression(expr.substr(s + 1));
-            }
+            return *intermediary % solve_expression(expr.substr(s + 1));
         break;
         case '*':
 
@@ -91,27 +53,7 @@ fell::types::variable::var fell::lex::solve_expression(const std::string && expr
 
         break;
         default:
-            {
-                const auto trim = util::trim(expr);
-
-                if(trim == "")
-                    throw std::runtime_error{"Extra symbol"};
-
-                try {
-                    return check_for_constant_expression(trim);
-                } catch(...) {
-                    types::variable::var v;
-
-                    const auto & ref = (*lang::global_table)[trim];
-
-                    if(ref == nullptr)
-                        throw std::runtime_error{std::string{"Undefined variable: "} + util::trim(expr)};
-
-                    fell::util::copy(v, ref);
-
-                    return v;
-                }
-            }
+            return intermediary;
         break;
     }
 }
