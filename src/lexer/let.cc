@@ -1,20 +1,20 @@
 #include "lexer.hh"
 
-void fell::lex::let(std::string line) {
-    const auto cutoff = line.find_first_of("=", 4);
+void fell::lex::let(std::string && statement) {
+    const auto cutoff = statement.find_first_of("=", 4);
 
     std::size_t i = 4;
-    while(!std::isspace(line[i]) && line[i] != '=')
+    while(!std::isspace(statement[i]) && statement[i] != '=')
         ++i;
 
-    const auto name = line.substr(4, i - 4);
+    const auto name = statement.substr(4, i - 4);
 
     check_for_invalid_redefinition(name);
 
     if(cutoff == std::string::npos) {
         (*lang::global_table)[name] = util::make_var<types::nihil>();
     } else {
-        (*lang::global_table)[name] = solve_expression(line.substr(cutoff + 1));
+        (*lang::global_table)[name] = solve_expression(statement.substr(cutoff + 1));
     }
 }
 

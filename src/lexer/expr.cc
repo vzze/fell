@@ -24,10 +24,12 @@ fell::types::variable::var fell::lex::apply_operation(
 }
 
 std::size_t fell::lex::operator_precedence(const std::string & operation) {
-    if(operation == "+" || operation == "-" || operation == "%")
-        return 1;
     if(operation == "*" || operation == "/")
         return 2;
+    if(operation == "+" || operation == "-" || operation == "%")
+        return 1;
+    if(operation == "(")
+        return 0;
 
     throw std::runtime_error{"Unknown operator: " + operation};
 }
@@ -48,14 +50,14 @@ fell::types::variable::var fell::lex::solve_expression(const std::string && expr
     std::stack<std::string> operators;
 
     for(std::size_t i = 0; i < expr.length(); ++i) {
-        if(std::isspace(expr[i]))
+        if(std::isspace(expr[i])) {
             continue;
-        else if(expr[i] == '(') {
+        } else if(expr[i] == '(') {
             operators.push("(");
-        } else if(std::strchr("+-%*/", expr[i]) == 0) {
+        } else if(std::strchr("+-%*/)", expr[i]) == 0) {
             std::string var{""};
 
-            while(std::strchr("+-%*/", expr[i]) == 0) {
+            while(std::strchr("+-%*/)", expr[i]) == 0) {
                 var.push_back(expr[i]);
                 ++i;
             }
