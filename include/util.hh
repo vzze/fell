@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <string>
+#include <stack>
 
 #include "variable.hh"
 
@@ -17,6 +18,7 @@ namespace fell {
 
         std::string trim(const std::string);
         void remove_comments(std::string &);
+        void check_paren(const std::string &);
 
         template<typename T, typename ... Args>
         inline types::variable::var make_var(Args && ... args) {

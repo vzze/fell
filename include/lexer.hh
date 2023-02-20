@@ -5,9 +5,12 @@
 #include <exception>
 #include <stdexcept>
 #include <iostream>
+#include <cstring>
 #include <vector>
 #include <string>
 #include <ranges>
+#include <cctype>
+#include <stack>
 
 #include "util.hh"
 #include "lang.hh"
@@ -25,8 +28,12 @@ namespace fell {
         std::size_t check_for_string_constant(std::string &);
         void clear_string_constants(std::size_t);
         void parse_file(const std::filesystem::path);
+
+        std::size_t operator_precedence(const std::string &);
+        types::variable::var apply_operation(const types::variable::var &&, const types::variable::var &&, const std::string &&);
         types::variable::var check_for_constant_expression(const std::string);
         types::variable::var solve_expression(const std::string &&);
+
         void let(std::string);
         void check_for_invalid_redefinition(const std::string &);
     }

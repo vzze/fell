@@ -1,6 +1,7 @@
 #include "variable.hh"
 #include "util.hh"
 
+
 fell::types::number::number(num num) : variable(num) {}
 
 fell::types::variable::var fell::types::number::operator + (const var & rhs) {

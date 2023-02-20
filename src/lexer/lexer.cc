@@ -1,11 +1,16 @@
 #include "lexer.hh"
-#include "util.hh"
 
 void fell::lex::parse_file(const std::filesystem::path path) {
     std::string file;
 
     try {
         file = util::get_file(path);
+    } catch(std::exception & e) {
+        std::cout << e.what() << '\n';
+    }
+
+    try {
+        util::check_paren(file);
     } catch(std::exception & e) {
         std::cout << e.what() << '\n';
     }
@@ -23,10 +28,11 @@ void fell::lex::parse_file(const std::filesystem::path path) {
     for(auto & statement : statements) {
         try {
             auto copy = statement;
+
             const auto counter = check_for_string_constant(copy);
 
             if(copy.find(keywords::LET) != std::string::npos) {
-                let(copy.substr(copy.find_first_not_of("\n\r\x0d ")));
+                let(util::trim(copy));
             }
 
             clear_string_constants(counter);

@@ -2,6 +2,7 @@
 #define LANG_HH
 
 #include "variable.hh"
+#include "util.hh"
 
 namespace fell {
     namespace lang {
