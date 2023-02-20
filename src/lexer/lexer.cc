@@ -1,8 +1,6 @@
 #include "lexer.hh"
 #include "util.hh"
 
-#include <iostream>
-
 void fell::lex::parse_file(const std::filesystem::path path) {
     std::string file;
 
@@ -14,28 +12,28 @@ void fell::lex::parse_file(const std::filesystem::path path) {
 
     fell::util::remove_comments(file);
 
-    for(std::size_t i = 1; const auto _line : std::views::split(file, std::string_view{"\n"})) {
-        const std::string_view line{_line.begin(), _line.end()};
+    std::vector<std::string> statements;
 
+    for(const auto statement : std::views::split(file, std::string_view{";"})) {
+        statements.emplace_back(statement.begin(), statement.end());
+    }
+
+    statements.pop_back();
+
+    for(auto & statement : statements) {
         try {
-            std::string editable_line{line.begin(), line.end()};
+            auto copy = statement;
+            const auto counter = check_for_string_constant(copy);
 
-            const auto counter = check_for_string_constant(editable_line);
-
-            if(line.find(keywords::LET) != std::string_view::npos) {
-                let(editable_line);
-            } else {
-
+            if(copy.find(keywords::LET) != std::string::npos) {
+                let(copy.substr(copy.find_first_not_of("\n\r\x0d ")));
             }
 
             clear_string_constants(counter);
-
         } catch(std::exception & e) {
-            std::cout << path.filename().string() << " -> L" << i << ": " << line << '\n';
+            std::cout << path.filename().string() << ":\n    " << statement << '\n';
             std::cout << "    " << e.what() << '\n';
             return;
         }
-
-        ++i;
     }
 }

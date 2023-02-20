@@ -4,6 +4,8 @@
 #include <filesystem>
 #include <exception>
 #include <stdexcept>
+#include <iostream>
+#include <vector>
 #include <string>
 #include <ranges>
 

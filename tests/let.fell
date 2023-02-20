@@ -1,9 +1,9 @@
-let x = 21
-let y = 20 + true
-let z=x+y
-let a =z+x+y
-let b= x+z
+let x = 21;
+let y = 20 + true;
+let z=x+y;
+let a =z+x+y;
+let b= x+z;
 
-let a = 10
+let a = 10;
 
-let c
+let c;

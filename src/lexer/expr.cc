@@ -21,7 +21,7 @@ fell::types::variable::var fell::lex::solve_expression(const std::string && expr
         throw std::runtime_error{"Extra symbol."};
 
     if(trim.find(' ') != std::string::npos)
-        throw std::runtime_error("Extra keyword.");
+        throw std::runtime_error("Extra token.");
 
     types::variable::var intermediary;
 

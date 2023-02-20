@@ -1,1 +1,1 @@
-let a = 12 + "Hello World"
+let a = 12 + "Hello World";
