@@ -27,12 +27,12 @@ void fell::lex::parse_file(const std::filesystem::path path) {
 
     for(auto & statement : statements) {
         try {
-            auto copy = statement;
+            util::trim(statement);
 
-            const auto counter = check_for_string_constant(copy);
+            const auto counter = check_for_string_constant(statement);
 
-            if(copy.find(keywords::LET) != std::string::npos) {
-                let(util::trim(copy));
+            if(statement.find(keywords::LET) != std::string::npos) {
+                let(statement);
             }
 
             clear_string_constants(counter);

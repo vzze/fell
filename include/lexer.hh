@@ -1,6 +1,7 @@
 #ifndef LEXER_HH
 #define LEXER_HH
 
+#include <string_view>
 #include <filesystem>
 #include <exception>
 #include <stdexcept>
@@ -31,10 +32,11 @@ namespace fell {
 
         std::size_t operator_precedence(const std::string &);
         types::variable::var apply_operation(const types::variable::var &&, const types::variable::var &&, const std::string &&);
-        types::variable::var check_for_constant_expression(const std::string);
-        types::variable::var solve_expression(const std::string &&);
+        types::variable::var check_for_constant_expression(const std::string &);
+        void solve_variable(const std::string_view &, std::stack<types::variable::var> &, std::size_t &);
+        types::variable::var solve_expression(const std::string_view);
 
-        void let(std::string &&);
+        void let(std::string &);
         void check_for_invalid_redefinition(const std::string &);
     }
 }

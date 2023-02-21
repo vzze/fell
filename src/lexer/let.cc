@@ -1,6 +1,6 @@
 #include "lexer.hh"
 
-void fell::lex::let(std::string && statement) {
+void fell::lex::let(std::string & statement) {
     const auto cutoff = statement.find_first_of("=", 4);
 
     std::size_t i = 4;
@@ -14,7 +14,9 @@ void fell::lex::let(std::string && statement) {
     if(cutoff == std::string::npos) {
         (*lang::global_table)[name] = util::make_var<types::nihil>();
     } else {
-        (*lang::global_table)[name] = solve_expression(statement.substr(cutoff + 1));
+        (*lang::global_table)[name] = solve_expression(
+            std::string_view{statement.begin() + static_cast<std::int64_t>(cutoff) + 1, statement.end()}
+        );
     }
 }
 

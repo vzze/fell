@@ -1,5 +1,35 @@
 #include "lexer.hh"
 
+void fell::lex::solve_variable(const std::string_view & expr, std::stack<types::variable::var> & vars, std::size_t & i) {
+    std::string var{""};
+
+    while(std::strchr("+-%*/)", expr[i]) == 0) {
+        var.push_back(expr[i]);
+        ++i;
+    }
+
+    --i;
+    util::trim(var);
+
+    if(var.find(' ') != std::string::npos)
+        throw std::runtime_error("Extra token.");
+
+    types::variable::var intermediary;
+
+    try {
+        intermediary = check_for_constant_expression(var);
+    } catch(...) {
+        const auto & ref = (*lang::global_table)[var];
+
+        if(ref == nullptr)
+            throw std::runtime_error{"Undefined variable: " + var};
+
+        util::copy(intermediary, ref);
+    }
+
+    vars.push(std::move(intermediary));
+}
+
 fell::types::variable::var fell::lex::apply_operation(
     const types::variable::var && lhs,
     const types::variable::var && rhs,
@@ -34,7 +64,7 @@ std::size_t fell::lex::operator_precedence(const std::string & operation) {
     throw std::runtime_error{"Unknown operator: " + operation};
 }
 
-fell::types::variable::var fell::lex::check_for_constant_expression(const std::string expr) {
+fell::types::variable::var fell::lex::check_for_constant_expression(const std::string & expr) {
     if(expr == keywords::FALSE)
         return util::make_var<fell::types::number>(0);
     else if(expr == keywords::TRUE)
@@ -45,99 +75,11 @@ fell::types::variable::var fell::lex::check_for_constant_expression(const std::s
     return util::make_var<fell::types::number>(std::stod(expr));
 }
 
-fell::types::variable::var fell::lex::solve_expression(const std::string && expr) {
+fell::types::variable::var fell::lex::solve_expression(const std::string_view expr) {
     std::stack<types::variable::var> vars;
     std::stack<std::string> operators;
 
-    for(std::size_t i = 0; i < expr.length(); ++i) {
-        if(std::isspace(expr[i])) {
-            continue;
-        } else if(expr[i] == '(') {
-            operators.push("(");
-        } else if(std::strchr("+-%*/)", expr[i]) == 0) {
-            std::string var{""};
-
-            while(std::strchr("+-%*/)", expr[i]) == 0) {
-                var.push_back(expr[i]);
-                ++i;
-            }
-
-            --i;
-            var = util::trim(var);
-
-            if(var.find(' ') != std::string::npos)
-                throw std::runtime_error("Extra token.");
-
-            types::variable::var intermediary;
-
-            try {
-                intermediary = check_for_constant_expression(var);
-            } catch(...) {
-                const auto & ref = (*lang::global_table)[var];
-
-                if(ref == nullptr)
-                    throw std::runtime_error{"Undefined variable: " + var};
-
-                util::copy(intermediary, ref);
-            }
-
-            vars.push(std::move(intermediary));
-        } else if(expr[i] == ')') {
-            while(!operators.empty() && operators.top() != "(") {
-                const auto operation = std::move(operators.top());
-                operators.pop();
-
-                if(vars.empty())
-                    throw std::runtime_error{"Extra symbol: " + operation};
-
-                const auto rhs = std::move(vars.top());
-                vars.pop();
-
-                if(vars.empty())
-                    throw std::runtime_error{"Extra symbol: " + operation};
-
-                const auto lhs = std::move(vars.top());
-                vars.pop();
-
-                vars.push(apply_operation(std::move(lhs), std::move(rhs), std::move(operation)));
-            }
-
-            if(!operators.empty())
-                operators.pop();
-        } else {
-            std::string next_operation = "";
-
-            while(std::strchr("+-%*/", expr[i])) {
-                next_operation.push_back(expr[i]);
-                ++i;
-            }
-
-            --i;
-
-            while(!operators.empty() && (operator_precedence(operators.top()) >= operator_precedence(next_operation))) {
-                const auto operation = std::move(operators.top());
-                operators.pop();
-
-                if(vars.empty())
-                    throw std::runtime_error{"Extra symbol: " + operation};
-
-                const auto rhs = std::move(vars.top());
-                vars.pop();
-
-                if(vars.empty())
-                    throw std::runtime_error{"Extra symbol: " + operation};
-
-                const auto lhs = std::move(vars.top());
-                vars.pop();
-
-                vars.push(apply_operation(std::move(lhs), std::move(rhs), std::move(operation)));
-            }
-
-            operators.push(next_operation);
-        }
-    }
-
-    while(!operators.empty()) {
+    static const auto solve_stacks = [&]() {
         const auto operation = std::move(operators.top());
         operators.pop();
 
@@ -154,7 +96,40 @@ fell::types::variable::var fell::lex::solve_expression(const std::string && expr
         vars.pop();
 
         vars.push(apply_operation(std::move(lhs), std::move(rhs), std::move(operation)));
+    };
+
+    for(std::size_t i = 0; i < expr.length(); ++i) {
+        if(std::isspace(expr[i])) {
+            continue;
+        } else if(expr[i] == '(') {
+            operators.push("(");
+        } else if(std::strchr("+-%*/)", expr[i]) == 0) {
+            solve_variable(expr, vars, i);
+        } else if(expr[i] == ')') {
+            while(!operators.empty() && operators.top() != "(")
+                solve_stacks();
+
+            if(!operators.empty())
+                operators.pop();
+        } else {
+            std::string next_operation = "";
+
+            while(std::strchr("+-%*/", expr[i])) {
+                next_operation.push_back(expr[i]);
+                ++i;
+            }
+
+            --i;
+
+            while(!operators.empty() && (operator_precedence(operators.top()) >= operator_precedence(next_operation)))
+                solve_stacks();
+
+            operators.push(next_operation);
+        }
     }
+
+    while(!operators.empty())
+        solve_stacks();
 
     return std::move(vars.top());
 }

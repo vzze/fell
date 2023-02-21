@@ -1,9 +1,6 @@
-split by "statements"
-they should end in ';'
-add paren check
 https://stackoverflow.com/questions/42340199/check-for-valid-parentheses-in-c
 https://duckduckgo.com/?q=check+for+valid+parentheses+c%2B%2B&t=newext&atb=v351-1&ia=web
 https://www.geeksforgeeks.org/check-for-balanced-parentheses-in-an-expression/
 https://www.geeksforgeeks.org/expression-evaluation/
 
-easy fix for paren ()
+change string.substr to refer to a non owning string_view
