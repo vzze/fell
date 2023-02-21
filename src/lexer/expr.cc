@@ -1,36 +1,36 @@
 #include "lexer.hh"
 
-void fell::lex::solve_variable(const std::string_view & expr, std::stack<types::variable::var> & vars, std::size_t & i) {
+void fell::lex::solve_variable(const std::string_view & expr, std::stack<types::variable::var> & vars, std::size_t & i, bool & alternance) {
+    if(alternance == true)
+        throw std::runtime_error{"Extra token."};
+    alternance = true;
+
     std::string var{""};
 
-    while(std::strchr("+-%*/)", expr[i]) == 0) {
-        if(expr[i] == '"') {
+    if(expr[i] == '"') {
+        ++i;
+
+        while(i < expr.length()) {
+            if(expr[i] == '"' && expr[i] != '\\')
+                break;
+            var.push_back(expr[i]);
             ++i;
-
-            while(i < expr.length()) {
-                if(expr[i] == '"' && expr[i] != '\\')
-                    break;
-                var.push_back(expr[i]);
-                ++i;
-            }
-
-            if(i == expr.length())
-                throw std::runtime_error{"Unterminated string."};
-
-            vars.push(util::make_var<types::string>(var));
-
-            return;
         }
 
+        if(i == expr.length())
+            throw std::runtime_error{"Unterminated string."};
+
+        vars.push(util::make_var<types::string>(var));
+
+        return;
+    }
+
+    while(std::strchr(" +-%*/)", expr[i]) == 0) {
         var.push_back(expr[i]);
         ++i;
     }
 
     --i;
-    util::trim(var);
-
-    if(var.find(' ') != std::string::npos)
-        throw std::runtime_error("Extra token.");
 
     types::variable::var intermediary;
 
@@ -116,13 +116,15 @@ fell::types::variable::var fell::lex::solve_expression(const std::string_view ex
         vars.push(apply_operation(std::move(lhs), std::move(rhs), std::move(operation)));
     };
 
+    bool alternance = false;
+
     for(std::size_t i = 0; i < expr.length(); ++i) {
         if(std::isspace(expr[i])) {
             continue;
         } else if(expr[i] == '(') {
             operators.push("(");
         } else if(std::strchr("+-%*/)", expr[i]) == 0) {
-            solve_variable(expr, vars, i);
+            solve_variable(expr, vars, i, alternance);
         } else if(expr[i] == ')') {
             while(!operators.empty() && operators.top() != "(")
                 solve_stacks();
@@ -130,6 +132,10 @@ fell::types::variable::var fell::lex::solve_expression(const std::string_view ex
             if(!operators.empty())
                 operators.pop();
         } else {
+            if(alternance == false)
+                throw std::runtime_error{"Extra symbol."};
+            alternance = false;
+
             std::string next_operation = "";
 
             while(std::strchr("+-%*/", expr[i])) {

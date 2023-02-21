@@ -25,7 +25,7 @@ void fell::lex::let(std::string & statement) {
 void fell::lex::check_for_invalid_redefinition(const std::string & name) {
     if(name == keywords::FALSE || name == keywords::TRUE || name == keywords::LET || name == keywords::NIHIL)
         throw std::runtime_error("Attempt to redefine keyword as different kind of symbol.");
-    if(name.find("__string_constant_") == 0)
+    if(name[0] == '"')
         throw std::runtime_error("Expression is not assignable.");
 
     try {
