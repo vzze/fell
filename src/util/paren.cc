@@ -2,7 +2,7 @@
 
 void fell::util::check_paren(const std::string & file) {
     std::stack<char> parens;
-    for(std::size_t i = 0; const auto & c : file)
+    for(std::size_t i = 1; const auto & c : file)
         switch(c) {
             case '\n':
                 ++i;
@@ -15,17 +15,17 @@ void fell::util::check_paren(const std::string & file) {
 
             case ')':
                 if(parens.empty() || parens.top() != '(')
-                    throw std::runtime_error("Line:" + std::to_string(i) + "Missmatched paren: ()");
+                    throw std::runtime_error("Line: " + std::to_string(i) + " Missmatched paren: ()");
                 parens.pop();
             break;
             case ']':
                 if(parens.empty() || parens.top() != '[')
-                    throw std::runtime_error("Line:" + std::to_string(i) + "Missmatched paren: []");
+                    throw std::runtime_error("Line: " + std::to_string(i) + " Missmatched paren: []");
                 parens.pop();
             break;
             case '}':
                 if(parens.empty() || parens.top() != '{')
-                    throw std::runtime_error("Line:" + std::to_string(i) + "Missmatched paren: {}");
+                    throw std::runtime_error("Line: " + std::to_string(i) + " Missmatched paren: {}");
                 parens.pop();
             break;
         }

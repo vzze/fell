@@ -14,9 +14,11 @@ void fell::lex::let(std::string & statement) {
     if(cutoff == std::string::npos) {
         (*lang::global_table)[name] = util::make_var<types::nihil>();
     } else {
-        (*lang::global_table)[name] = solve_expression(
-            std::string_view{statement.begin() + static_cast<std::int64_t>(cutoff) + 1, statement.end()}
-        );
+        const auto expr = std::string_view{statement.begin() + static_cast<std::int64_t>(cutoff) + 1, statement.end()};
+        if(expr.begin() == expr.end())
+            throw std::runtime_error{"Expected expression."};
+
+        (*lang::global_table)[name] = solve_expression(expr);
     }
 }
 

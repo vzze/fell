@@ -26,8 +26,6 @@ namespace fell {
             constexpr std::string FALSE = "false";
         }
 
-        std::size_t check_for_string_constant(std::string &);
-        void clear_string_constants(std::size_t);
         void parse_file(const std::filesystem::path);
 
         std::size_t operator_precedence(const std::string &);

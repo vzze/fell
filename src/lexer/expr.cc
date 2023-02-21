@@ -4,6 +4,24 @@ void fell::lex::solve_variable(const std::string_view & expr, std::stack<types::
     std::string var{""};
 
     while(std::strchr("+-%*/)", expr[i]) == 0) {
+        if(expr[i] == '"') {
+            ++i;
+
+            while(i < expr.length()) {
+                if(expr[i] == '"' && expr[i] != '\\')
+                    break;
+                var.push_back(expr[i]);
+                ++i;
+            }
+
+            if(i == expr.length())
+                throw std::runtime_error{"Unterminated string."};
+
+            vars.push(util::make_var<types::string>(var));
+
+            return;
+        }
+
         var.push_back(expr[i]);
         ++i;
     }

@@ -29,13 +29,13 @@ void fell::lex::parse_file(const std::filesystem::path path) {
         try {
             util::trim(statement);
 
-            const auto counter = check_for_string_constant(statement);
+            std::size_t check_def;
 
-            if(statement.find(keywords::LET) != std::string::npos) {
+            if((check_def = statement.find(keywords::LET)) != std::string::npos) {
+                if(check_def != 0)
+                    throw std::runtime_error{"Extra keyword in definition: " + statement.substr(0, check_def)};
                 let(statement);
             }
-
-            clear_string_constants(counter);
         } catch(std::exception & e) {
             std::cout << path.filename().string() << ":\n    " << statement << '\n';
             std::cout << "    " << e.what() << '\n';
