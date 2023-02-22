@@ -1,51 +1,125 @@
 #include "lexer.hh"
 
+void fell::lex::solve_table_member(types::variable::var & tbl, std::string_view def) {
+    if(def[0] != '"')
+        throw std::runtime_error{"Table key should be a String."};
+
+    std::size_t i = 1;
+
+    while(i < def.length()) {
+        if(def[i] == '"' && def[i] != '\\')
+            break;
+        ++i;
+    }
+
+    if(i == def.length())
+        throw std::runtime_error{"Unterminated string."};
+
+    const auto name = def.substr(1, i - 1);
+    ++i;
+
+    while(i < def.length() && def[i] != ':') {
+        if(!std::isspace(def[i]))
+            throw std::runtime_error{"Extra token in definition."};
+
+        ++i;
+    }
+
+    if(i == def.length())
+        throw std::runtime_error{"Expected property for key: " + std::string(name)};
+
+    const auto expr = std::string_view{def.begin() + static_cast<std::int64_t>(i) + 1, def.end()};
+
+    if(expr.begin() == expr.end())
+        throw std::runtime_error{"Expected property."};
+
+    (*tbl)[std::string(name)] = solve_expression(expr);
+}
+
 void fell::lex::solve_variable(const std::string_view & expr, std::stack<types::variable::var> & vars, std::size_t & i, bool & alternance) {
     if(alternance == true)
         throw std::runtime_error{"Extra token."};
     alternance = true;
 
-    std::string var{""};
-
     if(expr[i] == '"') {
         ++i;
+
+        const std::size_t j = i;
 
         while(i < expr.length()) {
             if(expr[i] == '"' && expr[i] != '\\')
                 break;
-            var.push_back(expr[i]);
             ++i;
         }
 
         if(i == expr.length())
             throw std::runtime_error{"Unterminated string."};
 
-        vars.push(util::make_var<types::string>(var));
-
-        return;
-    }
-
-    while(std::strchr(" +-%*/)", expr[i]) == 0) {
-        var.push_back(expr[i]);
+        vars.push(util::make_var<types::string>(std::string{expr.data() + j, i - j}));
+    } else if(expr[i] == '{') {
         ++i;
+
+        auto tbl = util::make_var<types::table>();
+
+        std::size_t paren_counter = 1;
+
+        std::size_t j = i;
+
+        bool triggered = false;
+
+        while(paren_counter) {
+            if(expr[i] == '{')
+                ++paren_counter;
+            else if(expr[i] == ':' && paren_counter == 1)
+                triggered = false;
+            else if(expr[i] == '}') {
+                --paren_counter;
+                if(paren_counter == 0 && !triggered) {
+                    while(std::isspace(expr[j])) ++j;
+                    const auto copy = i;
+                    --i;
+                    while(std::isspace(expr[i])) --i;
+                    solve_table_member(tbl, std::string_view{expr.data() + j, i - j + 1});
+                    i = copy;
+                }
+            } else if(expr[i] == ',' && paren_counter == 1) {
+                while(std::isspace(expr[j])) ++j;
+                const auto copy = i;
+                --i;
+                while(std::isspace(expr[i])) --i;
+                solve_table_member(tbl, std::string_view{expr.data() + j, i - j + 1});
+                triggered = true;
+                i = copy;
+                j = i + 1;
+            }
+            ++i;
+        }
+
+        vars.push(std::move(tbl));
+    } else {
+        const std::size_t j = i;
+
+        while(std::strchr(" +-%*/)", expr[i]) == 0 && i < expr.length()) {
+            ++i;
+        }
+        const auto var = std::string{expr.data() + j, i - j};
+        --i;
+
+        types::variable::var intermediary;
+
+        try {
+            intermediary = check_for_constant_expression(var);
+        } catch(...) {
+            const auto & ref = (*lang::global_table)[var];
+
+            if(ref == nullptr)
+                throw std::runtime_error{"Undefined variable: " + var};
+
+            util::copy(intermediary, ref);
+        }
+
+        vars.push(std::move(intermediary));
     }
-
-    --i;
-
-    types::variable::var intermediary;
-
-    try {
-        intermediary = check_for_constant_expression(var);
-    } catch(...) {
-        const auto & ref = (*lang::global_table)[var];
-
-        if(ref == nullptr)
-            throw std::runtime_error{"Undefined variable: " + var};
-
-        util::copy(intermediary, ref);
-    }
-
-    vars.push(std::move(intermediary));
 }
 
 fell::types::variable::var fell::lex::apply_operation(
@@ -97,7 +171,7 @@ fell::types::variable::var fell::lex::solve_expression(const std::string_view ex
     std::stack<types::variable::var> vars;
     std::stack<std::string> operators;
 
-    static const auto solve_stacks = [&]() {
+    const auto solve_stacks = [&]() {
         const auto operation = std::move(operators.top());
         operators.pop();
 
@@ -136,9 +210,9 @@ fell::types::variable::var fell::lex::solve_expression(const std::string_view ex
                 throw std::runtime_error{"Extra symbol."};
             alternance = false;
 
-            std::string next_operation = "";
+            std::string next_operation{}; next_operation.reserve(2);
 
-            while(std::strchr("+-%*/", expr[i])) {
+            while(std::strchr("+-%*/", expr[i]) && i < expr.length()) {
                 next_operation.push_back(expr[i]);
                 ++i;
             }
