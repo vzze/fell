@@ -19,6 +19,7 @@ namespace fell {
         void trim(std::string_view &);
         void remove_comments(std::string &);
         void check_paren(const std::string &);
+        double str_view_tod(std::string_view);
 
         template<typename T, typename ... Args>
         inline types::variable::var make_var(Args && ... args) {

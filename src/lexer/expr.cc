@@ -1,28 +1,28 @@
 #include "lexer.hh"
 
-void fell::lex::solve_expression_stacks(std::stack<types::variable::var> & vars, std::stack<std::string> & operators) {
+void fell::lex::solve_expression_stacks(std::stack<types::variable::var> & vars, std::stack<std::string_view> & operators) {
     const auto operation = std::move(operators.top());
     operators.pop();
 
     if(vars.empty())
-        throw std::runtime_error{"Extra symbol: " + operation};
+        throw std::runtime_error{"Extra symbol: " + std::string{operation}};
 
     const auto rhs = std::move(vars.top());
     vars.pop();
 
     if(vars.empty())
-        throw std::runtime_error{"Extra symbol: " + operation};
+        throw std::runtime_error{"Extra symbol: " + std::string{operation}};
 
     const auto lhs = std::move(vars.top());
     vars.pop();
 
-    vars.push(apply_operation(std::move(lhs), std::move(rhs), std::move(operation)));
+    vars.push(apply_operation(std::move(lhs), std::move(rhs), operation));
 }
 
 fell::types::variable::var fell::lex::apply_operation(
     const types::variable::var && lhs,
     const types::variable::var && rhs,
-    const std::string && operation
+    const std::string_view operation
 ) {
     if(operation == "+")
         return *lhs + rhs;
@@ -39,10 +39,10 @@ fell::types::variable::var fell::lex::apply_operation(
     if(operation == "/")
         return *lhs / rhs;
 
-    throw std::runtime_error{"Unknown operator: " + operation};
+    throw std::runtime_error{"Unknown operator: " + std::string{operation}};
 }
 
-std::size_t fell::lex::operator_precedence(const std::string & operation) {
+std::size_t fell::lex::operator_precedence(const std::string_view operation) {
     if(operation == "*" || operation == "/")
         return 2;
     if(operation == "+" || operation == "-" || operation == "%")
@@ -50,12 +50,12 @@ std::size_t fell::lex::operator_precedence(const std::string & operation) {
     if(operation == "(")
         return 0;
 
-    throw std::runtime_error{"Unknown operator: " + operation};
+    throw std::runtime_error{"Unknown operator: " + std::string{operation}};
 }
 
 fell::types::variable::var fell::lex::solve_expression(const std::string_view expr) {
     std::stack<types::variable::var> vars;
-    std::stack<std::string> operators;
+    std::stack<std::string_view> operators;
 
     bool alternance = false;
 
@@ -77,12 +77,12 @@ fell::types::variable::var fell::lex::solve_expression(const std::string_view ex
                 throw std::runtime_error{"Extra symbol."};
             alternance = false;
 
-            std::string next_operation{}; next_operation.reserve(2);
+            std::size_t j = i;
 
-            while(std::strchr("+-%*/", expr[i]) && i < expr.length()) {
-                next_operation.push_back(expr[i]);
+            while(std::strchr("+-%*/", expr[i]) && i < expr.length())
                 ++i;
-            }
+
+            const std::string_view next_operation{expr.data() + j, i - j};
 
             --i;
 
