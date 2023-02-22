@@ -23,26 +23,85 @@ void fell::lex::solve_variable(const std::string_view expr, std::stack<types::va
     } else {
         const std::size_t j = i;
 
+        bool member_access = false;
+
         while(std::strchr(" +-%*/)", expr[i]) == 0 && i < expr.length()) {
+            if(expr[i] == '[') {
+                member_access = true;
+                break;
+            }
             ++i;
         }
 
-        const auto var = std::string_view{expr.data() + j, i - j};
-        --i;
-
         types::variable::var intermediary;
 
-        try {
-            intermediary = check_for_constant_expression(var);
-        } catch(...) {
+        const auto var = std::string_view{expr.data() + j, i - j};
+
+        if(member_access) {
             const auto & ref = (*lang::global_table)[std::string{var}];
 
             if(ref == nullptr)
                 throw std::runtime_error{"Undefined variable: " + std::string{var}};
 
             util::copy(intermediary, ref);
-        }
 
-        vars.push(std::move(intermediary));
+            while(expr[i] == '[') {
+                ++i;
+
+                std::size_t p = i;
+
+                std::size_t paren_counter = 1;
+
+                while(paren_counter) {
+                    if(expr[i] == '[')
+                        ++paren_counter;
+                    if(expr[i] == ']')
+                        --paren_counter;
+                    ++i;
+                }
+
+                --i;
+
+                const auto copy{i};
+
+                --i;
+
+                while(std::isspace(expr[i])) --i;
+
+                if(p == i + 1)
+                    throw std::runtime_error{"Expected expression."};
+
+                i = copy + 1;
+
+                const auto member_expr = std::string_view{expr.data() + p, i - p - 1};
+
+                const auto res = solve_expression(member_expr);
+
+                const auto member = std::move((*intermediary)[res]);
+
+                if(member == nullptr)
+                    throw std::runtime_error{"Undefined member: " + util::get_value<types::string::str>(res)};
+
+                util::copy(intermediary, member);
+            }
+
+            --i;
+
+            vars.push(std::move(intermediary));
+        } else {
+            --i;
+            try {
+                intermediary = check_for_constant_expression(var);
+            } catch(...) {
+                const auto & ref = (*lang::global_table)[std::string{var}];
+
+                if(ref == nullptr)
+                    throw std::runtime_error{"Undefined variable: " + std::string{var}};
+
+                util::copy(intermediary, ref);
+            }
+
+            vars.push(std::move(intermediary));
+        }
     }
 }

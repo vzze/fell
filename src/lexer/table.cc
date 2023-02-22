@@ -76,5 +76,7 @@ void fell::lex::solve_table(const std::string_view expr, std::stack<types::varia
         ++i;
     }
 
+    --i;
+
     vars.push(std::move(tbl));
 }
