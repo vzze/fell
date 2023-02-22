@@ -17,7 +17,7 @@ void fell::lex::parse_file(const std::filesystem::path path) {
 
     fell::util::remove_comments(file);
 
-    std::vector<std::string> statements;
+    std::vector<std::string_view> statements;
 
     for(const auto statement : std::views::split(file, std::string_view{";"})) {
         statements.emplace_back(statement.begin(), statement.end());
@@ -33,7 +33,7 @@ void fell::lex::parse_file(const std::filesystem::path path) {
 
             if((check_def = statement.find(keywords::LET)) != std::string::npos) {
                 if(check_def != 0)
-                    throw std::runtime_error{"Extra keyword in definition: " + statement.substr(0, check_def)};
+                    throw std::runtime_error{"Extra keyword in definition: " + std::string{statement.substr(0, check_def)}};
                 let(statement);
             }
         } catch(std::exception & e) {

@@ -16,7 +16,7 @@ namespace fell {
         void copy(types::variable::var &, const types::variable::var &);
         std::string get_file(const std::filesystem::path);
 
-        void trim(std::string &);
+        void trim(std::string_view &);
         void remove_comments(std::string &);
         void check_paren(const std::string &);
 

@@ -1,1 +1,1 @@
-let a = nihil + 42;
+let a = 42 + nihil;

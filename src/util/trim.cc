@@ -1,6 +1,6 @@
 #include "util.hh"
 
-void fell::util::trim(std::string & str) {
+void fell::util::trim(std::string_view & str) {
     std::size_t offset1 = 0;
 
     while(std::isspace(str[offset1]) && offset1 < str.length())

@@ -1,1 +1,1 @@
-let a = "i fell off" + 42;
+let a = 42 + "i fell off";
