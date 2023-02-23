@@ -1,2 +1,2 @@
-let x = 12;
-let z = x + y;
+x = 12;
+z = x + y;

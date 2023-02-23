@@ -1,6 +1,6 @@
 #include "lexer.hh"
 
-void fell::lex::solve_expression_stacks(std::stack<types::variable::var> & vars, std::stack<std::string_view> & operators) {
+void fell::lex::solve_expression_stacks(std::stack<inmemory> & vars, std::stack<std::string_view> & operators) {
     const auto operation = std::move(operators.top());
     operators.pop();
 
@@ -16,46 +16,109 @@ void fell::lex::solve_expression_stacks(std::stack<types::variable::var> & vars,
     const auto lhs = std::move(vars.top());
     vars.pop();
 
-    vars.push(apply_operation(std::move(lhs), std::move(rhs), operation));
+    apply_operation(std::move(lhs), std::move(rhs), operation, vars);
 }
 
-fell::types::variable::var fell::lex::apply_operation(
-    const types::variable::var && lhs,
-    const types::variable::var && rhs,
-    const std::string_view operation
+#define SOLVE_DEFAULT_VARS(symbol) \
+    if(operation == #symbol) { \
+        if(lhs.non_reference) { \
+            if(rhs.non_reference) { \
+                return vars.push(inmemory{*lhs.non_reference symbol rhs.non_reference.get()}); \
+            } else { \
+                return vars.push(inmemory{*lhs.non_reference symbol rhs.reference->get()}); \
+            } \
+        } else { \
+            if(rhs.non_reference) { \
+                return vars.push(inmemory{**lhs.reference symbol rhs.non_reference.get()}); \
+            } else { \
+                return vars.push(inmemory{**lhs.reference symbol rhs.reference->get()}); \
+            } \
+        } \
+    }
+
+void fell::lex::apply_operation(
+    const inmemory && lhs,
+    const inmemory && rhs,
+    const std::string_view operation,
+    std::stack<inmemory> & vars
 ) {
-    if(operation == "+")
-        return *lhs + rhs;
 
-    if(operation == "-")
-        return *lhs - rhs;
+    SOLVE_DEFAULT_VARS(+);
+    SOLVE_DEFAULT_VARS(-);
+    SOLVE_DEFAULT_VARS(%);
+    SOLVE_DEFAULT_VARS(*);
+    SOLVE_DEFAULT_VARS(/);
 
-    if(operation == "%")
-        return *lhs % rhs;
+    if(operation == "=") {
+        if(lhs.non_reference) {
+            throw std::runtime_error{"Attempt to bind value to temporary variable."};
+        } else {
+            if(rhs.non_reference) {
+                util::copy(*lhs.reference, rhs.non_reference);
+            } else {
+                util::copy(*lhs.reference, *rhs.reference);
+            }
+        }
 
-    if(operation == "*")
-        return *lhs * rhs;
+        return vars.push(inmemory{util::make_var<types::nihil>()});
+    }
 
-    if(operation == "/")
-        return *lhs / rhs;
+    if(operation == "[") {
+        if(lhs.non_reference) {
+            if(rhs.non_reference) {
+                auto & s = (*lhs.non_reference)[rhs.non_reference.get()];
+                if(s == nullptr)
+                    return vars.push(inmemory{util::make_var<types::nihil>()});
+                else
+                    return vars.push(inmemory{&s});
+            } else {
+                auto & s = (*lhs.non_reference)[rhs.reference->get()];
+                if(s == nullptr)
+                    return vars.push(inmemory{util::make_var<types::nihil>()});
+                else
+                    return vars.push(inmemory{&s});
+            }
+        } else {
+            if(rhs.non_reference) {
+                auto & s = (**lhs.reference)[rhs.non_reference.get()];
+                if(s == nullptr)
+                    return vars.push(inmemory{util::make_var<types::nihil>()});
+                else
+                    return vars.push(inmemory{&s});
+            } else {
+                auto & s = (**lhs.reference)[rhs.reference->get()];
+                if(s == nullptr)
+                    return vars.push(inmemory{util::make_var<types::nihil>()});
+                else
+                    return vars.push(inmemory{&s});
+            }
+        }
+    }
 
     throw std::runtime_error{"Unknown operator: " + std::string{operation}};
 }
 
 std::size_t fell::lex::operator_precedence(const std::string_view operation) {
     if(operation == "*" || operation == "/")
-        return 2;
+        return 3;
     if(operation == "+" || operation == "-" || operation == "%")
+        return 2;
+    if(operation == "=")
         return 1;
-    if(operation == "(")
+    if(operation == "(" || operation == "[")
         return 0;
 
     throw std::runtime_error{"Unknown operator: " + std::string{operation}};
 }
 
-fell::types::variable::var fell::lex::solve_expression(const std::string_view expr) {
-    std::stack<types::variable::var> vars;
+void fell::lex::solve_expression(const std::string_view expr, types::variable::var * v, std::string_view op) {
+    std::stack<inmemory> vars;
     std::stack<std::string_view> operators;
+
+    if(v != nullptr) {
+        vars.push(inmemory{v});
+        operators.push(op);
+    }
 
     bool alternance = false;
 
@@ -64,14 +127,24 @@ fell::types::variable::var fell::lex::solve_expression(const std::string_view ex
             continue;
         } else if(expr[i] == '(') {
             operators.push("(");
-        } else if(std::strchr("+-%*/)", expr[i]) == 0) {
-            solve_variable(expr, vars, i, alternance);
+        } else if(expr[i] == '[') {
+            operators.push("[");
+            alternance = false;
+        } else if(expr[i] == ']') {
+            while(!operators.empty() && operators.top() != "[")
+                solve_expression_stacks(vars, operators);
+
+            if(!operators.empty()) {
+                solve_expression_stacks(vars, operators);
+            }
         } else if(expr[i] == ')') {
             while(!operators.empty() && operators.top() != "(")
                 solve_expression_stacks(vars, operators);
 
             if(!operators.empty())
                 operators.pop();
+        } else if(std::strchr("=+-%*/", expr[i]) == 0) {
+            solve_variable(expr, vars, i, alternance);
         } else {
             if(alternance == false)
                 throw std::runtime_error{"Extra symbol."};
@@ -79,7 +152,7 @@ fell::types::variable::var fell::lex::solve_expression(const std::string_view ex
 
             std::size_t j = i;
 
-            while(std::strchr("+-%*/", expr[i]) && i < expr.length())
+            while(std::strchr("=+-%*/", expr[i]) && i < expr.length())
                 ++i;
 
             const std::string_view next_operation{expr.data() + j, i - j};
@@ -95,6 +168,4 @@ fell::types::variable::var fell::lex::solve_expression(const std::string_view ex
 
     while(!operators.empty())
         solve_expression_stacks(vars, operators);
-
-    return std::move(vars.top());
 }

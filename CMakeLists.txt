@@ -31,18 +31,3 @@ target_link_libraries(libfell lexer lang util variable)
 
 add_executable(fell src/interpreter.cc)
 target_link_libraries(fell libfell)
-
-
-include_directories(
-    build
-)
-
-aux_source_directory(tests TESTS)
-
-foreach(test ${TESTS})
-    string(REPLACE ".cc" "" new_name ${test})
-    get_filename_component(file_name ${new_name} NAME)
-
-    add_executable(${file_name} ${test})
-    target_link_libraries(${file_name} libfell)
-endforeach()

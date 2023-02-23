@@ -1,5 +1,8 @@
 #include "lexer.hh"
 
+fell::lex::inmemory::inmemory(types::variable::var && v) : non_reference{std::move(v)}, reference{nullptr} {}
+fell::lex::inmemory::inmemory(types::variable::var * v) : non_reference{nullptr}, reference{v} {}
+
 void fell::lex::parse_file(const std::filesystem::path path) {
     std::string file;
 
@@ -27,18 +30,10 @@ void fell::lex::parse_file(const std::filesystem::path path) {
 
     for(auto & statement : statements) {
         try {
-            util::trim(statement);
-
-            std::size_t check_def;
-
-            if((check_def = statement.find(keywords::LET)) != std::string::npos) {
-                if(check_def != 0)
-                    throw std::runtime_error{"Extra keyword in definition: " + std::string{statement.substr(0, check_def)}};
-                let(statement);
-            }
+            solve_expression(statement);
         } catch(std::exception & e) {
-            std::cout << path.filename().string() << ":\n    " << statement << '\n';
-            std::cout << "    " << e.what() << '\n';
+            std::cout << path.filename().string() << ":\n" << statement << '\n';
+            std::cout << "->> " << e.what() << '\n';
             return;
         }
     }

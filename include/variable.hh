@@ -19,21 +19,20 @@ namespace fell {
 
             variable(std::any);
 
-            [[nodiscard]] virtual var operator + (const var &) = 0;
-            [[nodiscard]] virtual var operator - (const var &) = 0;
-            [[nodiscard]] virtual var operator * (const var &) = 0;
-            [[nodiscard]] virtual var operator / (const var &) = 0;
-            [[nodiscard]] virtual var operator % (const var &) = 0;
+            [[nodiscard]] virtual var operator + (const variable *) = 0;
+            [[nodiscard]] virtual var operator - (const variable *) = 0;
+            [[nodiscard]] virtual var operator * (const variable *) = 0;
+            [[nodiscard]] virtual var operator / (const variable *) = 0;
+            [[nodiscard]] virtual var operator % (const variable *) = 0;
 
-            [[nodiscard]] virtual var operator >  (const var &) = 0;
-            [[nodiscard]] virtual var operator >= (const var &) = 0;
-            [[nodiscard]] virtual var operator <  (const var &) = 0;
-            [[nodiscard]] virtual var operator <= (const var &) = 0;
-            [[nodiscard]] virtual var operator == (const var &) = 0;
-            [[nodiscard]] virtual var operator != (const var &) = 0;
+            [[nodiscard]] virtual var operator >  (const variable *) = 0;
+            [[nodiscard]] virtual var operator >= (const variable *) = 0;
+            [[nodiscard]] virtual var operator <  (const variable *) = 0;
+            [[nodiscard]] virtual var operator <= (const variable *) = 0;
+            [[nodiscard]] virtual var operator == (const variable *) = 0;
+            [[nodiscard]] virtual var operator != (const variable *) = 0;
 
-            [[nodiscard]] virtual var & operator [] (const var &) = 0;
-            [[nodiscard]] virtual var & operator [] (const var &&) = 0;
+            [[nodiscard]] virtual var & operator [] (const variable *) = 0;
             [[nodiscard]] virtual var & operator [] (const std::string) = 0;
 
             virtual ~variable();
@@ -44,21 +43,20 @@ namespace fell {
             using num = double;
             number(num = 0);
 
-            [[nodiscard]] var operator + (const var &) override;
-            [[nodiscard]] var operator - (const var &) override;
-            [[nodiscard]] var operator * (const var &) override;
-            [[nodiscard]] var operator / (const var &) override;
-            [[nodiscard]] var operator % (const var &) override;
+            [[nodiscard]] var operator + (const variable *) override;
+            [[nodiscard]] var operator - (const variable *) override;
+            [[nodiscard]] var operator * (const variable *) override;
+            [[nodiscard]] var operator / (const variable *) override;
+            [[nodiscard]] var operator % (const variable *) override;
 
-            [[nodiscard]] var operator >  (const var &) override;
-            [[nodiscard]] var operator >= (const var &) override;
-            [[nodiscard]] var operator <  (const var &) override;
-            [[nodiscard]] var operator <= (const var &) override;
-            [[nodiscard]] var operator == (const var &) override;
-            [[nodiscard]] var operator != (const var &) override;
+            [[nodiscard]] var operator >  (const variable *) override;
+            [[nodiscard]] var operator >= (const variable *) override;
+            [[nodiscard]] var operator <  (const variable *) override;
+            [[nodiscard]] var operator <= (const variable *) override;
+            [[nodiscard]] var operator == (const variable *) override;
+            [[nodiscard]] var operator != (const variable *) override;
 
-            [[noreturn]] var & operator [] (const var &) override;
-            [[noreturn]] var & operator [] (const var &&) override;
+            [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const std::string) override;
         };
 
@@ -67,21 +65,20 @@ namespace fell {
             using str = std::string;
             string(str = "");
 
-            [[nodiscard]] var operator + (const var &) override;
-            [[noreturn]] var operator - (const var &) override;
-            [[noreturn]] var operator * (const var &) override;
-            [[noreturn]] var operator / (const var &) override;
-            [[noreturn]] var operator % (const var &) override;
+            [[nodiscard]] var operator + (const variable *) override;
+            [[noreturn]] var operator - (const variable *) override;
+            [[noreturn]] var operator * (const variable *) override;
+            [[noreturn]] var operator / (const variable *) override;
+            [[noreturn]] var operator % (const variable *) override;
 
-            [[nodiscard]] var operator >  (const var &) override;
-            [[nodiscard]] var operator >= (const var &) override;
-            [[nodiscard]] var operator <  (const var &) override;
-            [[nodiscard]] var operator <= (const var &) override;
-            [[nodiscard]] var operator == (const var &) override;
-            [[nodiscard]] var operator != (const var &) override;
+            [[nodiscard]] var operator >  (const variable *) override;
+            [[nodiscard]] var operator >= (const variable *) override;
+            [[nodiscard]] var operator <  (const variable *) override;
+            [[nodiscard]] var operator <= (const variable *) override;
+            [[nodiscard]] var operator == (const variable *) override;
+            [[nodiscard]] var operator != (const variable *) override;
 
-            [[noreturn]] var & operator [] (const var &) override;
-            [[noreturn]] var & operator [] (const var &&) override;
+            [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const str) override;
         };
 
@@ -91,21 +88,20 @@ namespace fell {
 
             table(tbl = new std::unordered_map<string::str, var>());
 
-            [[noreturn]] var operator + (const var &) override;
-            [[noreturn]] var operator - (const var &) override;
-            [[noreturn]] var operator * (const var &) override;
-            [[noreturn]] var operator / (const var &) override;
-            [[noreturn]] var operator % (const var &) override;
+            [[noreturn]] var operator + (const variable *) override;
+            [[noreturn]] var operator - (const variable *) override;
+            [[noreturn]] var operator * (const variable *) override;
+            [[noreturn]] var operator / (const variable *) override;
+            [[noreturn]] var operator % (const variable *) override;
 
-            [[noreturn]] var operator >  (const var &) override;
-            [[noreturn]] var operator >= (const var &) override;
-            [[noreturn]] var operator <  (const var &) override;
-            [[noreturn]] var operator <= (const var &) override;
-            [[noreturn]] var operator == (const var &) override;
-            [[noreturn]] var operator != (const var &) override;
+            [[noreturn]] var operator >  (const variable *) override;
+            [[noreturn]] var operator >= (const variable *) override;
+            [[noreturn]] var operator <  (const variable *) override;
+            [[noreturn]] var operator <= (const variable *) override;
+            [[noreturn]] var operator == (const variable *) override;
+            [[noreturn]] var operator != (const variable *) override;
 
-            [[nodiscard]] var & operator [] (const var &) override;
-            [[nodiscard]] var & operator [] (const var &&) override;
+            [[nodiscard]] var & operator [] (const variable *) override;
             [[nodiscard]] var & operator [] (const string::str) override;
 
             ~table();
@@ -116,21 +112,20 @@ namespace fell {
             using nil = std::nullptr_t;
             nihil(nil = nullptr);
 
-            [[noreturn]] var operator + (const var &) override;
-            [[noreturn]] var operator - (const var &) override;
-            [[noreturn]] var operator * (const var &) override;
-            [[noreturn]] var operator / (const var &) override;
-            [[noreturn]] var operator % (const var &) override;
+            [[noreturn]] var operator + (const variable *) override;
+            [[noreturn]] var operator - (const variable *) override;
+            [[noreturn]] var operator * (const variable *) override;
+            [[noreturn]] var operator / (const variable *) override;
+            [[noreturn]] var operator % (const variable *) override;
 
-            [[noreturn]] var operator >  (const var &) override;
-            [[noreturn]] var operator >= (const var &) override;
-            [[noreturn]] var operator <  (const var &) override;
-            [[noreturn]] var operator <= (const var &) override;
-            [[noreturn]] var operator == (const var &) override;
-            [[noreturn]] var operator != (const var &) override;
+            [[noreturn]] var operator >  (const variable *) override;
+            [[noreturn]] var operator >= (const variable *) override;
+            [[noreturn]] var operator <  (const variable *) override;
+            [[noreturn]] var operator <= (const variable *) override;
+            [[noreturn]] var operator == (const variable *) override;
+            [[noreturn]] var operator != (const variable *) override;
 
-            [[noreturn]] var & operator [] (const var &) override;
-            [[noreturn]] var & operator [] (const var &&) override;
+            [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const string::str) override;
         };
     }

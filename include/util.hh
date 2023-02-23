@@ -16,7 +16,6 @@ namespace fell {
         void copy(types::variable::var &, const types::variable::var &);
         std::string get_file(const std::filesystem::path);
 
-        void trim(std::string_view &);
         void remove_comments(std::string &);
         void check_paren(const std::string &);
         double str_view_tod(std::string_view);
@@ -27,10 +26,10 @@ namespace fell {
         }
 
         template<typename T>
-        inline T & get_value(const types::variable::var & var) {
+        inline T & get_value(types::variable * var) {
             try {
                 return std::any_cast<T&>(var->value);
-            } catch(...) { // Need to change bad_any_cast error into something more user friendly
+            } catch(...) { // Same thing here as above
                 if constexpr(std::is_same_v<T, types::number::num>) {
                     throw std::runtime_error("Right hand variable is not convertible to Number.");
                 } else if constexpr(std::is_same_v<T, types::string::str>) {
@@ -44,9 +43,9 @@ namespace fell {
         }
 
         template<typename T>
-        inline T & get_value(types::variable * var) {
+        inline const T & get_value(const types::variable * var) {
             try {
-                return std::any_cast<T&>(var->value);
+                return std::any_cast<const T&>(var->value);
             } catch(...) { // Same thing here as above
                 if constexpr(std::is_same_v<T, types::number::num>) {
                     throw std::runtime_error("Right hand variable is not convertible to Number.");

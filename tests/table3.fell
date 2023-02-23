@@ -1,4 +1,4 @@
-let object = {
+object = {
     "val1": 21 + 21 * 2 / 2,
     "val2": "cheese",
     "val3": {
@@ -10,4 +10,4 @@ let object = {
     "val5": false,
 };
 
-let a = object["val3"]["val1"]+" but not this time";
+a = object["val3"]["val1"]+" but not this time";

@@ -1,3 +1,3 @@
-let a="this";
-let b=a+" is ";
-let c =b+"the "+"best " + "thing " + "ever";
+a="this";
+b=a+" is ";
+c =b+"the "+"best " + "thing " + "ever";

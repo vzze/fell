@@ -34,10 +34,10 @@ void fell::lex::solve_table_member(types::variable::var & tbl, const std::string
     if(expr.begin() == expr.end())
         throw std::runtime_error{"Expected property."};
 
-    (*tbl)[std::string(name)] = solve_expression(expr);
+    solve_expression(expr, &(*tbl)[std::string(name)], "=");
 }
 
-void fell::lex::solve_table(const std::string_view expr, std::stack<types::variable::var> & vars, std::size_t & i) {
+void fell::lex::solve_table(const std::string_view expr, std::stack<inmemory> & vars, std::size_t & i) {
     ++i;
 
     auto tbl = util::make_var<types::table>();
@@ -78,5 +78,5 @@ void fell::lex::solve_table(const std::string_view expr, std::stack<types::varia
 
     --i;
 
-    vars.push(std::move(tbl));
+    vars.push(inmemory{std::move(tbl)});
 }
