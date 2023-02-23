@@ -53,3 +53,7 @@ fell::types::variable::var & fell::types::nihil::operator [] (const variable *) 
 fell::types::variable::var & fell::types::nihil::operator [] (const string::str) {
     throw std::runtime_error{"Nil variable has no subscript operator."};
 }
+
+fell::types::variable::var fell::types::nihil::call(std::vector<variable::var> &&, std::vector<bool> &&) {
+    throw std::runtime_error{"Nil variable can't be called."};
+}

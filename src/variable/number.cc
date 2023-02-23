@@ -101,3 +101,7 @@ fell::types::variable::var & fell::types::number::operator [] (const variable *)
 fell::types::variable::var & fell::types::number::operator [] (const std::string) {
     throw std::runtime_error{"No subscript operator on variable of type Number."};
 }
+
+fell::types::variable::var fell::types::number::call(std::vector<variable::var> &&, std::vector<bool> &&) {
+    throw std::runtime_error{"Number variable can't be called."};
+}

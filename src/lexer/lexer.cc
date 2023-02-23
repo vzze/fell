@@ -3,6 +3,17 @@
 fell::lex::inmemory::inmemory(types::variable::var && v) : non_reference{std::move(v)}, reference{nullptr} {}
 fell::lex::inmemory::inmemory(types::variable::var * v) : non_reference{nullptr}, reference{v} {}
 
+void fell::lex::eval_code(const std::string & code) {
+    for(std::size_t i = 0; i < code.length(); ++i) {
+        try {
+            i += solve_expression(std::string_view{code.begin() + static_cast<std::int64_t>(i), code.end()});
+        } catch(std::exception & e) {
+            std::cout << "->> " << e.what() << '\n';
+            return;
+        }
+    }
+}
+
 void fell::lex::parse_file(const std::filesystem::path path) {
     std::string file;
 
@@ -20,21 +31,5 @@ void fell::lex::parse_file(const std::filesystem::path path) {
 
     fell::util::remove_comments(file);
 
-    std::vector<std::string_view> statements;
-
-    for(const auto statement : std::views::split(file, std::string_view{";"})) {
-        statements.emplace_back(statement.begin(), statement.end());
-    }
-
-    statements.pop_back();
-
-    for(auto & statement : statements) {
-        try {
-            solve_expression(statement);
-        } catch(std::exception & e) {
-            std::cout << path.filename().string() << ":\n" << statement << '\n';
-            std::cout << "->> " << e.what() << '\n';
-            return;
-        }
-    }
+    eval_code(file);
 }

@@ -29,7 +29,7 @@ namespace fell {
         inline T & get_value(types::variable * var) {
             try {
                 return std::any_cast<T&>(var->value);
-            } catch(...) { // Same thing here as above
+            } catch(...) { // Get underlying data from a variable
                 if constexpr(std::is_same_v<T, types::number::num>) {
                     throw std::runtime_error("Right hand variable is not convertible to Number.");
                 } else if constexpr(std::is_same_v<T, types::string::str>) {
@@ -38,6 +38,8 @@ namespace fell {
                     throw std::runtime_error("Right hand variable is not convertible to Table.");
                 } else if constexpr(std::is_same_v<T, types::nihil::nil>) {
                     throw std::runtime_error("Right hand variable is not convertible to Nil.");
+                } else if constexpr(std::is_same_v<T, types::func::data>) {
+                    throw std::runtime_error("Right hand variable is not convertible to Function.");
                 }
             }
         }
@@ -55,6 +57,8 @@ namespace fell {
                     throw std::runtime_error("Right hand variable is not convertible to Table.");
                 } else if constexpr(std::is_same_v<T, types::nihil::nil>) {
                     throw std::runtime_error("Right hand variable is not convertible to Nil.");
+                } else if constexpr(std::is_same_v<T, types::func::data>) {
+                    throw std::runtime_error("Right hand variable is not convertible to Function.");
                 }
             }
         }

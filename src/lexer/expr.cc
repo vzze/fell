@@ -1,22 +1,34 @@
 #include "lexer.hh"
 
-void fell::lex::solve_expression_stacks(std::stack<inmemory> & vars, std::stack<std::string_view> & operators) {
+void fell::lex::solve_expression_stacks(
+    std::stack<inmemory> & vars,
+    std::queue<inmemory> & par_list,
+    std::stack<std::string_view> & operators
+) {
     const auto operation = std::move(operators.top());
     operators.pop();
 
-    if(vars.empty())
-        throw std::runtime_error{"Extra symbol: " + std::string{operation}};
+    if(operation == ",") {
+        if(vars.empty())
+            throw std::runtime_error{"Extra symbol: " + std::string{operation}};
 
-    const auto rhs = std::move(vars.top());
-    vars.pop();
+        par_list.push(std::move(vars.top()));
+        vars.pop();
+    } else {
+        if(vars.empty())
+            throw std::runtime_error{"Extra symbol: " + std::string{operation}};
 
-    if(vars.empty())
-        throw std::runtime_error{"Extra symbol: " + std::string{operation}};
+        const auto rhs = std::move(vars.top());
+        vars.pop();
 
-    const auto lhs = std::move(vars.top());
-    vars.pop();
+        if(vars.empty())
+            throw std::runtime_error{"Extra symbol: " + std::string{operation}};
 
-    apply_operation(std::move(lhs), std::move(rhs), operation, vars);
+        const auto lhs = std::move(vars.top());
+        vars.pop();
+
+        apply_operation(std::move(lhs), std::move(rhs), operation, vars);
+    }
 }
 
 #define SOLVE_DEFAULT_VARS(symbol) \
@@ -48,6 +60,8 @@ void fell::lex::apply_operation(
     SOLVE_DEFAULT_VARS(%);
     SOLVE_DEFAULT_VARS(*);
     SOLVE_DEFAULT_VARS(/);
+
+#undef SOLVE_DEFAULT_VARS
 
     if(operation == "=") {
         if(lhs.non_reference) {
@@ -100,10 +114,12 @@ void fell::lex::apply_operation(
 
 std::size_t fell::lex::operator_precedence(const std::string_view operation) {
     if(operation == "*" || operation == "/")
-        return 3;
+        return 4;
     if(operation == "+" || operation == "-" || operation == "%")
-        return 2;
+        return 3;
     if(operation == "=")
+        return 2;
+    if(operation == ",")
         return 1;
     if(operation == "(" || operation == "[")
         return 0;
@@ -111,8 +127,13 @@ std::size_t fell::lex::operator_precedence(const std::string_view operation) {
     throw std::runtime_error{"Unknown operator: " + std::string{operation}};
 }
 
-void fell::lex::solve_expression(const std::string_view expr, types::variable::var * v, std::string_view op) {
+std::size_t fell::lex::solve_expression(
+    const std::string_view expr,
+    types::variable::var * v,
+    std::string_view op
+) {
     std::stack<inmemory> vars;
+    std::queue<inmemory> parameter_list;
     std::stack<std::string_view> operators;
 
     if(v != nullptr) {
@@ -121,29 +142,76 @@ void fell::lex::solve_expression(const std::string_view expr, types::variable::v
     }
 
     bool alternance = false;
+    bool function_call = false;
+    std::size_t i;
 
-    for(std::size_t i = 0; i < expr.length(); ++i) {
+    for(i = 0; i < expr.length() && expr[i] != ';'; ++i) {
         if(std::isspace(expr[i])) {
             continue;
         } else if(expr[i] == '(') {
             operators.push("(");
+            for(std::size_t j = i + 1; j < expr.length(); ++j)
+                if(expr[j] == '(')
+                    break;
+                else if(expr[j] == ',') {
+                    function_call = true;
+                    alternance = false;
+                    operators.push(",");
+                    break;
+                }
         } else if(expr[i] == '[') {
             operators.push("[");
             alternance = false;
         } else if(expr[i] == ']') {
             while(!operators.empty() && operators.top() != "[")
-                solve_expression_stacks(vars, operators);
+                solve_expression_stacks(vars, parameter_list, operators);
 
             if(!operators.empty()) {
-                solve_expression_stacks(vars, operators);
+                solve_expression_stacks(vars, parameter_list, operators);
             }
         } else if(expr[i] == ')') {
             while(!operators.empty() && operators.top() != "(")
-                solve_expression_stacks(vars, operators);
+                solve_expression_stacks(vars, parameter_list, operators);
 
-            if(!operators.empty())
+            if(!operators.empty()) {
                 operators.pop();
-        } else if(std::strchr("=+-%*/", expr[i]) == 0) {
+
+                if(function_call) {
+                    function_call = false;
+
+                    std::vector<types::variable::var> params;
+                    std::vector<bool> reference;
+
+                    params.reserve(parameter_list.size());
+                    reference.reserve(parameter_list.size());
+
+                    while(!parameter_list.empty()) {
+                        if(parameter_list.front().non_reference) {
+                            params.push_back(std::unique_ptr<types::variable>(parameter_list.front().non_reference.release()));
+                            reference.push_back(false);
+                        } else {
+                            auto ptr = (*parameter_list.front().reference).get();
+                            params.push_back(std::unique_ptr<types::variable>{ptr});
+                            reference.push_back(true);
+                        }
+
+                        parameter_list.pop();
+                    }
+
+                    if(vars.empty())
+                        throw std::runtime_error{"Function call with no function name."};
+
+                    const auto rhs = std::move(vars.top());
+                    vars.pop();
+
+                    if(rhs.reference) {
+                        vars.push(inmemory{(*rhs.reference)->call(std::move(params), std::move(reference))});
+                    } else {
+                        vars.push(inmemory{rhs.non_reference->call(std::move(params), std::move(reference))});
+                    }
+                }
+            }
+        } else if(std::strchr(",=+-%*/", expr[i]) == 0) {
             solve_variable(expr, vars, i, alternance);
         } else {
             if(alternance == false)
@@ -152,7 +220,7 @@ void fell::lex::solve_expression(const std::string_view expr, types::variable::v
 
             std::size_t j = i;
 
-            while(std::strchr("=+-%*/", expr[i]) && i < expr.length())
+            while(std::strchr(",=+-%*/", expr[i]) && i < expr.length())
                 ++i;
 
             const std::string_view next_operation{expr.data() + j, i - j};
@@ -160,12 +228,14 @@ void fell::lex::solve_expression(const std::string_view expr, types::variable::v
             --i;
 
             while(!operators.empty() && (operator_precedence(operators.top()) >= operator_precedence(next_operation)))
-                solve_expression_stacks(vars, operators);
+                solve_expression_stacks(vars, parameter_list, operators);
 
             operators.push(next_operation);
         }
     }
 
     while(!operators.empty())
-        solve_expression_stacks(vars, operators);
+        solve_expression_stacks(vars, parameter_list, operators);
+
+    return i + 1;
 }

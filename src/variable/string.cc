@@ -87,3 +87,7 @@ fell::types::variable::var & fell::types::string::operator [] (const variable *)
 fell::types::variable::var & fell::types::string::operator [] (const str) {
     throw std::runtime_error{"No subscript operator on variable of type String."};
 }
+
+fell::types::variable::var fell::types::string::call(std::vector<variable::var> &&, std::vector<bool> &&) {
+    throw std::runtime_error{"String variable can't be called."};
+}

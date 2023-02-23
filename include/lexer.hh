@@ -12,14 +12,16 @@
 #include <ranges>
 #include <cctype>
 #include <stack>
+#include <queue>
 
+#include "variable.hh"
 #include "util.hh"
 #include "lang.hh"
-#include "variable.hh"
 
 namespace fell {
     namespace lex {
         namespace keywords {
+            constexpr std::string RET = "ret";
             constexpr std::string NIHIL = "nihil";
             constexpr std::string TRUE = "true";
             constexpr std::string FALSE = "false";
@@ -33,10 +35,13 @@ namespace fell {
         };
 
         void parse_file(const std::filesystem::path);
+        void eval_code(const std::string &);
 
         std::size_t operator_precedence(const std::string_view);
         void apply_operation(const inmemory &&, const inmemory &&, const std::string_view, std::stack<inmemory> &);
         types::variable::var check_for_constant_expression(const std::string_view);
+
+        void solve_func(const std::string_view, std::stack<inmemory> &, std::size_t &);
 
         void solve_string(const std::string_view, std::stack<inmemory> &, std::size_t &);
 
@@ -45,8 +50,8 @@ namespace fell {
 
         void solve_variable(const std::string_view, std::stack<inmemory> &, std::size_t &, bool &);
 
-        void solve_expression_stacks(std::stack<inmemory> &, std::stack<std::string_view> &);
-        void solve_expression(const std::string_view, types::variable::var * = nullptr, std::string_view = "");
+        void solve_expression_stacks(std::stack<inmemory> &, std::queue<inmemory> &, std::stack<std::string_view> &);
+        std::size_t solve_expression(const std::string_view, types::variable::var * = nullptr, std::string_view = "");
     }
 }
 

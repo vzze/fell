@@ -19,8 +19,13 @@ void fell::lang::dump_table(const types::variable::var & table, std::string spac
                         [[maybe_unused]] const auto & ref = util::get_value<types::nihil::nil>(v.get());
                         std::cout << space << k << ": " << "NIL" << '\n';
                     } catch(...) {
-                        std::cout << space << k << ":\n";
-                        dump_table(v, space + "  ");
+                        try {
+                            fell::util::get_value<types::table::tbl>(v.get());
+                            std::cout << space << k << ":\n";
+                            dump_table(v, space + "  ");
+                        } catch(...) {
+                            std::cout << space << k << ": Function\n";
+                        }
                     }
                 }
             }
@@ -39,7 +44,11 @@ void fell::lang::dump_var(const types::variable::var & var) {
                     [[maybe_unused]] const auto & ref = util::get_value<types::nihil::nil>(var.get());
                     std::cout << "NIL" << '\n';
                 } catch(...) {
-                    dump_table(var, "  ");
+                    try {
+                        dump_table(var, "  ");
+                    } catch(...) {
+                        std::cout << "Function\n";
+                    }
                 }
             }
         }

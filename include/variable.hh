@@ -2,11 +2,13 @@
 #define VARIABLE_HH
 
 #include <unordered_map>
+#include <vector>
 #include <exception>
 #include <stdexcept>
 #include <string>
 #include <memory>
 #include <cmath>
+#include <tuple>
 #include <any>
 
 namespace fell {
@@ -34,6 +36,7 @@ namespace fell {
 
             [[nodiscard]] virtual var & operator [] (const variable *) = 0;
             [[nodiscard]] virtual var & operator [] (const std::string) = 0;
+            [[nodiscard]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) = 0;
 
             virtual ~variable();
         };
@@ -58,6 +61,8 @@ namespace fell {
 
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const std::string) override;
+
+            [[noreturn]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
         };
 
         struct string : public variable {
@@ -80,6 +85,8 @@ namespace fell {
 
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const str) override;
+
+            [[noreturn]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
         };
 
         struct table : public variable {
@@ -104,6 +111,8 @@ namespace fell {
             [[nodiscard]] var & operator [] (const variable *) override;
             [[nodiscard]] var & operator [] (const string::str) override;
 
+            [[noreturn]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
+
             ~table();
         };
 
@@ -127,6 +136,32 @@ namespace fell {
 
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const string::str) override;
+
+            [[noreturn]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
+        };
+
+        struct func : public variable {
+            // underlying type stored in member value
+            using data = std::tuple<std::vector<std::string>, std::string>;
+            func(data = {});
+
+            [[noreturn]] var operator + (const variable *) override;
+            [[noreturn]] var operator - (const variable *) override;
+            [[noreturn]] var operator * (const variable *) override;
+            [[noreturn]] var operator / (const variable *) override;
+            [[noreturn]] var operator % (const variable *) override;
+
+            [[noreturn]] var operator >  (const variable *) override;
+            [[noreturn]] var operator >= (const variable *) override;
+            [[noreturn]] var operator <  (const variable *) override;
+            [[noreturn]] var operator <= (const variable *) override;
+            [[noreturn]] var operator == (const variable *) override;
+            [[noreturn]] var operator != (const variable *) override;
+
+            [[noreturn]] var & operator [] (const variable *) override;
+            [[noreturn]] var & operator [] (const string::str) override;
+
+            [[nodiscard]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
         };
     }
 }

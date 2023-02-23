@@ -10,10 +10,14 @@ void fell::util::copy(types::variable::var & a, const types::variable::var & b) 
             try {
                 a = make_var<types::nihil>(get_value<types::nihil::nil>(b.get()));
             } catch(...) {
-                a = make_var<types::table>();
+                try {
+                    a = make_var<types::table>();
 
-                for(const auto & kv : *get_value<types::table::tbl>(b.get()))
-                    copy((*a)[kv.first], kv.second);
+                    for(const auto & kv : *get_value<types::table::tbl>(b.get()))
+                        copy((*a)[kv.first], kv.second);
+                } catch(...) {
+                    a = make_var<types::func>(get_value<types::func::data>(b.get()));
+                }
             }
         }
     }

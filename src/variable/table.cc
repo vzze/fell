@@ -68,3 +68,7 @@ fell::types::variable::var & fell::types::table::operator [] (const string::str 
 fell::types::table::~table() {
     delete util::get_value<tbl>(this);
 }
+
+fell::types::variable::var fell::types::table::call(std::vector<variable::var> &&, std::vector<bool> &&) {
+    throw std::runtime_error{"Table variable can't be called."};
+}
