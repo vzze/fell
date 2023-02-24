@@ -1,7 +1,5 @@
 #include "std.hh"
 
-#include <iostream>
-
 std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell::api::params)>>> fell::std::general = {
     {
         "print",

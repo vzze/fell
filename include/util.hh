@@ -1,10 +1,12 @@
 #ifndef UTIL_HH
 #define UTIL_HH
 
+
 #include <type_traits>
 #include <filesystem>
 #include <exception>
 #include <stdexcept>
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <stack>
@@ -19,6 +21,8 @@ namespace fell {
         void remove_comments(std::string &);
         void check_paren(const std::string &);
         double str_view_tod(std::string_view);
+
+        std::size_t parse_args(int, char**);
 
         template<typename T, typename ... Args>
         inline types::variable::var make_var(Args && ... args) {

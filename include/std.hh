@@ -1,6 +1,8 @@
 #ifndef STD_HH
 #define STD_HH
 
+#include <iostream>
+
 #include "variable.hh"
 #include "util.hh"
 #include "api.hh"
