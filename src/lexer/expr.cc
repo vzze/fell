@@ -150,15 +150,10 @@ std::size_t fell::lex::solve_expression(
             continue;
         } else if(expr[i] == '(') {
             operators.push("(");
-            for(std::size_t j = i + 1; j < expr.length(); ++j)
-                if(expr[j] == '(')
-                    break;
-                else if(expr[j] == ',') {
-                    function_call = true;
-                    alternance = false;
-                    operators.push(",");
-                    break;
-                }
+            if(alternance == true) {
+                function_call = true;
+                alternance = false;
+            }
         } else if(expr[i] == '[') {
             operators.push("[");
             alternance = false;
@@ -177,6 +172,12 @@ std::size_t fell::lex::solve_expression(
                 operators.pop();
 
                 if(function_call) {
+                    if(vars.empty())
+                        throw std::runtime_error{"Extra symbol: ,"};
+
+                    parameter_list.push(std::move(vars.top()));
+                    vars.pop();
+
                     function_call = false;
 
                     std::vector<types::variable::var> params;
@@ -187,7 +188,7 @@ std::size_t fell::lex::solve_expression(
 
                     while(!parameter_list.empty()) {
                         if(parameter_list.front().non_reference) {
-                            params.push_back(std::unique_ptr<types::variable>(parameter_list.front().non_reference.release()));
+                            params.push_back(std::move(parameter_list.front().non_reference));
                             reference.push_back(false);
                         } else {
                             auto ptr = (*parameter_list.front().reference).get();
@@ -201,13 +202,13 @@ std::size_t fell::lex::solve_expression(
                     if(vars.empty())
                         throw std::runtime_error{"Function call with no function name."};
 
-                    const auto rhs = std::move(vars.top());
+                    const auto lhs = std::move(vars.top());
                     vars.pop();
 
-                    if(rhs.reference) {
-                        vars.push(inmemory{(*rhs.reference)->call(std::move(params), std::move(reference))});
+                    if(lhs.reference) {
+                        vars.push(inmemory{(*lhs.reference)->call(std::move(params), std::move(reference))});
                     } else {
-                        vars.push(inmemory{rhs.non_reference->call(std::move(params), std::move(reference))});
+                        vars.push(inmemory{lhs.non_reference->call(std::move(params), std::move(reference))});
                     }
                 }
             }

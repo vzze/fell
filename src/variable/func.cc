@@ -61,18 +61,22 @@ fell::types::variable::var fell::types::func::call(std::vector<variable::var> &&
     lang::contexts.push_back(util::make_var<types::table>());
 
     try {
-        for(std::size_t i = 0; auto & param_name : std::get<0>(util::get_value<types::func::data>(this))) {
-            (**lang::contexts.rbegin())[param_name] = std::move(params.at(i++));
+        for(auto & param_name : std::get<0>(util::get_value<types::func::data>(this))) {
+            (**lang::contexts.rbegin())[param_name] = std::move(params.at(0));
+            params.erase(params.begin());
         }
     } catch(...) {
         lang::contexts.pop_back();
         throw std::runtime_error{"Not enough arguments to call function."};
     }
 
+    lang::dump_table(lang::global_table);
     lex::eval_code(std::get<1>(util::get_value<types::func::data>(this)));
+    lang::dump_table(lang::global_table);
 
     for(std::size_t i = 0; auto & param_name : std::get<0>(util::get_value<types::func::data>(this))) {
         if(references[i++]) {
+            std::cout << param_name << '\n';
             auto & ref = (**lang::contexts.rbegin())[param_name];
             [[maybe_unused]] auto releasing_ref = ref.release();
         }
