@@ -16,7 +16,6 @@
 
 #include "variable.hh"
 #include "util.hh"
-#include "lang.hh"
 
 namespace fell {
     namespace lex {
@@ -30,9 +29,13 @@ namespace fell {
         struct inmemory {
             types::variable::var non_reference;
             types::variable::var * reference;
+            explicit inmemory();
             explicit inmemory(types::variable::var *);
             explicit inmemory(types::variable::var &&);
         };
+
+        extern types::variable::var global_table;
+        extern std::vector<std::unordered_map<std::string, inmemory>> contexts;
 
         void parse_file(const std::filesystem::path);
         void eval_code(const std::string &);

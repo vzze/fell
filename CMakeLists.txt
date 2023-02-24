@@ -23,11 +23,13 @@ include_directories(
 add_subdirectory(src/variable)
 add_subdirectory(src/util)
 
-add_subdirectory(src/lang)
+add_subdirectory(src/std)
 add_subdirectory(src/lexer)
 
+add_subdirectory(src/api)
+
 add_library(libfell src/lib.cc)
-target_link_libraries(libfell lexer lang util variable)
+target_link_libraries(libfell lexer std util variable api)
 
 add_executable(fell src/interpreter.cc)
 target_link_libraries(fell libfell)

@@ -1,5 +1,8 @@
 #include "lexer.hh"
 
+fell::types::variable::var fell::lex::global_table = util::make_var<fell::types::table>();
+std::vector<std::unordered_map<std::string, fell::lex::inmemory>> fell::lex::contexts;
+fell::lex::inmemory::inmemory() : non_reference(nullptr), reference(nullptr) {}
 fell::lex::inmemory::inmemory(types::variable::var && v) : non_reference{std::move(v)}, reference{nullptr} {}
 fell::lex::inmemory::inmemory(types::variable::var * v) : non_reference{nullptr}, reference{v} {}
 

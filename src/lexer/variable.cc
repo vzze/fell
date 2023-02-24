@@ -37,7 +37,7 @@ void fell::lex::solve_variable(
         const auto var = std::string_view{expr.data() + j, i - j};
 
         if(var == "Global") {
-            return vars.push(inmemory{&lang::global_table});
+            return vars.push(inmemory{&global_table});
         }
 
         --i;
@@ -45,16 +45,19 @@ void fell::lex::solve_variable(
         try {
             vars.push(inmemory{check_for_constant_expression(var)});
         } catch(...) {
-            auto it = lang::contexts.rbegin();
+            auto it = contexts.rbegin();
 
-            while(it != lang::contexts.rend()) {
-                auto & ref = (**it)[std::string{var}];
-                if(ref != nullptr)
-                    return vars.push(inmemory{&ref});
+            while(it != contexts.rend()) {
+                auto & ref = (*it)[std::string{var}];
+                if(ref.non_reference) {
+                    return vars.push(inmemory{&ref.non_reference});
+                } else if(ref.reference) {
+                    return vars.push(inmemory{ref.reference});
+                }
                 ++it;
             }
 
-            auto & ref = (*lang::global_table)[std::string{var}];
+            auto & ref = (*global_table)[std::string{var}];
 
             if(ref == nullptr)
                 ref = util::make_var<types::nihil>();

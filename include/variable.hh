@@ -2,16 +2,25 @@
 #define VARIABLE_HH
 
 #include <unordered_map>
-#include <vector>
+#include <functional>
 #include <exception>
 #include <stdexcept>
 #include <string>
+#include <vector>
 #include <memory>
 #include <cmath>
 #include <tuple>
 #include <any>
 
 namespace fell {
+    namespace lex {
+        struct inmemory;
+    }
+
+    namespace api {
+        struct params;
+    }
+
     namespace types {
         struct variable {
             // shorthand for std::unique_ptr<variable>
@@ -36,7 +45,7 @@ namespace fell {
 
             [[nodiscard]] virtual var & operator [] (const variable *) = 0;
             [[nodiscard]] virtual var & operator [] (const std::string) = 0;
-            [[nodiscard]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) = 0;
+            [[nodiscard]] virtual var call (std::vector<lex::inmemory> &&) = 0;
 
             virtual ~variable();
         };
@@ -62,7 +71,7 @@ namespace fell {
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const std::string) override;
 
-            [[noreturn]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
+            [[noreturn]] virtual var call (std::vector<lex::inmemory> &&) override;
         };
 
         struct string : public variable {
@@ -86,7 +95,7 @@ namespace fell {
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const str) override;
 
-            [[noreturn]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
+            [[noreturn]] virtual var call (std::vector<lex::inmemory> &&) override;
         };
 
         struct table : public variable {
@@ -111,7 +120,7 @@ namespace fell {
             [[nodiscard]] var & operator [] (const variable *) override;
             [[nodiscard]] var & operator [] (const string::str) override;
 
-            [[noreturn]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
+            [[noreturn]] virtual var call (std::vector<lex::inmemory> &&) override;
 
             ~table();
         };
@@ -137,12 +146,12 @@ namespace fell {
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const string::str) override;
 
-            [[noreturn]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
+            [[noreturn]] virtual var call (std::vector<lex::inmemory> &&) override;
         };
 
         struct func : public variable {
             // underlying type stored in member value
-            using data = std::tuple<std::vector<std::string>, std::string>;
+            using data = std::tuple<std::vector<std::string>, std::string, std::function<variable::var(api::params)>>;
             func(data = {});
 
             [[noreturn]] var operator + (const variable *) override;
@@ -161,7 +170,7 @@ namespace fell {
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const string::str) override;
 
-            [[nodiscard]] virtual var call (std::vector<variable::var> &&, std::vector<bool> &&) override;
+            [[nodiscard]] virtual var call (std::vector<lex::inmemory> &&) override;
         };
     }
 }

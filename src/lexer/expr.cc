@@ -180,22 +180,12 @@ std::size_t fell::lex::solve_expression(
 
                     function_call = false;
 
-                    std::vector<types::variable::var> params;
-                    std::vector<bool> reference;
+                    std::vector<inmemory> params;
 
                     params.reserve(parameter_list.size());
-                    reference.reserve(parameter_list.size());
 
                     while(!parameter_list.empty()) {
-                        if(parameter_list.front().non_reference) {
-                            params.push_back(std::move(parameter_list.front().non_reference));
-                            reference.push_back(false);
-                        } else {
-                            auto ptr = (*parameter_list.front().reference).get();
-                            params.push_back(std::unique_ptr<types::variable>{ptr});
-                            reference.push_back(true);
-                        }
-
+                        params.insert(params.begin(), std::move(parameter_list.front()));
                         parameter_list.pop();
                     }
 
@@ -206,9 +196,9 @@ std::size_t fell::lex::solve_expression(
                     vars.pop();
 
                     if(lhs.reference) {
-                        vars.push(inmemory{(*lhs.reference)->call(std::move(params), std::move(reference))});
+                        vars.push(inmemory{(*lhs.reference)->call(std::move(params))});
                     } else {
-                        vars.push(inmemory{lhs.non_reference->call(std::move(params), std::move(reference))});
+                        vars.push(inmemory{lhs.non_reference->call(std::move(params))});
                     }
                 }
             }

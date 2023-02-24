@@ -71,15 +71,12 @@ void fell::lex::solve_func(const std::string_view expr, std::stack<inmemory> & v
         ++i;
     }
 
-    if(i == expr.length())
-        throw std::runtime_error{"Unterminated Function body."};
-
     --i;
+
+    if(expr[i] != '}')
+        throw std::runtime_error{"Unterminated Function body."};
 
     std::string body{expr.data() + j, i - j};
 
-    if(i == j)
-        throw std::runtime_error{"Unterminated Function body."};
-
-    vars.push(inmemory{util::make_var<types::func>(std::tuple{ params, body })});
+    vars.push(inmemory{util::make_var<types::func>(std::tuple{ params, body, nullptr })});
 }

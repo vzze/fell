@@ -47,12 +47,15 @@ void fell::lex::solve_table(const std::string_view expr, std::stack<inmemory> & 
     std::size_t j = i;
 
     bool triggered = true;
+    bool func = false;
 
     while(paren_counter) {
         if(expr[i] == '{')
             ++paren_counter;
         else if(expr[i] == ':' && paren_counter == 1)
             triggered = false;
+        else if(expr[i] == '|')
+            func = !func;
         else if(expr[i] == '}') {
             --paren_counter;
             if(paren_counter == 0 && !triggered) {
@@ -63,7 +66,7 @@ void fell::lex::solve_table(const std::string_view expr, std::stack<inmemory> & 
                 solve_table_member(tbl, std::string_view{expr.data() + j, i - j + 1});
                 i = copy;
             }
-        } else if(expr[i] == ',' && paren_counter == 1) {
+        } else if(expr[i] == ',' && paren_counter == 1 && !func) {
             while(std::isspace(expr[j])) ++j;
             const auto copy = i;
             --i;
