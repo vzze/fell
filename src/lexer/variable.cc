@@ -30,7 +30,7 @@ void fell::lex::solve_variable(
     } else {
         const std::size_t j = i;
 
-        while(std::strchr(" \",;=<>!&|+-%*/()[]{}", expr[i]) == 0 && i < expr.length()) {
+        while(std::strchr(" \",;=<>!&?+-%*/()[]{}", expr[i]) == 0 && i < expr.length()) {
             ++i;
         }
 

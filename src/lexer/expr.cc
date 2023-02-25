@@ -134,7 +134,7 @@ std::size_t fell::lex::operator_precedence(const std::string_view operation) {
         return 5;
     if(operation == "&&")
         return 4;
-    if(operation == "||")
+    if(operation == "?")
         return 3;
     if(operation == "=")
         return 2;
@@ -221,7 +221,7 @@ std::size_t fell::lex::solve_expression(
                     }
                 }
             }
-        } else if(std::strchr(",=<>!&|+-%*/", expr[i]) == 0) {
+        } else if(std::strchr(",=<>!&?+-%*/", expr[i]) == 0) {
             solve_variable(expr, vars, i, alternance);
         } else {
             if(alternance == false)
@@ -230,7 +230,7 @@ std::size_t fell::lex::solve_expression(
 
             std::size_t j = i;
 
-            while(std::strchr(",=<>!&|+-%*/", expr[i]) && i < expr.length())
+            while(std::strchr(",=<>!&?+-%*/", expr[i]) && i < expr.length())
                 ++i;
 
             const std::string_view next_operation{expr.data() + j, i - j};
