@@ -20,7 +20,7 @@ print(fibo(9));
 * `cmake` 3.2 or later
 
 ### Installation and Usage
-Cloning the repository, then running cmake will generate an executable that can be used on standalone Fell code. A static library will also be generated which grants interoperability inbetween Fell code and C++ code.
+Cloning the repository then running cmake will generate an executable that can be used on standalone Fell code. A static library will also be generated which grants interoperability between Fell code and C++ code.
 
 Fell provides an API for C++ through `include/api.hh`, this is the same interface used in developing Fell's standard library.
 
