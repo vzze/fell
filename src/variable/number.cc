@@ -94,6 +94,54 @@ fell::types::variable::var fell::types::number::operator != (const variable * rh
     );
 }
 
+fell::types::variable::var fell::types::number::operator && (const variable * rhs) {
+    try {
+        util::get_value<nihil::nil>(rhs);
+        return fell::util::make_var<number>(0);
+    } catch(...) {
+        try {
+            return fell::util::make_var<number>(
+                static_cast<num>(
+                    (util::get_value<num>(this) != 0.0) &&
+                    (util::get_value<num>(rhs) != 0.0)
+                )
+            );
+        } catch(...) {
+            return fell::util::make_var<number>(
+                static_cast<num>(
+                    (util::get_value<num>(this) != 0.0) && true
+                )
+            );
+        }
+    }
+}
+
+fell::types::variable::var fell::types::number::operator || (const variable * rhs) {
+    try {
+        util::get_value<nihil::nil>(rhs);
+        return fell::util::make_var<number>(
+            static_cast<num>(
+                (util::get_value<num>(this) != 0.0) || false
+            )
+        );
+    } catch(...) {
+        try {
+            return fell::util::make_var<number>(
+                static_cast<num>(
+                    (util::get_value<num>(this) != 0.0) ||
+                    (util::get_value<num>(rhs) != 0.0)
+                )
+            );
+        } catch(...) {
+            return fell::util::make_var<number>(
+                static_cast<num>(
+                    (util::get_value<num>(this) != 0.0) || true
+                )
+            );
+        }
+    }
+}
+
 fell::types::variable::var & fell::types::number::operator [] (const variable *) {
     throw std::runtime_error{"No subscript operator on variable of type Number."};
 }

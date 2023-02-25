@@ -1,6 +1,7 @@
 #ifndef STD_HH
 #define STD_HH
 
+#include <stdexcept>
 #include <iostream>
 
 #include "variable.hh"

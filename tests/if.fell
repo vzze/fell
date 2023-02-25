@@ -1,0 +1,9 @@
+if(13 < 12, || {},
+| | {
+    print("13 is not smaller than 12");
+}
+);
+
+if(13 > 12, || {
+    print("13 is bigger than 12");
+});

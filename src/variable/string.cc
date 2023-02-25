@@ -80,6 +80,27 @@ fell::types::variable::var fell::types::string::operator != (const variable * rh
     );
 }
 
+fell::types::variable::var fell::types::string::operator && (const variable * rhs) {
+    try {
+        util::get_value<nihil::nil>(rhs);
+        return fell::util::make_var<number>(0);
+    } catch(...) {
+        try {
+            return fell::util::make_var<number>(
+                static_cast<number::num>(
+                    true && (util::get_value<number::num>(rhs) != 0.0)
+                )
+            );
+        } catch(...) {
+            return fell::util::make_var<number>(1);
+        }
+    }
+}
+
+fell::types::variable::var fell::types::string::operator || (const variable *) {
+    return fell::util::make_var<number>(1);
+}
+
 fell::types::variable::var & fell::types::string::operator [] (const variable *) {
     throw std::runtime_error{"No subscript operator on variable of type String."};
 }

@@ -31,19 +31,19 @@ void fell::lex::solve_expression_stacks(
     }
 }
 
-#define SOLVE_DEFAULT_VARS(symbol) \
+#define SOLVE_DEFAULT_VARS(symbol, op) \
     if(operation == #symbol) { \
         if(lhs.non_reference) { \
             if(rhs.non_reference) { \
-                return vars.push(inmemory{*lhs.non_reference symbol rhs.non_reference.get()}); \
+                return vars.push(inmemory{*lhs.non_reference op rhs.non_reference.get()}); \
             } else { \
-                return vars.push(inmemory{*lhs.non_reference symbol rhs.reference->get()}); \
+                return vars.push(inmemory{*lhs.non_reference op rhs.reference->get()}); \
             } \
         } else { \
             if(rhs.non_reference) { \
-                return vars.push(inmemory{**lhs.reference symbol rhs.non_reference.get()}); \
+                return vars.push(inmemory{**lhs.reference op rhs.non_reference.get()}); \
             } else { \
-                return vars.push(inmemory{**lhs.reference symbol rhs.reference->get()}); \
+                return vars.push(inmemory{**lhs.reference op rhs.reference->get()}); \
             } \
         } \
     }
@@ -55,22 +55,23 @@ void fell::lex::apply_operation(
     std::stack<inmemory> & vars
 ) {
 
-    SOLVE_DEFAULT_VARS(*);
-    SOLVE_DEFAULT_VARS(/);
+    SOLVE_DEFAULT_VARS(*, *);
+    SOLVE_DEFAULT_VARS(/, /);
 
-    SOLVE_DEFAULT_VARS(+);
-    SOLVE_DEFAULT_VARS(-);
-    SOLVE_DEFAULT_VARS(%);
+    SOLVE_DEFAULT_VARS(+, +);
+    SOLVE_DEFAULT_VARS(-, -);
+    SOLVE_DEFAULT_VARS(%, %);
 
-    SOLVE_DEFAULT_VARS(<);
-    SOLVE_DEFAULT_VARS(<=)
-    SOLVE_DEFAULT_VARS(>);
-    SOLVE_DEFAULT_VARS(>=);
+    SOLVE_DEFAULT_VARS(<, <);
+    SOLVE_DEFAULT_VARS(<=, <=)
+    SOLVE_DEFAULT_VARS(>, >);
+    SOLVE_DEFAULT_VARS(>=, >=);
 
-    SOLVE_DEFAULT_VARS(==);
-    SOLVE_DEFAULT_VARS(!=);
-    /* SOLVE_DEFAULT_VARS(&&); */
-    /* SOLVE_DEFAULT_VARS(||); */
+    SOLVE_DEFAULT_VARS(==, ==);
+    SOLVE_DEFAULT_VARS(!=, !=);
+
+    SOLVE_DEFAULT_VARS(&&, &&);
+    SOLVE_DEFAULT_VARS(?, ||);
 
 #undef SOLVE_DEFAULT_VARS
 
@@ -162,6 +163,7 @@ std::size_t fell::lex::solve_expression(
 
     bool alternance = false;
     bool function_call = false;
+    bool function_is_void = false;
     std::size_t i;
 
     for(i = 0; i < expr.length() && expr[i] != ';'; ++i) {
@@ -171,6 +173,9 @@ std::size_t fell::lex::solve_expression(
             operators.push("(");
             if(alternance == true) {
                 function_call = true;
+                auto j = i + 1;
+                while(std::isspace(expr[j])) ++j;
+                if(expr[j] == ')') function_is_void = true;
                 alternance = false;
             }
         } else if(expr[i] == '[') {
@@ -191,11 +196,7 @@ std::size_t fell::lex::solve_expression(
                 operators.pop();
 
                 if(function_call) {
-                    if(vars.empty())
-                        throw std::runtime_error{"Extra symbol: ,"};
-
-                    parameter_list.push(std::move(vars.top()));
-                    vars.pop();
+                    alternance = true;
 
                     function_call = false;
 
@@ -203,13 +204,17 @@ std::size_t fell::lex::solve_expression(
 
                     params.reserve(parameter_list.size());
 
-                    while(!parameter_list.empty()) {
-                        params.insert(params.begin(), std::move(parameter_list.front()));
-                        parameter_list.pop();
+                    if(!function_is_void) {
+                        params.push_back(std::move(vars.top()));
+                        vars.pop();
                     }
 
-                    if(vars.empty())
-                        throw std::runtime_error{"Function call with no function name."};
+                    function_is_void = false;
+
+                    while(!parameter_list.empty()) {
+                        params.push_back(std::move(parameter_list.front()));
+                        parameter_list.pop();
+                    }
 
                     const auto lhs = std::move(vars.top());
                     vars.pop();

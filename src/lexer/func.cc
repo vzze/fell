@@ -6,43 +6,44 @@ void fell::lex::solve_func(const std::string_view expr, std::stack<inmemory> & v
 
     std::vector<std::string> params;
 
-    while(i < expr.length()) {
-        if(expr[i] == ',') {
-            const auto copy{i};
+    if(expr[i] != '|')
+        while(i < expr.length()) {
+            if(expr[i] == ',') {
+                const auto copy{i};
 
-            --i;
+                --i;
 
-            while(std::isspace(expr[i])) --i;
+                while(std::isspace(expr[i])) --i;
 
-            i += 1;
+                i += 1;
 
-            while(std::isspace(expr[j])) ++j;
+                while(std::isspace(expr[j])) ++j;
 
-            params.push_back(std::string{expr.data() + j, i - j});
+                params.push_back(std::string{expr.data() + j, i - j});
 
-            i = copy;
+                i = copy;
 
-            j = copy + 1;
+                j = copy + 1;
+            }
+
+            if(expr[i] == '|') {
+                const auto copy{i};
+
+                --i;
+
+                while(std::isspace(expr[i])) --i;
+
+                i += 1;
+
+                while(std::isspace(expr[j])) ++j;
+                if(j < i)
+                    params.push_back(std::string{expr.data() + j, i - j});
+                i = copy;
+                break;
+            }
+
+            ++i;
         }
-
-        if(expr[i] == '|') {
-            const auto copy{i};
-
-            --i;
-
-            while(std::isspace(expr[i])) --i;
-
-            i += 1;
-
-            while(std::isspace(expr[j])) ++j;
-
-            params.push_back(std::string{expr.data() + j, i - j});
-            i = copy;
-            break;
-        }
-
-        ++i;
-    }
 
     if(i == expr.length())
         throw std::runtime_error{"Unterminated parameter list."};

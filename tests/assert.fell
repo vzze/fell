@@ -1,0 +1,3 @@
+assert(12 != 12);
+assert(nihil);
+assert(0);

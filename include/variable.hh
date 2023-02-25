@@ -43,6 +43,9 @@ namespace fell {
             [[nodiscard]] virtual var operator == (const variable *) = 0;
             [[nodiscard]] virtual var operator != (const variable *) = 0;
 
+            [[nodiscard]] virtual var operator && (const variable *) = 0;
+            [[nodiscard]] virtual var operator || (const variable *) = 0;
+
             [[nodiscard]] virtual var & operator [] (const variable *) = 0;
             [[nodiscard]] virtual var & operator [] (const std::string) = 0;
             [[nodiscard]] virtual var call (std::vector<lex::inmemory> &&) = 0;
@@ -68,6 +71,9 @@ namespace fell {
             [[nodiscard]] var operator == (const variable *) override;
             [[nodiscard]] var operator != (const variable *) override;
 
+            [[nodiscard]] virtual var operator && (const variable *) override;
+            [[nodiscard]] virtual var operator || (const variable *) override;
+
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const std::string) override;
 
@@ -91,6 +97,9 @@ namespace fell {
             [[nodiscard]] var operator <= (const variable *) override;
             [[nodiscard]] var operator == (const variable *) override;
             [[nodiscard]] var operator != (const variable *) override;
+
+            [[nodiscard]] virtual var operator && (const variable *) override;
+            [[nodiscard]] virtual var operator || (const variable *) override;
 
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const str) override;
@@ -116,6 +125,9 @@ namespace fell {
             [[noreturn]] var operator <= (const variable *) override;
             [[noreturn]] var operator == (const variable *) override;
             [[noreturn]] var operator != (const variable *) override;
+
+            [[nodiscard]] virtual var operator && (const variable *) override;
+            [[nodiscard]] virtual var operator || (const variable *) override;
 
             [[nodiscard]] var & operator [] (const variable *) override;
             [[nodiscard]] var & operator [] (const string::str) override;
@@ -143,6 +155,9 @@ namespace fell {
             [[noreturn]] var operator == (const variable *) override;
             [[noreturn]] var operator != (const variable *) override;
 
+            [[nodiscard]] virtual var operator && (const variable *) override;
+            [[nodiscard]] virtual var operator || (const variable *) override;
+
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const string::str) override;
 
@@ -166,6 +181,9 @@ namespace fell {
             [[noreturn]] var operator <= (const variable *) override;
             [[noreturn]] var operator == (const variable *) override;
             [[noreturn]] var operator != (const variable *) override;
+
+            [[nodiscard]] virtual var operator && (const variable *) override;
+            [[nodiscard]] virtual var operator || (const variable *) override;
 
             [[noreturn]] var & operator [] (const variable *) override;
             [[noreturn]] var & operator [] (const string::str) override;

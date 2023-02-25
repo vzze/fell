@@ -45,6 +45,7 @@ namespace fell {
 
         void solve_func(const std::string_view, std::stack<inmemory> &, std::size_t &);
 
+        void replace_string_codes(std::string &);
         void solve_string(const std::string_view, std::stack<inmemory> &, std::size_t &);
 
         void solve_table(const std::string_view, std::stack<inmemory> &, std::size_t &);

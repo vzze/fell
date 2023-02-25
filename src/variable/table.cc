@@ -47,6 +47,26 @@ fell::types::variable::var fell::types::table::operator != (const variable *) {
     throw std::runtime_error{"Variable of type Table can't be compared."};
 }
 
+fell::types::variable::var fell::types::table::operator && (const variable * rhs) {
+    try {
+        util::get_value<nihil::nil>(rhs);
+        return fell::util::make_var<number>(0);
+    } catch(...) {
+        try {
+            return fell::util::make_var<number>(
+                static_cast<number::num>(
+                    true && (util::get_value<number::num>(rhs) != 0.0)
+                )
+            );
+        } catch(...) {
+            return fell::util::make_var<number>(1);
+        }
+    }
+}
+
+fell::types::variable::var fell::types::table::operator || (const variable *) {
+    return fell::util::make_var<number>(1);
+}
 fell::types::variable::var & fell::types::table::operator [] (const variable * key) {
     try {
         return util::get_value<tbl>(this)->at(util::get_value<string::str>(key));
