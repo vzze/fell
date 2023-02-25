@@ -23,3 +23,7 @@ void fell::api::params::for_each_param(std::function<void(param)> applied) {
 fell::types::variable::var fell::api::make_func(std::function<types::variable::var(params)> fn) {
     return util::make_var<types::func>(types::func::data({}, "", fn));
 }
+
+void fell::api::set_global_var(std::string name, types::variable::var var) {
+    (*lex::global_table)[name] = std::move(var);
+}

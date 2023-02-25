@@ -34,7 +34,7 @@ namespace fell {
                         std::is_same_v<UnderlyingValue, tbl> ||
                         std::is_same_v<UnderlyingValue, fun> ||
                         std::is_same_v<UnderlyingValue, nil>,
-                        "Value must be one of the: param::num, param::str, param::tbl, param::fun, param::nil"
+                        "Type must be one of the: param::num, param::str, param::tbl, param::fun, param::nil"
                     );
                     return util::get_value<UnderlyingValue>(v.get());
                 }
@@ -46,6 +46,14 @@ namespace fell {
 
         template<typename Type, typename ... Args>
         inline types::variable::var make_var(Args && ... args) {
+            static_assert(
+                std::is_same_v<Type, types::number> ||
+                std::is_same_v<Type, types::string> ||
+                std::is_same_v<Type, types::table> ||
+                std::is_same_v<Type, types::func> ||
+                std::is_same_v<Type, types::nihil>,
+                "Type must be one of the: types::number, types::string, types::table, types::func, types::nihil"
+            );
             return util::make_var<Type>(std::forward<Args>(args)...);
         }
 
@@ -59,6 +67,8 @@ namespace fell {
         };
 
         types::variable::var make_func(std::function<types::variable::var(params)>);
+
+        void set_global_var(std::string, types::variable::var);
     }
 }
 

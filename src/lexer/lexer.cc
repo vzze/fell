@@ -11,6 +11,7 @@ void fell::lex::eval_code(const std::string & code) {
         try {
             i += solve_expression(std::string_view{code.begin() + static_cast<std::int64_t>(i), code.end()});
         } catch(std::exception & e) {
+            std::cout << code.substr(i, code.find_first_of(";", i) - i) << '\n';
             std::cout << "->> " << e.what() << '\n';
             return;
         }

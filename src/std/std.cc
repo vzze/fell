@@ -24,13 +24,12 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
                 }
             });
             ::std::cout << '\n';
-            return util::make_var<types::nihil>();
+            return api::make_var<types::nihil>();
         }
     }
 };
 
 void fell::std::init() {
-    for(auto & [n, f] : general) {
-        (*lex::global_table)[n] = api::make_func(f);
-    }
+    for(auto & [n, f] : general)
+        api::set_global_var(n, api::make_func(f));
 }
