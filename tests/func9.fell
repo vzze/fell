@@ -1,0 +1,10 @@
+x = || {
+    local c = 12;
+    print(c);
+};
+
+x();
+
+# should be 'nil'
+
+print(c);

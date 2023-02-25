@@ -96,8 +96,20 @@ fell::types::variable::var fell::types::func::call(std::vector<lex::inmemory> &&
 
         lex::eval_code(std::get<1>(util::get_value<types::func::data>(this)));
 
-        lex::contexts.pop_back();
-    }
 
-    return util::make_var<nihil>();
+        auto & context = *lex::contexts.rbegin();
+        auto ret = std::move(context["ret"]);
+        context.erase("ret");
+        lex::contexts.pop_back();
+
+        if(ret.non_reference) {
+            return std::move(ret.non_reference);
+        } else if(ret.reference) {
+            types::variable::var v;
+            util::copy(v, *ret.reference);
+            return v;
+        } else {
+            return util::make_var<nihil>();
+        }
+    }
 }

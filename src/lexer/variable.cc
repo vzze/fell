@@ -36,8 +36,27 @@ void fell::lex::solve_variable(
 
         const auto var = std::string_view{expr.data() + j, i - j};
 
+        if(var == "local") {
+            local_value = true;
+            alternance = false;
+            return;
+        }
+
+        /* std::cout << var << '\n'; */
+
         if(var == "Global") {
             return vars.push(inmemory{&global_table});
+        }
+
+        if(var == "ret") {
+            if(contexts.rbegin() == contexts.rend())
+                throw std::runtime_error{"Can't return from global context."};
+
+            auto & ref = (*contexts.rbegin())[std::string{var}];
+
+            ref.non_reference = util::make_var<types::nihil>();
+
+            return vars.push(inmemory{&ref.non_reference});
         }
 
         --i;
@@ -45,6 +64,19 @@ void fell::lex::solve_variable(
         try {
             vars.push(inmemory{check_for_constant_expression(var)});
         } catch(...) {
+            if(local_value) {
+                local_value = false;
+
+                if(contexts.rbegin() == contexts.rend())
+                    throw std::runtime_error{"Can't make global variable local."};
+
+                auto & ref = (*contexts.rbegin())[std::string{var}];
+
+                ref.non_reference = util::make_var<types::nihil>();
+
+                return vars.push(inmemory{&ref.non_reference});
+            }
+
             auto it = contexts.rbegin();
 
             while(it != contexts.rend()) {

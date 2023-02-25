@@ -6,4 +6,4 @@ a = |f, g| {
 
 b = a(2, 3);
 
-print(c);
+print(b, c);

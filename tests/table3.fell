@@ -11,3 +11,5 @@ object = {
 };
 
 a = object["val3"]["val1"]+" but not this time";
+
+print(a);

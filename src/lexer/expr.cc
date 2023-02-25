@@ -162,8 +162,8 @@ std::size_t fell::lex::solve_expression(
     }
 
     bool alternance = false;
-    bool function_call = false;
-    bool function_is_void = false;
+    std::vector<bool> func_call = {};
+    std::vector<bool> func_no_param = {};
     std::size_t i;
 
     for(i = 0; i < expr.length() && expr[i] != ';'; ++i) {
@@ -172,10 +172,11 @@ std::size_t fell::lex::solve_expression(
         } else if(expr[i] == '(') {
             operators.push("(");
             if(alternance == true) {
-                function_call = true;
+                func_call.push_back(true);
                 auto j = i + 1;
                 while(std::isspace(expr[j])) ++j;
-                if(expr[j] == ')') function_is_void = true;
+                if(expr[j] == ')') func_no_param.push_back(true);
+                else func_no_param.push_back(false);
                 alternance = false;
             }
         } else if(expr[i] == '[') {
@@ -195,21 +196,21 @@ std::size_t fell::lex::solve_expression(
             if(!operators.empty()) {
                 operators.pop();
 
-                if(function_call) {
+                if(func_call.rbegin() != func_call.rend()) {
                     alternance = true;
 
-                    function_call = false;
+                    func_call.pop_back();
 
                     std::vector<inmemory> params;
 
                     params.reserve(parameter_list.size());
 
-                    if(!function_is_void) {
+                    if(!*func_no_param.rbegin()) {
                         params.push_back(std::move(vars.top()));
                         vars.pop();
                     }
 
-                    function_is_void = false;
+                    func_no_param.pop_back();
 
                     while(!parameter_list.empty()) {
                         params.push_back(std::move(parameter_list.front()));

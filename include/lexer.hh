@@ -51,6 +51,7 @@ namespace fell {
         void solve_table(const std::string_view, std::stack<inmemory> &, std::size_t &);
         void solve_table_member(types::variable::var &, const std::string_view);
 
+        extern bool local_value;
         void solve_variable(const std::string_view, std::stack<inmemory> &, std::size_t &, bool &);
 
         void solve_expression_stacks(std::stack<inmemory> &, std::queue<inmemory> &, std::stack<std::string_view> &);

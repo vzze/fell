@@ -1,5 +1,6 @@
 #include "lexer.hh"
 
+bool fell::lex::local_value = false;
 fell::types::variable::var fell::lex::global_table = util::make_var<fell::types::table>();
 std::vector<std::unordered_map<std::string, fell::lex::inmemory>> fell::lex::contexts;
 fell::lex::inmemory::inmemory() : non_reference(nullptr), reference(nullptr) {}
@@ -11,6 +12,7 @@ void fell::lex::eval_code(const std::string & code) {
         try {
             i += solve_expression(std::string_view{code.begin() + static_cast<std::int64_t>(i), code.end()});
         } catch(std::exception & e) {
+            local_value = false;
             std::cout << code.substr(i, code.find_first_of(";", i) - i) << '\n';
             std::cout << "->> " << e.what() << '\n';
             return;
