@@ -1,3 +1,5 @@
 a = true;
 b = false;
 c = nihil;
+
+print(a, b, c);

@@ -29,12 +29,6 @@ void fell::lex::parse_file(const std::filesystem::path path) {
         std::cout << e.what() << '\n';
     }
 
-    try {
-        util::check_paren(file);
-    } catch(std::exception & e) {
-        std::cout << e.what() << '\n';
-    }
-
     fell::util::remove_comments(file);
 
     eval_code(file);

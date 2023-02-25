@@ -7,3 +7,5 @@ b= x+z;
 a = 10;
 
 c;
+
+print(x, y, z, a, b, c);

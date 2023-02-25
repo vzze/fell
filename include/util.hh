@@ -19,7 +19,6 @@ namespace fell {
         std::string get_file(const std::filesystem::path);
 
         void remove_comments(std::string &);
-        void check_paren(const std::string &);
         double str_view_tod(std::string_view);
 
         std::size_t parse_args(int, char**);

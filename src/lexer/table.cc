@@ -49,7 +49,7 @@ void fell::lex::solve_table(const std::string_view expr, std::stack<inmemory> & 
     bool triggered = true;
     bool func = false;
 
-    while(paren_counter) {
+    while(paren_counter && i < expr.length()) {
         if(expr[i] == '{')
             ++paren_counter;
         else if(expr[i] == ':' && paren_counter == 1)
@@ -80,6 +80,9 @@ void fell::lex::solve_table(const std::string_view expr, std::stack<inmemory> & 
     }
 
     --i;
+
+    if(expr[i] != '}')
+        throw std::runtime_error{"Unterminated Table definition."};
 
     vars.push(inmemory{std::move(tbl)});
 }

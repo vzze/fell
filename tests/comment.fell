@@ -2,3 +2,5 @@
 a = 32; # This is also a comment
 # I like let but false is good
 b = 42;
+
+print(a, b);

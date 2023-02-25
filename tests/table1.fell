@@ -9,3 +9,5 @@ object = {
     "val4": true,
     "val5": false,
 };
+
+print(object["val2"]);
