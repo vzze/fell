@@ -69,19 +69,32 @@ fell::types::variable::var fell::types::table::operator || (const variable *) {
 }
 fell::types::variable::var & fell::types::table::operator [] (const variable * key) {
     try {
-        return util::get_value<tbl>(this)->at(util::get_value<string::str>(key));
+        auto key_t = util::get_value<string::str>(key);
+        auto & ref = util::get_value<tbl>(this)->first;
+
+        return ref[util::get_value<string::str>(key)];
     } catch(...) {
-        (*util::get_value<tbl>(this))[util::get_value<string::str>(key)] = nullptr;
-        return util::get_value<tbl>(this)->at(util::get_value<string::str>(key));
+        auto key_t = static_cast<std::size_t>(util::get_value<number::num>(key));
+        auto & ref = util::get_value<tbl>(this)->second;
+
+        if(ref.size() <= key_t)
+            ref.resize(key_t + 1);
+
+        return ref[key_t];
     }
 }
 
 fell::types::variable::var & fell::types::table::operator [] (const string::str key) {
+    return util::get_value<tbl>(this)->first[key];
+}
+
+fell::types::variable::var & fell::types::table::operator [] (const std::size_t key) {
     try {
-        return util::get_value<tbl>(this)->at(key);
+        return util::get_value<tbl>(this)->second.at(key);
     } catch(...) {
-        (*util::get_value<tbl>(this))[key] = nullptr;
-        return util::get_value<tbl>(this)->at(key);
+        auto & ref = util::get_value<tbl>(this)->second;
+        ref.resize(key + 1);
+        return ref[key];
     }
 }
 

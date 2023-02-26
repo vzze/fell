@@ -150,6 +150,10 @@ fell::types::variable::var & fell::types::number::operator [] (const std::string
     throw std::runtime_error{"No subscript operator on variable of type Number."};
 }
 
+fell::types::variable::var & fell::types::number::operator [] (const std::size_t) {
+    throw std::runtime_error{"No subscript operator on variable of type Number."};
+}
+
 fell::types::variable::var fell::types::number::call(std::vector<lex::inmemory> &&) {
     throw std::runtime_error{"Number variable can't be called."};
 }

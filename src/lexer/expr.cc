@@ -93,30 +93,34 @@ void fell::lex::apply_operation(
         if(lhs.non_reference) {
             if(rhs.non_reference) {
                 auto & s = (*lhs.non_reference)[rhs.non_reference.get()];
+
                 if(s == nullptr)
-                    return vars.push(inmemory{util::make_var<types::nihil>()});
-                else
-                    return vars.push(inmemory{&s});
+                    s = util::make_var<types::nihil>();
+
+                return vars.push(inmemory{&s});
             } else {
                 auto & s = (*lhs.non_reference)[rhs.reference->get()];
+
                 if(s == nullptr)
-                    return vars.push(inmemory{util::make_var<types::nihil>()});
-                else
-                    return vars.push(inmemory{&s});
+                    s = util::make_var<types::nihil>();
+
+                return vars.push(inmemory{&s});
             }
         } else {
             if(rhs.non_reference) {
                 auto & s = (**lhs.reference)[rhs.non_reference.get()];
+
                 if(s == nullptr)
-                    return vars.push(inmemory{util::make_var<types::nihil>()});
-                else
-                    return vars.push(inmemory{&s});
+                    s = util::make_var<types::nihil>();
+
+                return vars.push(inmemory{&s});
             } else {
                 auto & s = (**lhs.reference)[rhs.reference->get()];
+
                 if(s == nullptr)
-                    return vars.push(inmemory{util::make_var<types::nihil>()});
-                else
-                    return vars.push(inmemory{&s});
+                    s = util::make_var<types::nihil>();
+
+                return vars.push(inmemory{&s});
             }
         }
     }

@@ -131,13 +131,27 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
             if(params.number_of_params() < 2)
                 throw ::std::runtime_error{"for_kv expects 2 parameters."};
 
-            auto & table = params.get_param(0).get_value<api::param::tbl>();
+            auto & table = params.get_param(0).get_value<api::param::tbl>()->first;
 
-            for(auto & [k, v] : *table) {
+            for(auto & [k, v] : table) {
                 ::std::vector<lex::inmemory> args;
                 args.reserve(2);
                 args.push_back(lex::inmemory{api::make_var<types::string>(k)});
                 args.push_back(lex::inmemory{&v});
+                [[maybe_unused]] auto u = params.get_param(1).expose()->call(::std::move(args));
+            }
+
+            return api::make_var<types::nihil>();
+        }
+    },
+    {
+        "for_each",
+        [](fell::api::params params) -> fell::types::variable::var {
+            auto & array = params.get_param(0).get_value<api::param::tbl>()->second;
+
+            for(auto & v : array) {
+                ::std::vector<lex::inmemory> args;
+                args.reserve(1); args.push_back(lex::inmemory{&v});
                 [[maybe_unused]] auto u = params.get_param(1).expose()->call(::std::move(args));
             }
 

@@ -1,0 +1,21 @@
+x = {};
+
+i = 0;
+
+while(|| { ret = i < 10; }, || {
+    x[i] = i;
+    i = i + 1;
+});
+
+i = 0;
+
+while(|| { ret = i < 10; }, || {
+    print(x[i]);
+    i = i + 1;
+});
+
+print("");
+
+for_each(x, |element| {
+    print(element);
+});

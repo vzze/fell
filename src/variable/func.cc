@@ -57,6 +57,10 @@ fell::types::variable::var & fell::types::func::operator [] (const string::str) 
     throw std::runtime_error{"Function has no subscript operator."};
 }
 
+fell::types::variable::var & fell::types::func::operator [] (const std::size_t) {
+    throw std::runtime_error{"Function has no subscript operator."};
+}
+
 fell::types::variable::var fell::types::func::operator && (const variable * rhs) {
     try {
         util::get_value<nihil::nil>(rhs);
