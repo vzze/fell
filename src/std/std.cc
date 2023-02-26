@@ -88,6 +88,43 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
             return api::make_var<types::nihil>();
         }
     },
+    {
+        "while",
+        [](fell::api::params params) -> fell::types::variable::var {
+            if(params.number_of_params() < 2)
+                throw ::std::runtime_error{"while expects 2 parameters."};
+
+            auto condition = params.get_param(0).expose()->call({});
+
+            bool value = true;
+
+            try {
+                api::get_value<api::param::nil>(condition);
+                value = false;
+            } catch(...) {
+                try {
+                    value = api::get_value<api::param::num>(condition) != 0.0;
+                } catch(...) {}
+            }
+
+            while(value) {
+                [[maybe_unused]] auto u = params.get_param(1).expose()->call({});
+
+                condition = params.get_param(0).expose()->call({});
+
+                try {
+                    api::get_value<api::param::nil>(condition);
+                    value = false;
+                } catch(...) {
+                    try {
+                        value = api::get_value<api::param::num>(condition) != 0.0;
+                    } catch(...) {}
+                }
+            }
+
+            return api::make_var<types::nihil>();
+        }
+    }
 };
 
 void fell::std::init() {

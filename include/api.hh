@@ -44,6 +44,19 @@ namespace fell {
                 friend void fell::api::copy(param & a, const param & b);
         };
 
+        template<typename UnderlyingValue>
+        inline UnderlyingValue get_value(types::variable::var & v) {
+            static_assert(
+                std::is_same_v<UnderlyingValue, param::num> ||
+                std::is_same_v<UnderlyingValue, param::str> ||
+                std::is_same_v<UnderlyingValue, param::tbl> ||
+                std::is_same_v<UnderlyingValue, param::fun> ||
+                std::is_same_v<UnderlyingValue, param::nil>,
+                "Type must be one of the: param::num, param::str, param::tbl, param::fun, param::nil"
+            );
+            return util::get_value<UnderlyingValue>(v.get());
+        }
+
         inline void copy(param & a, const param & b) { util::copy(a.v, b.v); }
 
         template<typename Type, typename ... Args>
