@@ -33,6 +33,7 @@ namespace fell {
             explicit inmemory(types::variable::var &&);
         };
 
+        extern std::filesystem::path project_root;
         extern types::variable::var global_table;
         extern std::vector<std::unordered_map<std::string, inmemory>> contexts;
 

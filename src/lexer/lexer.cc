@@ -1,5 +1,6 @@
 #include "lexer.hh"
 
+std::filesystem::path fell::lex::project_root{};
 bool fell::lex::local_value = false;
 fell::types::variable::var fell::lex::global_table = util::make_var<fell::types::table>();
 std::vector<std::unordered_map<std::string, fell::lex::inmemory>> fell::lex::contexts;
@@ -21,6 +22,12 @@ void fell::lex::eval_code(const std::string & code) {
 }
 
 void fell::lex::parse_file(const std::filesystem::path path) {
+    static constinit bool first_file = false;
+
+    if(!first_file)
+        project_root = path.parent_path();
+    first_file = true;
+
     std::string file;
 
     try {

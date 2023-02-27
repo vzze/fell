@@ -147,6 +147,9 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
     {
         "for_each",
         [](fell::api::params params) -> fell::types::variable::var {
+            if(params.number_of_params() < 2)
+                throw ::std::runtime_error{"for_each expects 2 parameters."};
+
             auto & array = params.get_param(0).get_value<api::param::tbl>()->second;
 
             for(auto & v : array) {
@@ -154,6 +157,21 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
                 args.reserve(1); args.push_back(lex::inmemory{&v});
                 [[maybe_unused]] auto u = params.get_param(1).expose()->call(::std::move(args));
             }
+
+            return api::make_var<types::nihil>();
+        }
+    },
+    {
+        "require",
+        [](fell::api::params params) -> fell::types::variable::var {
+            if(params.number_of_params() < 1)
+                throw ::std::runtime_error{"require expects 1 parameter."};
+
+            auto & module = params.get_param(0).get_value<api::param::str>();
+            auto copy = lex::project_root;
+
+            copy.append(module);
+            lex::parse_file(copy);
 
             return api::make_var<types::nihil>();
         }
