@@ -7,4 +7,4 @@ if($check_dir -eq $false) {
 Write-Host "`n-------------- CMAKE --------------`n"
 
 Invoke-Expression "cmake -S . -B build -G `"MinGW Makefiles`""
-Invoke-Expression "cmake --build ./build"
+Invoke-Expression "cmake --build ./build --config Release"
