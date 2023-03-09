@@ -1,11 +1,10 @@
 Write-Host "`n-------------- FELL TESTS --------------"
 
-$files = Get-ChildItem "./tests"
+$files = Get-ChildItem "./tests" -Recurse
 
 foreach($f in $files) {
     if($f.Extension -eq ".fell") {
         Write-Host "`n$($f.Name):`n"
-
         Invoke-Expression "./build/fell $($f.FullName)"
     }
 }
