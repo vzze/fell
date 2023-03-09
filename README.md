@@ -35,3 +35,12 @@ Fell provides an API for C++ through `include/api.hh`, this is the same interfac
     return api::make_var<types::nihil>();
 }
 ```
+
+#### Disclaimer
+Fell is not JIT and does not generate bytecode, being a syntax tree walker it's inherently slower than an interpreted language that generates bytecode, hence the "Fast" in the about section.
+
+The Standard Library is missing features (i.e. string manipulation)
+
+This is a personal project that was made for fun, and I don't expect to maintain it for long periods of time.
+
+As of commit [80b96e9](https://github.com/vzze/fell/commit/80b96e92d2c9217970d62e33c23548d21712bc9e) Fell is Turing complete (`tests/turing_completeness.fell`)
