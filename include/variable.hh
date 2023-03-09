@@ -73,11 +73,11 @@ namespace fell {
             [[nodiscard]] var operator && (const variable *) override;
             [[nodiscard]] var operator || (const variable *) override;
 
-            [[noreturn]] var & operator [] (const variable *) override;
-            [[noreturn]] var & operator [] (const std::string) override;
-            [[noreturn]] var & operator [] (const std::size_t) override;
+            var & operator [] (const variable *) override;
+            var & operator [] (const std::string) override;
+            var & operator [] (const std::size_t) override;
 
-            [[noreturn]] var call (std::vector<lex::inmemory> &&) override;
+            var call (std::vector<lex::inmemory> &&) override;
         };
 
         struct string : public variable {
@@ -85,10 +85,10 @@ namespace fell {
             string(str = "");
 
             [[nodiscard]] var operator + (const variable *) override;
-            [[noreturn]] var operator - (const variable *) override;
-            [[noreturn]] var operator * (const variable *) override;
-            [[noreturn]] var operator / (const variable *) override;
-            [[noreturn]] var operator % (const variable *) override;
+            var operator - (const variable *) override;
+            var operator * (const variable *) override;
+            var operator / (const variable *) override;
+            var operator % (const variable *) override;
 
             [[nodiscard]] var operator >  (const variable *) override;
             [[nodiscard]] var operator >= (const variable *) override;
@@ -100,11 +100,11 @@ namespace fell {
             [[nodiscard]] var operator && (const variable *) override;
             [[nodiscard]] var operator || (const variable *) override;
 
-            [[noreturn]] var & operator [] (const variable *) override;
-            [[noreturn]] var & operator [] (const str) override;
-            [[noreturn]] var & operator [] (const std::size_t) override;
+            var & operator [] (const variable *) override;
+            var & operator [] (const str) override;
+            var & operator [] (const std::size_t) override;
 
-            [[noreturn]] var call (std::vector<lex::inmemory> &&) override;
+            var call (std::vector<lex::inmemory> &&) override;
         };
 
         struct table : public variable {
@@ -112,18 +112,18 @@ namespace fell {
 
             table(tbl = new std::pair<std::unordered_map<string::str, var>, std::vector<var>>());
 
-            [[noreturn]] var operator + (const variable *) override;
-            [[noreturn]] var operator - (const variable *) override;
-            [[noreturn]] var operator * (const variable *) override;
-            [[noreturn]] var operator / (const variable *) override;
-            [[noreturn]] var operator % (const variable *) override;
+            var operator + (const variable *) override;
+            var operator - (const variable *) override;
+            var operator * (const variable *) override;
+            var operator / (const variable *) override;
+            var operator % (const variable *) override;
 
-            [[noreturn]] var operator >  (const variable *) override;
-            [[noreturn]] var operator >= (const variable *) override;
-            [[noreturn]] var operator <  (const variable *) override;
-            [[noreturn]] var operator <= (const variable *) override;
-            [[noreturn]] var operator == (const variable *) override;
-            [[noreturn]] var operator != (const variable *) override;
+            var operator >  (const variable *) override;
+            var operator >= (const variable *) override;
+            var operator <  (const variable *) override;
+            var operator <= (const variable *) override;
+            var operator == (const variable *) override;
+            var operator != (const variable *) override;
 
             [[nodiscard]] var operator && (const variable *) override;
             [[nodiscard]] var operator || (const variable *) override;
@@ -132,7 +132,7 @@ namespace fell {
             [[nodiscard]] var & operator [] (const string::str) override;
             [[nodiscard]] var & operator [] (const std::size_t) override;
 
-            [[noreturn]] var call (std::vector<lex::inmemory> &&) override;
+            var call (std::vector<lex::inmemory> &&) override;
 
             ~table();
         };
@@ -141,52 +141,52 @@ namespace fell {
             using nil = std::nullptr_t;
             nihil(nil = nullptr);
 
-            [[noreturn]] var operator + (const variable *) override;
-            [[noreturn]] var operator - (const variable *) override;
-            [[noreturn]] var operator * (const variable *) override;
-            [[noreturn]] var operator / (const variable *) override;
-            [[noreturn]] var operator % (const variable *) override;
+            var operator + (const variable *) override;
+            var operator - (const variable *) override;
+            var operator * (const variable *) override;
+            var operator / (const variable *) override;
+            var operator % (const variable *) override;
 
-            [[noreturn]] var operator >  (const variable *) override;
-            [[noreturn]] var operator >= (const variable *) override;
-            [[noreturn]] var operator <  (const variable *) override;
-            [[noreturn]] var operator <= (const variable *) override;
-            [[noreturn]] var operator == (const variable *) override;
-            [[noreturn]] var operator != (const variable *) override;
+            var operator >  (const variable *) override;
+            var operator >= (const variable *) override;
+            var operator <  (const variable *) override;
+            var operator <= (const variable *) override;
+            var operator == (const variable *) override;
+            var operator != (const variable *) override;
 
             [[nodiscard]] var operator && (const variable *) override;
             [[nodiscard]] var operator || (const variable *) override;
 
-            [[noreturn]] var & operator [] (const variable *) override;
-            [[noreturn]] var & operator [] (const string::str) override;
-            [[noreturn]] var & operator [] (const std::size_t) override;
+            var & operator [] (const variable *) override;
+            var & operator [] (const string::str) override;
+            var & operator [] (const std::size_t) override;
 
-            [[noreturn]] var call (std::vector<lex::inmemory> &&) override;
+            var call (std::vector<lex::inmemory> &&) override;
         };
 
         struct func : public variable {
             using data = std::tuple<std::vector<std::string>, std::string, std::function<variable::var(api::params)>>;
             func(data = {});
 
-            [[noreturn]] var operator + (const variable *) override;
-            [[noreturn]] var operator - (const variable *) override;
-            [[noreturn]] var operator * (const variable *) override;
-            [[noreturn]] var operator / (const variable *) override;
-            [[noreturn]] var operator % (const variable *) override;
+            var operator + (const variable *) override;
+            var operator - (const variable *) override;
+            var operator * (const variable *) override;
+            var operator / (const variable *) override;
+            var operator % (const variable *) override;
 
-            [[noreturn]] var operator >  (const variable *) override;
-            [[noreturn]] var operator >= (const variable *) override;
-            [[noreturn]] var operator <  (const variable *) override;
-            [[noreturn]] var operator <= (const variable *) override;
-            [[noreturn]] var operator == (const variable *) override;
-            [[noreturn]] var operator != (const variable *) override;
+            var operator >  (const variable *) override;
+            var operator >= (const variable *) override;
+            var operator <  (const variable *) override;
+            var operator <= (const variable *) override;
+            var operator == (const variable *) override;
+            var operator != (const variable *) override;
 
             [[nodiscard]] var operator && (const variable *) override;
             [[nodiscard]] var operator || (const variable *) override;
 
-            [[noreturn]] var & operator [] (const variable *) override;
-            [[noreturn]] var & operator [] (const string::str) override;
-            [[noreturn]] var & operator [] (const std::size_t) override;
+            var & operator [] (const variable *) override;
+            var & operator [] (const string::str) override;
+            var & operator [] (const std::size_t) override;
 
             [[nodiscard]] var call (std::vector<lex::inmemory> &&) override;
         };

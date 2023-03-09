@@ -36,7 +36,7 @@ namespace fell {
 
         extern std::filesystem::path project_root;
         extern types::variable::var global_table;
-        extern std::vector<std::unordered_map<std::string, inmemory>> contexts;
+        extern std::list<std::unordered_map<std::string, inmemory>> contexts;
 
         void parse_file(const std::filesystem::path);
         void eval_code(const std::string &);
