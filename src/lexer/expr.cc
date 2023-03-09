@@ -157,7 +157,7 @@ std::size_t fell::lex::solve_expression(
     std::string_view op
 ) {
     std::stack<inmemory> vars;
-    std::queue<inmemory> parameter_list;
+    std::list<std::queue<inmemory>> parameter_list;
     std::stack<std::string_view> operators;
 
     if(v != nullptr) {
@@ -166,8 +166,8 @@ std::size_t fell::lex::solve_expression(
     }
 
     bool alternance = false;
-    std::vector<bool> func_call = {};
-    std::vector<bool> func_no_param = {};
+    std::list<bool> func_call = {};
+    std::list<bool> func_no_param = {};
     std::size_t i;
 
     for(i = 0; i < expr.length() && expr[i] != ';'; ++i) {
@@ -182,20 +182,21 @@ std::size_t fell::lex::solve_expression(
                 if(expr[j] == ')') func_no_param.push_back(true);
                 else func_no_param.push_back(false);
                 alternance = false;
+                parameter_list.push_back({});
             }
         } else if(expr[i] == '[') {
             operators.push("[");
             alternance = false;
         } else if(expr[i] == ']') {
             while(!operators.empty() && operators.top() != "[")
-                solve_expression_stacks(vars, parameter_list, operators);
+                solve_expression_stacks(vars, *parameter_list.rbegin(), operators);
 
             if(!operators.empty()) {
-                solve_expression_stacks(vars, parameter_list, operators);
+                solve_expression_stacks(vars, *parameter_list.rbegin(), operators);
             }
         } else if(expr[i] == ')') {
             while(!operators.empty() && operators.top() != "(")
-                solve_expression_stacks(vars, parameter_list, operators);
+                solve_expression_stacks(vars, *parameter_list.rbegin(), operators);
 
             if(!operators.empty()) {
                 operators.pop();
@@ -207,7 +208,7 @@ std::size_t fell::lex::solve_expression(
 
                     std::vector<inmemory> params;
 
-                    params.reserve(parameter_list.size());
+                    params.reserve(parameter_list.rbegin()->size() + 1);
 
                     if(!*func_no_param.rbegin()) {
                         params.push_back(std::move(vars.top()));
@@ -216,10 +217,12 @@ std::size_t fell::lex::solve_expression(
 
                     func_no_param.pop_back();
 
-                    while(!parameter_list.empty()) {
-                        params.push_back(std::move(parameter_list.front()));
-                        parameter_list.pop();
+                    while(!parameter_list.rbegin()->empty()) {
+                        params.push_back(std::move(parameter_list.rbegin()->front()));
+                        parameter_list.rbegin()->pop();
                     }
+
+                    parameter_list.pop_back();
 
                     const auto lhs = std::move(vars.top());
                     vars.pop();
@@ -248,14 +251,14 @@ std::size_t fell::lex::solve_expression(
             --i;
 
             while(!operators.empty() && (operator_precedence(operators.top()) >= operator_precedence(next_operation)))
-                solve_expression_stacks(vars, parameter_list, operators);
+                solve_expression_stacks(vars, *parameter_list.rbegin(), operators);
 
             operators.push(next_operation);
         }
     }
 
     while(!operators.empty())
-        solve_expression_stacks(vars, parameter_list, operators);
+        solve_expression_stacks(vars, *parameter_list.rbegin(), operators);
 
     return i + 1;
 }

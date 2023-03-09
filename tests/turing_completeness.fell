@@ -39,6 +39,5 @@ while(|| { ret = i < 2; }, || {
 print("Sum of first two elements:", sum);
 
 if(Array["at"](0) < Array["at"](1), || {
-    x = Array["at"](1);
-    print(Array["at"](0), "is smaller than", x);
+    print(Array["at"](0), "is smaller than", Array["at"](1));
 })

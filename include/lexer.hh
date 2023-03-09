@@ -12,6 +12,7 @@
 #include <cctype>
 #include <stack>
 #include <queue>
+#include <list>
 
 #include "variable.hh"
 #include "util.hh"
