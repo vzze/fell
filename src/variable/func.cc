@@ -100,10 +100,10 @@ fell::types::variable::var fell::types::func::call(std::vector<lex::inmemory> &&
 
         lex::eval_code(std::get<1>(util::get_value<types::func::data>(this)));
 
-
         auto & context = *lex::contexts.rbegin();
-        auto ret = std::move(context["ret"]);
-        context.erase("ret");
+
+        lex::inmemory ret;
+        ret = std::exchange(context["ret"], lex::inmemory{});
         lex::contexts.pop_back();
 
         if(ret.non_reference) {

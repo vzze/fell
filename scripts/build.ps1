@@ -1,13 +1,18 @@
 param(
     [Parameter()]
-    [String]$Type = "mingw"
+    [String]$Type = ""
 )
 
 $check_dir = Test-Path ./build -PathType Container
 
-if($Type -eq "rebuild") {
-    Invoke-Expression "cmake --build ./build --config Release"
-    return
+if($Type -eq "") {
+    if($check_dir -eq $false) {
+        Write-Host "Please generate a build type: mingw or msvc"
+        return;
+    } else {
+        Invoke-Expression "cmake --build ./build --config Release"
+        return
+    }
 }
 
 if($check_dir -eq $false) {
