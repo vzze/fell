@@ -11,7 +11,8 @@ std::size_t fell::util::parse_args(int argc, char ** argv) {
             std::cout << "This program comes with ABSOLUTELY NO WARRANTY.\n";
             std::cout << "This is free software, and you are welcome to redistribute it\n";
             std::cout << "under certain conditions; type `fell conditions` for details.\n\n";
-            std::cout << "Version 1.6.5\n";
+            std::cout << "Version 1.6.7\n";
+
             return 0;
         } else if(arg == "conditions") {
             std::cout << "The Fell Programming Language\n";
@@ -29,6 +30,7 @@ std::size_t fell::util::parse_args(int argc, char ** argv) {
 
             std::cout << "You should have received a copy of the GNU General Public License\n";
             std::cout << "along with this program.  If not, see <https://www.gnu.org/licenses/>.\n";
+
             return 0;
         }
 

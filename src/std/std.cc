@@ -136,8 +136,8 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
             for(auto & [k, v] : table) {
                 ::std::vector<lex::inmemory> args;
                 args.reserve(2);
-                args.push_back(lex::inmemory{api::make_var<types::string>(k)});
-                args.push_back(lex::inmemory{&v});
+                args.emplace_back(api::make_var<types::string>(k));
+                args.emplace_back(&v);
                 [[maybe_unused]] auto u = params.get_param(1).expose()->call(::std::move(args));
             }
 
@@ -154,7 +154,7 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
 
             for(auto & v : array) {
                 ::std::vector<lex::inmemory> args;
-                args.reserve(1); args.push_back(lex::inmemory{&v});
+                args.reserve(1); args.emplace_back(&v);
                 [[maybe_unused]] auto u = params.get_param(1).expose()->call(::std::move(args));
             }
 

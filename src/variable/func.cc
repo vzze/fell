@@ -87,7 +87,7 @@ fell::types::variable::var fell::types::func::call(std::vector<lex::inmemory> &&
         auto embed = std::get<2>(util::get_value<types::func::data>(this));
         return embed(api::params{std::move(params)});
     } else {
-        lex::contexts.push_back({});
+        lex::contexts.emplace_back();
 
         try {
             for(std::size_t i = 0; auto & param_name : std::get<0>(util::get_value<types::func::data>(this))) {

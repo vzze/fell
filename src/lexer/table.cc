@@ -84,5 +84,5 @@ void fell::lex::solve_table(const std::string_view expr, std::stack<inmemory> & 
     if(expr[i] != '}')
         throw std::runtime_error{"Unterminated Table definition."};
 
-    vars.push(inmemory{std::move(tbl)});
+    vars.emplace(std::move(tbl));
 }

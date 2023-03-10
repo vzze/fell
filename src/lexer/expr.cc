@@ -35,15 +35,15 @@ void fell::lex::solve_expression_stacks(
     if(operation == #symbol) { \
         if(lhs.non_reference) { \
             if(rhs.non_reference) { \
-                return vars.push(inmemory{*lhs.non_reference op rhs.non_reference.get()}); \
+                vars.emplace(*lhs.non_reference op rhs.non_reference.get()); return; \
             } else { \
-                return vars.push(inmemory{*lhs.non_reference op rhs.reference->get()}); \
+                vars.emplace(*lhs.non_reference op rhs.reference->get()); return; \
             } \
         } else { \
             if(rhs.non_reference) { \
-                return vars.push(inmemory{**lhs.reference op rhs.non_reference.get()}); \
+                vars.emplace(**lhs.reference op rhs.non_reference.get()); return; \
             } else { \
-                return vars.push(inmemory{**lhs.reference op rhs.reference->get()}); \
+                vars.emplace(**lhs.reference op rhs.reference->get()); return; \
             } \
         } \
     }
@@ -86,7 +86,8 @@ void fell::lex::apply_operation(
             }
         }
 
-        return vars.push(inmemory{util::make_var<types::nihil>()});
+        vars.emplace(util::make_var<types::nihil>());
+        return;
     }
 
     if(operation == "[") {
@@ -97,14 +98,16 @@ void fell::lex::apply_operation(
                 if(s == nullptr)
                     s = util::make_var<types::nihil>();
 
-                return vars.push(inmemory{&s});
+                vars.emplace(&s);
+                return;
             } else {
                 auto & s = (*lhs.non_reference)[rhs.reference->get()];
 
                 if(s == nullptr)
                     s = util::make_var<types::nihil>();
 
-                return vars.push(inmemory{&s});
+                vars.emplace(&s);
+                return;
             }
         } else {
             if(rhs.non_reference) {
@@ -113,14 +116,16 @@ void fell::lex::apply_operation(
                 if(s == nullptr)
                     s = util::make_var<types::nihil>();
 
-                return vars.push(inmemory{&s});
+                vars.emplace(&s);
+                return;
             } else {
                 auto & s = (**lhs.reference)[rhs.reference->get()];
 
                 if(s == nullptr)
                     s = util::make_var<types::nihil>();
 
-                return vars.push(inmemory{&s});
+                vars.emplace(&s);
+                return;
             }
         }
     }
@@ -161,7 +166,7 @@ std::size_t fell::lex::solve_expression(
     std::stack<std::string_view> operators;
 
     if(v != nullptr) {
-        vars.push(inmemory{v});
+        vars.emplace(v);
         operators.push(op);
     }
 
@@ -182,7 +187,7 @@ std::size_t fell::lex::solve_expression(
                 if(expr[j] == ')') func_no_param.push_back(true);
                 else func_no_param.push_back(false);
                 alternance = false;
-                parameter_list.push_back({});
+                parameter_list.emplace_back();
             }
         } else if(expr[i] == '[') {
             operators.push("[");
@@ -228,9 +233,9 @@ std::size_t fell::lex::solve_expression(
                     vars.pop();
 
                     if(lhs.reference) {
-                        vars.push(inmemory{(*lhs.reference)->call(std::move(params))});
+                        vars.emplace((*lhs.reference)->call(std::move(params)));
                     } else {
-                        vars.push(inmemory{lhs.non_reference->call(std::move(params))});
+                        vars.emplace(lhs.non_reference->call(std::move(params)));
                     }
                 }
             }

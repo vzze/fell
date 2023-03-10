@@ -45,5 +45,5 @@ void fell::lex::solve_string(const std::string_view expr, std::stack<inmemory> &
 
     replace_string_codes(data);
 
-    vars.push(inmemory{util::make_var<types::string>(data)});
+    vars.emplace(util::make_var<types::string>(data));
 }

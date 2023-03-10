@@ -19,7 +19,7 @@ void fell::lex::solve_func(const std::string_view expr, std::stack<inmemory> & v
 
                 while(std::isspace(expr[j])) ++j;
 
-                params.push_back(std::string{expr.data() + j, i - j});
+                params.emplace_back(expr.data() + j, i - j);
 
                 i = copy;
 
@@ -37,7 +37,7 @@ void fell::lex::solve_func(const std::string_view expr, std::stack<inmemory> & v
 
                 while(std::isspace(expr[j])) ++j;
                 if(j < i)
-                    params.push_back(std::string{expr.data() + j, i - j});
+                    params.emplace_back(expr.data() + j, i - j);
                 i = copy;
                 break;
             }
@@ -79,5 +79,5 @@ void fell::lex::solve_func(const std::string_view expr, std::stack<inmemory> & v
 
     std::string body{expr.data() + j, i - j};
 
-    vars.push(inmemory{util::make_var<types::func>(std::tuple{ params, body, nullptr })});
+    vars.emplace(util::make_var<types::func>(std::tuple{ params, body, nullptr }));
 }

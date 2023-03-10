@@ -30,7 +30,7 @@ void fell::lex::solve_variable(
     } else {
         const std::size_t j = i;
 
-        while(std::strchr(" \",;=<>!&?+-%*/()[]{}", expr[i]) == 0 && i < expr.length()) {
+        while((std::isalnum(expr[i]) || expr[i] == '_') && i < expr.length()) {
             ++i;
         }
 
@@ -45,7 +45,8 @@ void fell::lex::solve_variable(
         /* std::cout << var << '\n'; */
 
         if(var == "Global") {
-            return vars.push(inmemory{&global_table});
+            vars.emplace(&global_table);
+            return;
         }
 
         if(var == "ret") {
@@ -56,13 +57,14 @@ void fell::lex::solve_variable(
 
             ref.non_reference = util::make_var<types::nihil>();
 
-            return vars.push(inmemory{&ref.non_reference});
+            vars.emplace(&ref.non_reference);
+            return;
         }
 
         --i;
 
         try {
-            vars.push(inmemory{check_for_constant_expression(var)});
+            vars.emplace(check_for_constant_expression(var));
         } catch(...) {
             if(local_value) {
                 local_value = false;
@@ -74,7 +76,8 @@ void fell::lex::solve_variable(
 
                 ref.non_reference = util::make_var<types::nihil>();
 
-                return vars.push(inmemory{&ref.non_reference});
+                vars.emplace(&ref.non_reference);
+                return;
             }
 
             auto it = contexts.rbegin();
@@ -82,9 +85,11 @@ void fell::lex::solve_variable(
             while(it != contexts.rend()) {
                 auto & ref = (*it)[std::string{var}];
                 if(ref.non_reference) {
-                    return vars.push(inmemory{&ref.non_reference});
+                    vars.emplace(&ref.non_reference);
+                    return;
                 } else if(ref.reference) {
-                    return vars.push(inmemory{ref.reference});
+                    vars.emplace(ref.reference);
+                    return;
                 }
                 ++it;
             }
@@ -94,7 +99,7 @@ void fell::lex::solve_variable(
             if(ref == nullptr)
                 ref = util::make_var<types::nihil>();
 
-            vars.push(inmemory{&ref});
+            vars.emplace(&ref);
         }
     }
 }
