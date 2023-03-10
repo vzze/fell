@@ -102,6 +102,6 @@ fell::types::table::~table() {
     delete util::get_value<tbl>(this);
 }
 
-fell::types::variable::var fell::types::table::call(std::vector<lex::inmemory> &&) {
+fell::types::variable::var fell::types::table::call(std::vector<lex::inmemory> &&, bool) {
     throw std::runtime_error{"Table variable can't be called."};
 }

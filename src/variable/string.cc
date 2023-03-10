@@ -113,6 +113,6 @@ fell::types::variable::var & fell::types::string::operator [] (const std::size_t
     throw std::runtime_error{"No subscript operator on variable of type String."};
 }
 
-fell::types::variable::var fell::types::string::call(std::vector<lex::inmemory> &&) {
+fell::types::variable::var fell::types::string::call(std::vector<lex::inmemory> &&, bool) {
     throw std::runtime_error{"String variable can't be called."};
 }

@@ -1,0 +1,3 @@
+x = 16666;
+
+print(tostring(x) + "y");

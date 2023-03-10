@@ -80,6 +80,6 @@ fell::types::variable::var & fell::types::nihil::operator [] (const std::size_t)
     throw std::runtime_error{"Nil variable has no subscript operator."};
 }
 
-fell::types::variable::var fell::types::nihil::call(std::vector<lex::inmemory> &&) {
+fell::types::variable::var fell::types::nihil::call(std::vector<lex::inmemory> &&, bool) {
     throw std::runtime_error{"Nil variable can't be called."};
 }

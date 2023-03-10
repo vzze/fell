@@ -1,0 +1,3 @@
+x = "16023";
+
+print(tonumber(x) + 1);

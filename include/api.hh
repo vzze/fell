@@ -77,6 +77,7 @@ namespace fell {
                 std::vector<lex::inmemory> pars;
             public:
                 params(std::vector<lex::inmemory> &&);
+                std::vector<lex::inmemory> & expose();
                 std::size_t number_of_params();
                 param get_param(std::size_t);
                 void  for_each_param(std::function<void(param)>);

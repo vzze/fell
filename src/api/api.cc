@@ -15,6 +15,10 @@ fell::api::param fell::api::params::get_param(std::size_t index) {
         return param{*pars.at(index).reference};
 }
 
+std::vector<fell::lex::inmemory> & fell::api::params::expose() {
+    return pars;
+}
+
 void fell::api::params::for_each_param(std::function<void(param)> applied) {
     for(auto & p : pars) {
         if(p.non_reference)

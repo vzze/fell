@@ -175,6 +175,71 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
 
             return api::make_var<types::nihil>();
         }
+    },
+    {
+        "tonumber",
+        [](fell::api::params params) -> fell::types::variable::var {
+            return api::make_var<types::number>(::std::stod(params.get_param(0).get_value<api::param::str>()));
+        }
+    },
+    {
+        "tostring",
+        [](fell::api::params params) -> fell::types::variable::var {
+            return api::make_var<types::string>(::std::to_string(params.get_param(0).get_value<api::param::num>()));
+        }
+    },
+    {
+        "error",
+        [](fell::api::params params) -> fell::types::variable::var {
+            throw ::std::runtime_error{params.get_param(0).get_value<api::param::str>()};
+        }
+    },
+    {
+        "type",
+        [](fell::api::params params) -> fell::types::variable::var {
+            auto par = params.get_param(0);
+            try {
+                par.get_value<api::param::num>();
+                return api::make_var<types::string>("num");
+            } catch(...) {
+                try {
+                    par.get_value<api::param::str>();
+                    return api::make_var<types::string>("str");
+                } catch(...) {
+                    try {
+                        par.get_value<api::param::fun>();
+                        return api::make_var<types::string>("fun");
+                    } catch(...) {
+                        try {
+                            par.get_value<api::param::tbl>();
+                            return api::make_var<types::string>("tbl");
+                        } catch(...) {
+                            return api::make_var<types::string>("nil");
+                        }
+                    }
+                }
+            }
+        }
+    },
+    {
+        "protected_call",
+        [](fell::api::params params) -> fell::types::variable::var {
+            if(params.number_of_params() < 1)
+                throw ::std::runtime_error{"protected_call expects atleast 1 parameter."};
+
+            auto exposed = ::std::move(params.expose());
+            auto func = ::std::move(exposed[0]);
+
+            exposed.erase(exposed.begin());
+
+            if(func.non_reference) {
+                return func.non_reference->call(::std::move(exposed), true);
+            } else if(func.reference) {
+                return (*func.reference)->call(::std::move(exposed), true);
+            } else {
+                throw ::std::runtime_error{"Unresolved parameter."};
+            }
+        }
     }
 };
 

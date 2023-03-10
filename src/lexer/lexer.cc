@@ -8,11 +8,13 @@ fell::lex::inmemory::inmemory() : non_reference(nullptr), reference(nullptr) {}
 fell::lex::inmemory::inmemory(types::variable::var && v) : non_reference{std::move(v)}, reference{nullptr} {}
 fell::lex::inmemory::inmemory(types::variable::var * v) : non_reference{nullptr}, reference{v} {}
 
-void fell::lex::eval_code(const std::string & code) {
+void fell::lex::eval_code(const std::string & code, bool protected_call) {
     for(std::size_t i = 0; i < code.length(); ++i) {
         try {
             i += solve_expression(std::string_view{code.begin() + static_cast<std::int64_t>(i), code.end()});
         } catch(std::exception & e) {
+            if(protected_call)
+                throw std::runtime_error{e.what()}; // might look weird but since the call is protected the error can propagate
             local_value = false;
             std::cout << code.substr(i, code.find_first_of(";", i) - i) << '\n';
             std::cout << "->> " << e.what() << '\n';

@@ -82,7 +82,7 @@ fell::types::variable::var fell::types::func::operator || (const variable *) {
     return fell::util::make_var<number>(1);
 }
 
-fell::types::variable::var fell::types::func::call(std::vector<lex::inmemory> && params) {
+fell::types::variable::var fell::types::func::call(std::vector<lex::inmemory> && params, bool protected_call) {
     if(std::get<2>(util::get_value<types::func::data>(this))) {
         auto embed = std::get<2>(util::get_value<types::func::data>(this));
         return embed(api::params{std::move(params)});
@@ -98,22 +98,59 @@ fell::types::variable::var fell::types::func::call(std::vector<lex::inmemory> &&
             throw std::runtime_error{"Not enough arguments to call function."};
         }
 
-        lex::eval_code(std::get<1>(util::get_value<types::func::data>(this)));
+        if(!protected_call) {
+            lex::eval_code(std::get<1>(util::get_value<types::func::data>(this)));
 
-        auto & context = *lex::contexts.rbegin();
+            auto & context = *lex::contexts.rbegin();
 
-        lex::inmemory ret;
-        ret = std::exchange(context["ret"], lex::inmemory{});
-        lex::contexts.pop_back();
+            lex::inmemory ret;
+            ret = std::exchange(context["ret"], lex::inmemory{});
 
-        if(ret.non_reference) {
-            return std::move(ret.non_reference);
-        } else if(ret.reference) {
-            types::variable::var v;
-            util::copy(v, *ret.reference);
-            return v;
+            lex::contexts.pop_back();
+
+            if(ret.non_reference) {
+                return std::move(ret.non_reference);
+            } else if(ret.reference) {
+                types::variable::var v;
+                util::copy(v, *ret.reference);
+                return v;
+            } else {
+                return util::make_var<nihil>();
+            }
         } else {
-            return util::make_var<nihil>();
+            auto tbl = api::make_var<types::table>();
+
+            (*tbl)["errmsg"] = util::make_var<types::string>("");
+            (*tbl)["errc"] = util::make_var<types::number>(0);
+
+            try {
+                lex::eval_code(std::get<1>(util::get_value<types::func::data>(this)), protected_call);
+
+                auto & context = *lex::contexts.rbegin();
+
+                lex::inmemory ret;
+                ret = std::exchange(context["ret"], lex::inmemory{});
+
+                lex::contexts.pop_back();
+
+                if(ret.non_reference) {
+                    (*tbl)["value"] = std::move(ret.non_reference);
+                } else if(ret.reference) {
+                    util::copy((*tbl)["value"], *ret.reference);
+                } else {
+                    (*tbl)["value"] = util::make_var<nihil>();
+                }
+
+                return tbl;
+            } catch(std::exception & e) {
+                lex::contexts.pop_back();
+
+                (*tbl)["errmsg"] = util::make_var<types::string>(e.what());
+                (*tbl)["errc"] = util::make_var<types::number>(::std::strlen(e.what()));
+                (*tbl)["value"] = util::make_var<types::nihil>();
+
+                return tbl;
+            }
         }
     }
 }

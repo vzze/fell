@@ -49,7 +49,7 @@ namespace fell {
             [[nodiscard]] virtual var & operator [] (const variable *) = 0;
             [[nodiscard]] virtual var & operator [] (const std::string) = 0;
             [[nodiscard]] virtual var & operator [] (const std::size_t) = 0;
-            [[nodiscard]] virtual var call (std::vector<lex::inmemory> &&) = 0;
+            [[nodiscard]] virtual var call (std::vector<lex::inmemory> &&, bool = false) = 0;
 
             virtual ~variable();
         };
@@ -78,7 +78,7 @@ namespace fell {
             var & operator [] (const std::string) override;
             var & operator [] (const std::size_t) override;
 
-            var call (std::vector<lex::inmemory> &&) override;
+            var call (std::vector<lex::inmemory> &&, bool = false) override;
         };
 
         struct string : public variable {
@@ -105,7 +105,7 @@ namespace fell {
             var & operator [] (const str) override;
             var & operator [] (const std::size_t) override;
 
-            var call (std::vector<lex::inmemory> &&) override;
+            var call (std::vector<lex::inmemory> &&, bool = false) override;
         };
 
         struct table : public variable {
@@ -133,7 +133,7 @@ namespace fell {
             [[nodiscard]] var & operator [] (const string::str) override;
             [[nodiscard]] var & operator [] (const std::size_t) override;
 
-            var call (std::vector<lex::inmemory> &&) override;
+            var call (std::vector<lex::inmemory> &&, bool = false) override;
 
             ~table();
         };
@@ -162,7 +162,7 @@ namespace fell {
             var & operator [] (const string::str) override;
             var & operator [] (const std::size_t) override;
 
-            var call (std::vector<lex::inmemory> &&) override;
+            var call (std::vector<lex::inmemory> &&, bool = false) override;
         };
 
         struct func : public variable {
@@ -189,7 +189,7 @@ namespace fell {
             var & operator [] (const string::str) override;
             var & operator [] (const std::size_t) override;
 
-            [[nodiscard]] var call (std::vector<lex::inmemory> &&) override;
+            [[nodiscard]] var call (std::vector<lex::inmemory> &&, bool = false) override;
         };
     }
 }

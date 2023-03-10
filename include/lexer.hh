@@ -39,7 +39,7 @@ namespace fell {
         extern std::list<std::unordered_map<std::string, inmemory>> contexts;
 
         void parse_file(const std::filesystem::path);
-        void eval_code(const std::string &);
+        void eval_code(const std::string &, bool = false);
 
         std::size_t operator_precedence(const std::string_view);
         void apply_operation(const inmemory &&, const inmemory &&, const std::string_view, std::stack<inmemory> &);

@@ -41,6 +41,6 @@ Fell is not JIT and does not generate bytecode, being a syntax tree walker it's 
 
 The Standard Library is missing features (i.e. string manipulation)
 
-This is a personal project that was made for fun, and I don't expect to maintain it for long periods of time.
+This is a personal project that I made for fun, and I don't expect to maintain it for a long period of time.
 
 As of [80b96e9](https://github.com/vzze/fell/commit/80b96e92d2c9217970d62e33c23548d21712bc9e) Fell is Turing complete (`tests/turing_completeness.fell`)
