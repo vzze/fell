@@ -246,4 +246,5 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
 void fell::std::init() {
     for(auto & [n, f] : general)
         api::set_global_var(n, api::make_func(f));
+    init_table();
 }

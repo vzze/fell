@@ -1,0 +1,21 @@
+x = {};
+
+x[0] = 3;
+x[1] = 2;
+x[2] = 1;
+
+table["sort"](x);
+
+for_each(x, |v| {
+    print(v);
+});
+
+print();
+
+table["sort"](x, |a, b| {
+    ret = a > b;
+});
+
+for_each(x, |v| {
+    print(v);
+});

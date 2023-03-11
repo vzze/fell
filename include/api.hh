@@ -45,7 +45,7 @@ namespace fell {
         };
 
         template<typename UnderlyingValue>
-        inline UnderlyingValue get_value(types::variable::var & v) {
+        inline UnderlyingValue get_value(const types::variable::var & v) {
             static_assert(
                 std::is_same_v<UnderlyingValue, param::num> ||
                 std::is_same_v<UnderlyingValue, param::str> ||
@@ -58,6 +58,7 @@ namespace fell {
         }
 
         inline void copy(param & a, const param & b) { util::copy(a.v, b.v); }
+        inline void copy_var(types::variable::var & a, const types::variable::var & b) { util::copy(a, b); }
 
         template<typename Type, typename ... Args>
         inline types::variable::var make_var(Args && ... args) {

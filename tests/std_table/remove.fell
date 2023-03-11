@@ -1,0 +1,14 @@
+x = {};
+
+x[0] = 1;
+x[1] = 2;
+x[2] = 3;
+
+print("removed:");
+print(table["remove"](x, 1));
+
+print("x:");
+
+for_each(x, |v| {
+    print(v);
+});

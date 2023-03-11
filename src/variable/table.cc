@@ -77,8 +77,14 @@ fell::types::variable::var & fell::types::table::operator [] (const variable * k
         auto key_t = static_cast<std::size_t>(util::get_value<number::num>(key));
         auto & ref = util::get_value<tbl>(this)->second;
 
-        if(ref.size() <= key_t)
+        if(ref.size() <= key_t) {
+            auto sz = ref.size();
+
             ref.resize(key_t + 1);
+
+            for(std::size_t i = sz; i < ref.size(); ++i)
+                ref[i] = util::make_var<types::nihil>();
+        }
 
         return ref[key_t];
     }
@@ -93,7 +99,16 @@ fell::types::variable::var & fell::types::table::operator [] (const std::size_t 
         return util::get_value<tbl>(this)->second.at(key);
     } catch(...) {
         auto & ref = util::get_value<tbl>(this)->second;
-        ref.resize(key + 1);
+
+        if(ref.size() <= key) {
+            auto sz = ref.size();
+
+            ref.resize(key + 1);
+
+            for(std::size_t i = sz; i < ref.size(); ++i)
+                ref[i] = util::make_var<types::nihil>();
+        }
+
         return ref[key];
     }
 }

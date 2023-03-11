@@ -1,0 +1,23 @@
+x = {
+    "key1": "value1",
+    "key2": "value2",
+    "key3": "value3",
+    "key4": "value4",
+};
+
+print("table x:");
+
+for_kv(x, |k, v| {
+    print(k, v);
+});
+
+packed = table["pack"](x);
+
+print("packed x:");
+
+i = 0;
+
+for_each(packed, |v| {
+    print(i, v);
+    i = i + 1;
+})

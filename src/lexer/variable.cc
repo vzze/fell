@@ -42,8 +42,6 @@ void fell::lex::solve_variable(
             return;
         }
 
-        /* std::cout << var << '\n'; */
-
         if(var == "Global") {
             vars.emplace(&global_table);
             return;

@@ -1,6 +1,7 @@
 #ifndef STD_HH
 #define STD_HH
 
+#include <algorithm>
 #include <stdexcept>
 #include <iostream>
 
@@ -12,6 +13,9 @@
 namespace fell {
     namespace std {
         extern ::std::vector<::std::pair<::std::string,::std::function<types::variable::var(api::params)>>> general;
+        extern ::std::vector<::std::pair<::std::string,::std::function<types::variable::var(api::params)>>> table;
+
+        void init_table();
         void init();
     }
 }
