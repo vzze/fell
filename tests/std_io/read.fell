@@ -1,0 +1,28 @@
+s = io["open"]("file.txt", "r");
+
+print("file handle:", s); # this is the most cursed pointer manipulation i've ever done
+
+read_num = || {
+    n = io["read"](s, "num");
+    print("read: ", n);
+};
+
+read_num();
+read_num();
+read_num();
+
+print("closed: ", io["close"](s));
+
+s = io["open"]("file.txt", "r");
+print("file handle:", s);
+
+print(io["read"](s, "line")); # extra \n from print
+
+print("closed: ", io["close"](s));
+
+s = io["open"]("file.txt", "r");
+print("file handle:", s);
+
+print(io["read"](s, "all"));
+
+print("closed: ", io["close"](s));
