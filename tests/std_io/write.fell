@@ -1,0 +1,23 @@
+io["write"](io["stdout"], 42);
+io["write"](io["stdout"], 42, "%.0lf\n");
+io["write"](io["stdout"], "string", "%s\n");
+
+fun = || {};
+tbl = {};
+nil = nihil;
+
+io["write"](io["stdout"], nil);
+io["write"](io["stdout"], fun, "\n%p\n");
+io["write"](io["stdout"], tbl, "%p\n");
+
+io["write"](io["stderr"], "is stderr even used for something these days?\n");
+
+s = io["open"]("fle.txt", "a");
+
+if(s, || {
+    io["write"](s, "Hello World!", "\n%s\n");
+    print(io["close"](s));
+}, || {
+    print("Couldn't open file"); # When opening a file for writing it's automatically created
+    # this is kind of useless here
+});

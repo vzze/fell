@@ -4,81 +4,117 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
     {
         "open",
         [](api::params params) -> types::variable::var {
-            if(params.number_of_params() == 1) {
-                const auto s = _fell__open(
-                    (lex::project_root / params.get_param(0).get_value<api::param::str>()).string().c_str(),
-                    "r"
-                );
+            ::std::FILE * file;
 
-                if(s == nullptr)
-                    return util::make_var<types::nihil>();
-                else
-                    return api::make_var<types::number>(
-                        ::std::bit_cast<::std::intptr_t>(s)
-                    );
-            } else {
-                const auto s = _fell__open(
-                    (lex::project_root / params.get_param(0).get_value<api::param::str>()).string().c_str(),
-                    params.get_param(1).get_value<api::param::str>().c_str()
-                );
-
-                if(s == nullptr)
-                    return util::make_var<types::nihil>();
-                else
-                    return api::make_var<types::number>(
-                        ::std::bit_cast<::std::intptr_t>(s)
-                    );
-            }
+            if(fopen_s(
+                &file,
+                (lex::project_root / params.get_param(0).get_value<api::param::str>()).string().c_str(),
+                params.get_param(1).get_value<api::param::str>().c_str()
+            ) == 0)
+                return api::make_var<types::file>(file);
+            else
+                return api::make_var<types::nihil>();
         }
     },
     {
         "close",
         [](api::params params) -> types::variable::var {
-            const auto err = _fell__close( // this is not safe code
-                ::std::bit_cast<::std::FILE*>( // but it works
-                    static_cast<::std::intptr_t>(
-                        params.get_param(0).get_value<api::param::num>()
-                    )
-                )
-            );
-
-            if(err == 0) {
-                return util::make_var<types::number>(1);
-            } else {
-                return util::make_var<types::nihil>();
-            }
+            if(fclose(params.get_param(0).get_value<api::param::fil>()) == 0)
+                return api::make_var<types::number>(1);
+            else
+                return api::make_var<types::nihil>();
         }
     },
     {
         "read",
         [](api::params params) -> types::variable::var {
-            const auto file = ::std::bit_cast<::std::FILE*>(
-                static_cast<::std::intptr_t>(
-                    params.get_param(0).get_value<api::param::num>()
-                )
-            );
+            const auto value = params.get_param(1).get_value<api::param::str>();
+            if(value == "num") {
+                double d;
 
-            const auto var_type = params.get_param(1).get_value<api::param::str>();
+                if(fscanf_s(params.get_param(0).get_value<api::param::fil>(), "%lf", &d) > 0)
+                    return api::make_var<types::number>(d);
+                else
+                    return api::make_var<types::nihil>();
+            } else if(value == "str") {
+                ::std::string str; str.resize(4208);
 
-            if(var_type == "num") {
-                return api::make_var<types::number>(
-                    _fell__read_number(file, &params.get_param(2).get_value<api::param::num>())
-                );
-            } else if(var_type == "line") {
-                auto & ref = params.get_param(2).get_value<api::param::str>();
-                ref.resize(4208);
-                const auto ret = _fell__read_line(file, ref.data());
-                ref.shrink_to_fit();
-                return api::make_var<types::number>(ret);
-            } else if(var_type == "all") {
-                char * buffer;
-                _fell__read_file(file, &buffer);
-                auto value = ::std::string{buffer};
-                _fell__free(&buffer);
-                return api::make_var<types::string>(value);
+                if(fscanf_s(params.get_param(0).get_value<api::param::fil>(), "%s", str.data()) > 0) {
+                    str.shrink_to_fit();
+                    return api::make_var<types::string>(str);
+                } else
+                    return api::make_var<types::nihil>();
+
+            } else if(value == "line") {
+                ::std::string str; str.resize(4208);
+                if(fgets(str.data(), 4208, params.get_param(0).get_value<api::param::fil>()) != nullptr) {
+                    str.shrink_to_fit();
+                    return api::make_var<types::string>(str);
+                } else
+                    return api::make_var<types::nihil>();
+            } else if(value == "all") {
+                const auto file = params.get_param(0).get_value<api::param::fil>();
+                fseek(file, 0, SEEK_END);
+
+                long sz = ftell(file);
+                ::std::string str; str.resize(static_cast<::std::size_t>(sz));
+
+                fseek(file, 0, SEEK_SET);
+                fread(&str[0], static_cast<::std::size_t>(sz), 1, file);
+
+                return api::make_var<types::string>(str);
             } else {
                 return api::make_var<types::nihil>();
             }
+        }
+    },
+    {
+        "write",
+        [](api::params params) -> types::variable::var {
+            [[maybe_unused]] const auto file = params.get_param(0).get_value<api::param::fil>();
+            auto fmt = ::std::string{""};
+            if(params.number_of_params() >= 3)
+                fmt = params.get_param(2).get_value<api::param::str>();
+            [[maybe_unused]] const auto par  = params.get_param(1);
+
+            try {
+                if(fmt != "")
+                    fprintf_s(file, fmt.c_str(), par.get_value<api::param::num>());
+                else
+                    fprintf_s(file, "%lf", par.get_value<api::param::num>());
+            } catch(...) {
+                try {
+                    if(fmt != "")
+                        fprintf_s(file, fmt.c_str(), par.get_value<api::param::str>().c_str());
+                    else
+                        fprintf_s(file, "%s", par.get_value<api::param::str>().c_str());
+                } catch(...) {
+                    try {
+                        if(fmt != "")
+                            fprintf_s(file, fmt.c_str(), &par.get_value<api::param::fun>());
+                        else
+                            fprintf_s(file, "%p", &par.get_value<api::param::fun>());
+                    } catch(...) {
+                        try {
+                            if(fmt != "")
+                                fprintf_s(file, fmt.c_str(), par.get_value<api::param::tbl>());
+                            else
+                                fprintf_s(file, "%p", par.get_value<api::param::tbl>());
+                        } catch(...) {
+                            try {
+                                if(fmt != "")
+                                    fprintf_s(file, fmt.c_str(), par.get_value<api::param::fil>());
+                                else
+                                    fprintf_s(file, "%p", par.get_value<api::param::fil>());
+                            } catch(...) {
+                                fprintf_s(file, "nil");
+                            }
+                        }
+                    }
+                }
+            }
+
+            return api::make_var<types::nihil>();
         }
     }
 };
@@ -86,9 +122,9 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
 void fell::std::init_io() {
     auto tbl = api::make_var<types::table>();
 
-    (*tbl)["stdin"] = api::make_var<types::number>(static_cast<double>(FILE::STDIN));
-    (*tbl)["stdout"] = api::make_var<types::number>(static_cast<double>(FILE::STDOUT));
-    (*tbl)["stderr"] = api::make_var<types::number>(static_cast<double>(FILE::STDERR));
+    (*tbl)["stdin"] = api::make_var<types::file>(stdin);
+    (*tbl)["stdout"] = api::make_var<types::file>(stdout);
+    (*tbl)["stderr"] = api::make_var<types::file>(stderr);
 
     for(auto & [n, f] : io)
         (*tbl)[n] = api::make_func(f);

@@ -11,21 +11,11 @@
 #include "api.hh"
 #include "lexer.hh"
 
-extern "C" {
-    #include "file.h"
-}
-
 namespace fell {
     namespace std {
         extern ::std::vector<::std::pair<::std::string,::std::function<types::variable::var(api::params)>>> general;
         extern ::std::vector<::std::pair<::std::string,::std::function<types::variable::var(api::params)>>> table;
         extern ::std::vector<::std::pair<::std::string,::std::function<types::variable::var(api::params)>>> io;
-
-        enum class FILE : ::std::int16_t {
-            STDIN  = -0xFC,
-            STDOUT = -0xC0,
-            STDERR = -0xFF
-        };
 
         void init_table();
         void init_io();

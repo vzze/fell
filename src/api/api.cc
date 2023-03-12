@@ -19,13 +19,12 @@ std::vector<fell::lex::inmemory> & fell::api::params::expose() {
     return pars;
 }
 
-void fell::api::params::for_each_param(std::function<void(param)> applied) {
-    for(auto & p : pars) {
-        if(p.non_reference)
-            applied(param{p.non_reference});
+void fell::api::params::for_each_param(std::function<void(param)> applied, ::std::size_t num) {
+    for(auto i = num; i < pars.size(); ++i)
+        if(pars[i].non_reference)
+            applied(param{pars[i].non_reference});
         else
-            applied(param{*p.reference});
-    }
+            applied(param{*pars[i].reference});
 }
 
 std::size_t fell::api::params::number_of_params() {

@@ -20,7 +20,11 @@ void fell::util::copy(types::variable::var & a, const types::variable::var & b) 
                         copy((*a)[i++], v);
 
                 } catch(...) {
-                    a = make_var<types::func>(get_value<types::func::data>(b.get()));
+                    try {
+                        a = make_var<types::func>(get_value<types::func::data>(b.get()));
+                    } catch(...) {
+                        a = make_var<types::file>(get_value<types::file::fl>(b.get()));
+                    }
                 }
             }
         }

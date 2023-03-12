@@ -5,6 +5,7 @@
 #include <functional>
 #include <exception>
 #include <stdexcept>
+#include <fstream>
 #include <utility>
 #include <string>
 #include <vector>
@@ -141,6 +142,33 @@ namespace fell {
         struct nihil : public variable {
             using nil = std::nullptr_t;
             nihil(nil = nullptr);
+
+            var operator + (const variable *) override;
+            var operator - (const variable *) override;
+            var operator * (const variable *) override;
+            var operator / (const variable *) override;
+            var operator % (const variable *) override;
+
+            var operator >  (const variable *) override;
+            var operator >= (const variable *) override;
+            var operator <  (const variable *) override;
+            var operator <= (const variable *) override;
+            var operator == (const variable *) override;
+            var operator != (const variable *) override;
+
+            [[nodiscard]] var operator && (const variable *) override;
+            [[nodiscard]] var operator || (const variable *) override;
+
+            var & operator [] (const variable *) override;
+            var & operator [] (const string::str) override;
+            var & operator [] (const std::size_t) override;
+
+            var call (std::vector<lex::inmemory> &&, bool = false) override;
+        };
+
+        struct file : public variable {
+            using fl = FILE*;
+            file(fl = nullptr);
 
             var operator + (const variable *) override;
             var operator - (const variable *) override;

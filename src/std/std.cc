@@ -19,7 +19,12 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
                                 const auto ptr = par.get_value<api::param::tbl>();
                                 ::std::cout << "table: " << ptr << ' ';
                             } catch(...) {
-                                ::std::cout << "nil ";
+                                try {
+                                    const auto ptr = par.get_value<api::param::fil>();
+                                    ::std::cout << "file: " << ptr << ' ';
+                                } catch(...) {
+                                    ::std::cout << "nil ";
+                                }
                             }
                         }
                     }
@@ -216,7 +221,12 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
                             par.get_value<api::param::tbl>();
                             return api::make_var<types::string>("tbl");
                         } catch(...) {
-                            return api::make_var<types::string>("nil");
+                            try {
+                                par.get_value<api::param::fil>();
+                                return api::make_var<types::string>("fil");
+                            } catch(...) {
+                                return api::make_var<types::string>("nil");
+                            }
                         }
                     }
                 }

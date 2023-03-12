@@ -21,6 +21,7 @@ namespace fell {
             using tbl = types::table::tbl;
             using fun = types::func::data;
             using nil = types::nihil::nil;
+            using fil = types::file::fl;
 
             private:
                 types::variable::var & v;
@@ -33,6 +34,21 @@ namespace fell {
                         std::is_same_v<UnderlyingValue, str> ||
                         std::is_same_v<UnderlyingValue, tbl> ||
                         std::is_same_v<UnderlyingValue, fun> ||
+                        std::is_same_v<UnderlyingValue, fil> ||
+                        std::is_same_v<UnderlyingValue, nil>,
+                        "Type must be one of the: param::num, param::str, param::tbl, param::fun, param::nil"
+                    );
+                    return util::get_value<UnderlyingValue>(v.get());
+                }
+
+                template<typename UnderlyingValue>
+                const UnderlyingValue & get_value() const {
+                    static_assert(
+                        std::is_same_v<UnderlyingValue, num> ||
+                        std::is_same_v<UnderlyingValue, str> ||
+                        std::is_same_v<UnderlyingValue, tbl> ||
+                        std::is_same_v<UnderlyingValue, fun> ||
+                        std::is_same_v<UnderlyingValue, fil> ||
                         std::is_same_v<UnderlyingValue, nil>,
                         "Type must be one of the: param::num, param::str, param::tbl, param::fun, param::nil"
                     );
@@ -51,8 +67,9 @@ namespace fell {
                 std::is_same_v<UnderlyingValue, param::str> ||
                 std::is_same_v<UnderlyingValue, param::tbl> ||
                 std::is_same_v<UnderlyingValue, param::fun> ||
-                std::is_same_v<UnderlyingValue, param::nil>,
-                "Type must be one of the: param::num, param::str, param::tbl, param::fun, param::nil"
+                std::is_same_v<UnderlyingValue, param::nil> ||
+                std::is_same_v<UnderlyingValue, param::fil>,
+                "Type must be one of the: param::num, param::str, param::tbl, param::fun, param::nil, param::fil"
             );
             return util::get_value<UnderlyingValue>(v.get());
         }
@@ -67,8 +84,9 @@ namespace fell {
                 std::is_same_v<Type, types::string> ||
                 std::is_same_v<Type, types::table> ||
                 std::is_same_v<Type, types::func> ||
+                std::is_same_v<Type, types::file> ||
                 std::is_same_v<Type, types::nihil>,
-                "Type must be one of the: types::number, types::string, types::table, types::func, types::nihil"
+                "Type must be one of the: types::number, types::string, types::table, types::func, types::nihil, types::file"
             );
             return util::make_var<Type>(std::forward<Args>(args)...);
         }
@@ -81,7 +99,7 @@ namespace fell {
                 std::vector<lex::inmemory> & expose();
                 std::size_t number_of_params();
                 param get_param(std::size_t);
-                void  for_each_param(std::function<void(param)>);
+                void  for_each_param(std::function<void(param)>, ::std::size_t = 0);
         };
 
         types::variable::var make_func(std::function<types::variable::var(params)>);

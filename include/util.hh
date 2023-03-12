@@ -34,15 +34,17 @@ namespace fell {
                 return std::any_cast<T&>(var->value);
             } catch(...) { // Get underlying data from a variable
                 if constexpr(std::is_same_v<T, types::number::num>) {
-                    throw std::runtime_error("Right hand variable is not convertible to Number.");
+                    throw std::runtime_error("Variable is not convertible to Number.");
                 } else if constexpr(std::is_same_v<T, types::string::str>) {
-                    throw std::runtime_error("Right hand variable is not convertible to String.");
+                    throw std::runtime_error("Variable is not convertible to String.");
                 } else if constexpr(std::is_same_v<T, types::table::tbl>) {
-                    throw std::runtime_error("Right hand variable is not convertible to Table.");
+                    throw std::runtime_error("Variable is not convertible to Table.");
                 } else if constexpr(std::is_same_v<T, types::nihil::nil>) {
-                    throw std::runtime_error("Right hand variable is not convertible to Nil.");
+                    throw std::runtime_error("Variable is not convertible to Nil.");
                 } else if constexpr(std::is_same_v<T, types::func::data>) {
-                    throw std::runtime_error("Right hand variable is not convertible to Function.");
+                    throw std::runtime_error("Variable is not convertible to Function.");
+                } else if constexpr(std::is_same_v<T, types::file::fl>) {
+                    throw std::runtime_error("Variable is not convertible to File.");
                 }
             }
         }
@@ -53,15 +55,17 @@ namespace fell {
                 return std::any_cast<const T&>(var->value);
             } catch(...) { // Same thing here as above
                 if constexpr(std::is_same_v<T, types::number::num>) {
-                    throw std::runtime_error("Right hand variable is not convertible to Number.");
+                    throw std::runtime_error("Variable is not convertible to Number.");
                 } else if constexpr(std::is_same_v<T, types::string::str>) {
-                    throw std::runtime_error("Right hand variable is not convertible to String.");
+                    throw std::runtime_error("Variable is not convertible to String.");
                 } else if constexpr(std::is_same_v<T, types::table::tbl>) {
-                    throw std::runtime_error("Right hand variable is not convertible to Table.");
+                    throw std::runtime_error("Variable is not convertible to Table.");
                 } else if constexpr(std::is_same_v<T, types::nihil::nil>) {
-                    throw std::runtime_error("Right hand variable is not convertible to Nil.");
+                    throw std::runtime_error("Variable is not convertible to Nil.");
                 } else if constexpr(std::is_same_v<T, types::func::data>) {
-                    throw std::runtime_error("Right hand variable is not convertible to Function.");
+                    throw std::runtime_error("Variable is not convertible to Function.");
+                } else if constexpr(std::is_same_v<T, types::file::fl>) {
+                    throw std::runtime_error("Variable is not convertible to File.");
                 }
             }
         }
