@@ -3,26 +3,31 @@ s = io["open"]("file.txt", "r");
 print("file handle:", s); # this is the most cursed pointer manipulation i've ever done
 
 read_num = || {
-    n = io["read"](s, "num");
-    print("read: ", n);
+    local value = 0;
+    ret = io["read"](s, "num", value);
+    print("read: ", value);
 };
 
-read_num();
-read_num();
-read_num();
+while(|| { ret = read_num(); }, || {});
 
 print("closed: ", io["close"](s));
 
 s = io["open"]("file.txt", "r");
 print("file handle:", s);
 
-print(io["read"](s, "line")); # extra \n from print
+read_line = || {
+    local value = "";
+    ret = io["read"](s, "line", value);
+    print("readln: ", value);
+};
+
+while(|| { ret = read_line(); }, || {});
 
 print("closed: ", io["close"](s));
 
 s = io["open"]("file.txt", "r");
 print("file handle:", s);
 
-print(io["read"](s, "all"));
+print("BORDER" + io["read"](s, "all") + "BORDER");
 
 print("closed: ", io["close"](s));

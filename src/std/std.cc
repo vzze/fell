@@ -12,10 +12,12 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
                         ::std::cout << par.get_value<api::param::str>() << ' ';
                     } catch(...) {
                         try {
-                            ::std::cout << "function: " << &par.get_value<api::param::fun>() << ' ';
+                            const auto ptr = &par.get_value<api::param::fun>();
+                            ::std::cout << "function: " << ptr << ' ';
                         } catch(...) {
                             try {
-                                ::std::cout << "table: " << par.get_value<api::param::tbl>() << ' ';
+                                const auto ptr = par.get_value<api::param::tbl>();
+                                ::std::cout << "table: " << ptr << ' ';
                             } catch(...) {
                                 ::std::cout << "nil ";
                             }
@@ -103,7 +105,7 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
                 value = false;
             } catch(...) {
                 try {
-                    value = api::get_value<api::param::num>(condition) != 0.0;
+                    value = api::get_value<api::param::num>(condition) != 0;
                 } catch(...) {}
             }
 
@@ -117,7 +119,7 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
                     value = false;
                 } catch(...) {
                     try {
-                        value = api::get_value<api::param::num>(condition) != 0.0;
+                        value = api::get_value<api::param::num>(condition) != 0;
                     } catch(...) {}
                 }
             }

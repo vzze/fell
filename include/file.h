@@ -9,13 +9,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-extern char _fell__buffer[4208];
+#include <string.h>
 
 FILE * _fell__open(const char *, const char *);
 size_t _fell__close(FILE *);
-double _fell__read_number(FILE *);
-char * _fell__read_line(FILE *);
+int    _fell__read_number(FILE *, double *);
+int    _fell__read_line(FILE *, char *);
 void   _fell__read_file(FILE *, char **);
 void   _fell__free(char **);
 

@@ -61,9 +61,15 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
             const auto var_type = params.get_param(1).get_value<api::param::str>();
 
             if(var_type == "num") {
-                return api::make_var<types::number>(_fell__read_number(file));
+                return api::make_var<types::number>(
+                    _fell__read_number(file, &params.get_param(2).get_value<api::param::num>())
+                );
             } else if(var_type == "line") {
-                return api::make_var<types::string>(::std::string{_fell__read_line(file)});
+                auto & ref = params.get_param(2).get_value<api::param::str>();
+                ref.resize(4208);
+                const auto ret = _fell__read_line(file, ref.data());
+                ref.shrink_to_fit();
+                return api::make_var<types::number>(ret);
             } else if(var_type == "all") {
                 char * buffer;
                 _fell__read_file(file, &buffer);
