@@ -5,7 +5,7 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
         "size",
         [](api::params params) -> fell::types::variable::var {
             return api::make_var<types::number>(
-                params.get_param(0).get_value<api::param::tbl>()->second.size()
+                static_cast<types::number::num>(params.get_param(0).get_value<api::param::tbl>()->second.size())
             );
         }
     },

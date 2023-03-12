@@ -39,7 +39,7 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
             } else if(value == "str") {
                 ::std::string str; str.resize(4208);
 
-                if(fscanf_s(params.get_param(0).get_value<api::param::fil>(), "%s", str.data()) > 0) {
+                if(fscanf_s(params.get_param(0).get_value<api::param::fil>(), "%s", str.data(), static_cast<unsigned int>(str.size())) > 0) {
                     str.shrink_to_fit();
                     return api::make_var<types::string>(str);
                 } else
@@ -71,11 +71,11 @@ std::vector<std::pair<std::string, std::function<fell::types::variable::var(fell
     {
         "write",
         [](api::params params) -> types::variable::var {
-            [[maybe_unused]] const auto file = params.get_param(0).get_value<api::param::fil>();
+            const auto file = params.get_param(0).get_value<api::param::fil>();
             auto fmt = ::std::string{""};
             if(params.number_of_params() >= 3)
                 fmt = params.get_param(2).get_value<api::param::str>();
-            [[maybe_unused]] const auto par  = params.get_param(1);
+            const auto par  = params.get_param(1);
 
             try {
                 if(fmt != "")
