@@ -1,11 +1,10 @@
-a = |a, b| {
-    a = b;
+ni = |a b c| {
+    a = c;
+    b = c;
 };
 
-c = 2;
+two = 2;
+three = 3;
+four = 4;
 
-d = 12;
-
-a(c, d);
-
-print(c, d);
+ni(two, three, four);

@@ -1,0 +1,16 @@
+x = || {
+    print(12);
+    ret 1602;
+};
+
+y = |a| {
+    ret a + nihil;
+};
+
+z = || {
+    error("error-ing is funny");
+};
+
+exposed res1 = protected_call(x);
+exposed res2 = protected_call(y, 12);
+exposed res3 = protected_call(z);

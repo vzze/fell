@@ -1,43 +1,25 @@
-Array = {
-    "size": 0,
-    "data": {},
-    "push": |element| {
-        Array["data"][Array["size"]] = element;
-        Array["size"] = Array["size"] + 1;
-    },
-    "at": |index| {
-        ret = Array["data"][index];
-    },
-    "replace": |index, new_value| {
-        Array["data"][index] = new_value;
-    }
-};
-
-Array["push"](12);
-Array["push"](14);
-Array["push"]("This is a String");
-
-Array["replace"](0, 13);
-
-print("Size of Array:", Array["size"]);
+exposed x = {};
 
 i = 0;
 
-for_each(Array["data"], |element| {
-    print("Element at index", i, ":", element);
-    i = i +1;
-});
-
-i = 0;
-sum = 0;
-
-while(|| { ret = i < 2; }, || {
-    sum = sum + Array["at"](i);
+while i < 10 {
+    x[i] = 10 - i;
     i = i + 1;
-});
+}
 
-print("Sum of first two elements:", sum);
+do {
+    sorted = true;
 
-if(Array["at"](0) < Array["at"](1), || {
-    print(Array["at"](0), "is smaller than", Array["at"](1));
-})
+    i = 0;
+
+    while i < 9 {
+        if x[i] > x[i + 1] {
+            sorted = false;
+            t = x[i];
+            x[i] = x[i + 1];
+            x[i + 1] = t;
+        }
+
+        i = i + 1;
+    }
+} while sorted == false;

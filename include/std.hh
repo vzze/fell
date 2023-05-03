@@ -1,27 +1,31 @@
 #ifndef STD_HH
 #define STD_HH
 
-#include <algorithm>
-#include <stdexcept>
-#include <iostream>
-#include <list>
+#include <functional>
 
-#include "variable.hh"
-#include "util.hh"
-#include "api.hh"
-#include "lexer.hh"
+#include <variable.hh>
+#include <vm.hh>
 
-namespace fell {
-    namespace std {
-        extern ::std::vector<::std::pair<::std::string,::std::function<types::variable::var(api::params)>>> general;
-        extern ::std::vector<::std::pair<::std::string,::std::function<types::variable::var(api::params)>>> table;
-        extern ::std::vector<::std::pair<::std::string,::std::function<types::variable::var(api::params)>>> io;
+namespace fell::lib {
+    struct params {
+        private:
+            std::size_t offset;
+            std::size_t size;
+            vm * vm;
+        public:
+            std::stack<fell::vm::holder> & get_stack();
+            std::filesystem::path & cwd();
 
-        void init_table();
-        void init_io();
+            var & operator [] (const std::size_t);
+            void for_each(std::function<void(var &)>, const std::size_t = 0);
 
-        void init();
-    }
-}
+            var call_function(var &, std::vector<var*>);
+
+            std::size_t number() const;
+            params(struct vm *, const std::size_t, const std::size_t);
+    };
+
+    extern std::vector<std::pair<std::string, std::function<var(params)>>> general;
+};
 
 #endif

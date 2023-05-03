@@ -1,7 +1,0 @@
-read = |type| {
-    local n = io["read"](io["stdin"], type);
-    print(n);
-};
-
-read("num");
-read("str");

@@ -1,0 +1,7 @@
+x = 12;
+y = "12";
+z = 12.2;
+
+print(tostring(x), type(tostring(x)));
+
+print(tointeger(y), type(tointeger(y)));

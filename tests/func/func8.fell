@@ -1,7 +1,10 @@
-a = || {
-    ret = 42;
+cmp = |num| {
+    if num == 0 {
+        ret 42;
+    } else {
+        ret 84;
+    }
 };
 
-b = a();
-
-print(b);
+a = cmp(0);
+b = cmp(1);

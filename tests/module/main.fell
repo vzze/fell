@@ -1,3 +1,2 @@
-require("mod.fell");
-
-print(a());
+x = require("hello.fell");
+print(x.greeting());

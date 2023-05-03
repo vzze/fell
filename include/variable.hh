@@ -2,224 +2,97 @@
 #define VARIABLE_HH
 
 #include <unordered_map>
+#include <type_traits>
 #include <functional>
-#include <exception>
-#include <stdexcept>
-#include <fstream>
-#include <utility>
-#include <string>
+#include <cstdint>
+#include <variant>
 #include <vector>
-#include <memory>
+#include <string>
 #include <cmath>
-#include <tuple>
-#include <any>
+
+namespace fell::lib {
+    struct params;
+}
 
 namespace fell {
-    namespace lex {
-        struct inmemory;
-    }
+    struct var {
+        public:
+            using integer = std::int64_t;
+            using number  = double;
+            using string  = std::string;
+            using object  = std::pair<std::unordered_map<string, var>, std::vector<var>>;
+            using nihil   = char;
+            using func    = std::variant<std::size_t, std::function<var(lib::params)>>;
 
-    namespace api {
-        struct params;
-    }
+            enum class TYPE : std::int32_t {
+                INTEGER,
+                NUMBER,
+                STRING,
+                OBJECT,
+                NIHIL,
+                FUNCTION
+            };
+        private:
+            using storage = std::variant<integer, number, string, object, nihil, func>;
 
-    namespace types {
-        struct variable {
-            using var = std::unique_ptr<variable>;
+            template<typename T, typename ... Args>
+            struct is_same_multiple {
+                static constexpr bool value = (std::is_same_v<T, Args> || ...);
+            };
 
-            std::any value;
+            template<typename T, typename ... Args>
+            inline static constexpr bool is_same_multiple_v = is_same_multiple<T, Args...>::value;
 
-            variable(std::any);
+            TYPE type;
+            storage value;
+        public:
+            var(const integer);
+            var(const number);
+            var(const string);
+            var(const object);
+            var(const func);
+            var(const nihil = nihil{});
 
-            [[nodiscard]] virtual var operator + (const variable *) = 0;
-            [[nodiscard]] virtual var operator - (const variable *) = 0;
-            [[nodiscard]] virtual var operator * (const variable *) = 0;
-            [[nodiscard]] virtual var operator / (const variable *) = 0;
-            [[nodiscard]] virtual var operator % (const variable *) = 0;
+            operator bool() const;
 
-            [[nodiscard]] virtual var operator >  (const variable *) = 0;
-            [[nodiscard]] virtual var operator >= (const variable *) = 0;
-            [[nodiscard]] virtual var operator <  (const variable *) = 0;
-            [[nodiscard]] virtual var operator <= (const variable *) = 0;
-            [[nodiscard]] virtual var operator == (const variable *) = 0;
-            [[nodiscard]] virtual var operator != (const variable *) = 0;
+            var operator * (const var &) const;
+            var operator / (const var &) const;
+            var operator % (const var &) const;
+            var operator + (const var &) const;
+            var operator - (const var &) const;
 
-            [[nodiscard]] virtual var operator && (const variable *) = 0;
-            [[nodiscard]] virtual var operator || (const variable *) = 0;
+            var operator > (const var &) const;
+            var operator < (const var &) const;
+            var operator >= (const var &) const;
+            var operator <= (const var &) const;
+            var operator == (const var &) const;
+            var operator != (const var &) const;
 
-            [[nodiscard]] virtual var & operator [] (const variable *) = 0;
-            [[nodiscard]] virtual var & operator [] (const std::string) = 0;
-            [[nodiscard]] virtual var & operator [] (const std::size_t) = 0;
-            [[nodiscard]] virtual var call (std::vector<lex::inmemory> &&, bool = false) = 0;
+            var operator && (const var &) const;
+            var operator || (const var &) const;
 
-            virtual ~variable();
-        };
+            var * operator [] (const var &);
 
-        struct number : public variable {
-            using num = double;
-            number(num = 0);
+            template<typename VarType>
+            VarType & get() requires(
+                is_same_multiple_v<
+                    VarType, integer, number, string, object, nihil, func
+                >
+            ) {
+                return std::get<VarType>(value);
+            }
 
-            [[nodiscard]] var operator + (const variable *) override;
-            [[nodiscard]] var operator - (const variable *) override;
-            [[nodiscard]] var operator * (const variable *) override;
-            [[nodiscard]] var operator / (const variable *) override;
-            [[nodiscard]] var operator % (const variable *) override;
+            template<typename VarType>
+            const VarType & get() const requires(
+                is_same_multiple_v<
+                    VarType, integer, number, string, object, nihil, func
+                >
+            ) {
+                return std::get<VarType>(value);
+            }
 
-            [[nodiscard]] var operator >  (const variable *) override;
-            [[nodiscard]] var operator >= (const variable *) override;
-            [[nodiscard]] var operator <  (const variable *) override;
-            [[nodiscard]] var operator <= (const variable *) override;
-            [[nodiscard]] var operator == (const variable *) override;
-            [[nodiscard]] var operator != (const variable *) override;
-
-            [[nodiscard]] var operator && (const variable *) override;
-            [[nodiscard]] var operator || (const variable *) override;
-
-            var & operator [] (const variable *) override;
-            var & operator [] (const std::string) override;
-            var & operator [] (const std::size_t) override;
-
-            var call (std::vector<lex::inmemory> &&, bool = false) override;
-        };
-
-        struct string : public variable {
-            using str = std::string;
-            string(str = "");
-
-            [[nodiscard]] var operator + (const variable *) override;
-            var operator - (const variable *) override;
-            var operator * (const variable *) override;
-            var operator / (const variable *) override;
-            var operator % (const variable *) override;
-
-            [[nodiscard]] var operator >  (const variable *) override;
-            [[nodiscard]] var operator >= (const variable *) override;
-            [[nodiscard]] var operator <  (const variable *) override;
-            [[nodiscard]] var operator <= (const variable *) override;
-            [[nodiscard]] var operator == (const variable *) override;
-            [[nodiscard]] var operator != (const variable *) override;
-
-            [[nodiscard]] var operator && (const variable *) override;
-            [[nodiscard]] var operator || (const variable *) override;
-
-            var & operator [] (const variable *) override;
-            var & operator [] (const str) override;
-            var & operator [] (const std::size_t) override;
-
-            var call (std::vector<lex::inmemory> &&, bool = false) override;
-        };
-
-        struct table : public variable {
-            using tbl = std::pair<std::unordered_map<string::str, var>, std::vector<var>>*;
-
-            table(tbl = new std::pair<std::unordered_map<string::str, var>, std::vector<var>>());
-
-            var operator + (const variable *) override;
-            var operator - (const variable *) override;
-            var operator * (const variable *) override;
-            var operator / (const variable *) override;
-            var operator % (const variable *) override;
-
-            var operator >  (const variable *) override;
-            var operator >= (const variable *) override;
-            var operator <  (const variable *) override;
-            var operator <= (const variable *) override;
-            var operator == (const variable *) override;
-            var operator != (const variable *) override;
-
-            [[nodiscard]] var operator && (const variable *) override;
-            [[nodiscard]] var operator || (const variable *) override;
-
-            [[nodiscard]] var & operator [] (const variable *) override;
-            [[nodiscard]] var & operator [] (const string::str) override;
-            [[nodiscard]] var & operator [] (const std::size_t) override;
-
-            var call (std::vector<lex::inmemory> &&, bool = false) override;
-
-            ~table();
-        };
-
-        struct nihil : public variable {
-            using nil = std::nullptr_t;
-            nihil(nil = nullptr);
-
-            var operator + (const variable *) override;
-            var operator - (const variable *) override;
-            var operator * (const variable *) override;
-            var operator / (const variable *) override;
-            var operator % (const variable *) override;
-
-            var operator >  (const variable *) override;
-            var operator >= (const variable *) override;
-            var operator <  (const variable *) override;
-            var operator <= (const variable *) override;
-            var operator == (const variable *) override;
-            var operator != (const variable *) override;
-
-            [[nodiscard]] var operator && (const variable *) override;
-            [[nodiscard]] var operator || (const variable *) override;
-
-            var & operator [] (const variable *) override;
-            var & operator [] (const string::str) override;
-            var & operator [] (const std::size_t) override;
-
-            var call (std::vector<lex::inmemory> &&, bool = false) override;
-        };
-
-        struct file : public variable {
-            using fl = FILE*;
-            file(fl = nullptr);
-
-            var operator + (const variable *) override;
-            var operator - (const variable *) override;
-            var operator * (const variable *) override;
-            var operator / (const variable *) override;
-            var operator % (const variable *) override;
-
-            var operator >  (const variable *) override;
-            var operator >= (const variable *) override;
-            var operator <  (const variable *) override;
-            var operator <= (const variable *) override;
-            var operator == (const variable *) override;
-            var operator != (const variable *) override;
-
-            [[nodiscard]] var operator && (const variable *) override;
-            [[nodiscard]] var operator || (const variable *) override;
-
-            var & operator [] (const variable *) override;
-            var & operator [] (const string::str) override;
-            var & operator [] (const std::size_t) override;
-
-            var call (std::vector<lex::inmemory> &&, bool = false) override;
-        };
-
-        struct func : public variable {
-            using data = std::tuple<std::vector<std::string>, std::string, std::function<variable::var(api::params)>>;
-            func(data = {});
-
-            var operator + (const variable *) override;
-            var operator - (const variable *) override;
-            var operator * (const variable *) override;
-            var operator / (const variable *) override;
-            var operator % (const variable *) override;
-
-            var operator >  (const variable *) override;
-            var operator >= (const variable *) override;
-            var operator <  (const variable *) override;
-            var operator <= (const variable *) override;
-            var operator == (const variable *) override;
-            var operator != (const variable *) override;
-
-            [[nodiscard]] var operator && (const variable *) override;
-            [[nodiscard]] var operator || (const variable *) override;
-
-            var & operator [] (const variable *) override;
-            var & operator [] (const string::str) override;
-            var & operator [] (const std::size_t) override;
-
-            [[nodiscard]] var call (std::vector<lex::inmemory> &&, bool = false) override;
-        };
-    }
+            TYPE get_type() const;
+    };
 }
 
 #endif

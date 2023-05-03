@@ -1,3 +1,20 @@
-a = if(13 == 13, || { ret = 19; });
+sum = |n| {
+    if n == 0 {
+        ret n;
+    } else {
+        ret n + sum(n - 1);
+    }
+};
 
-print(a);
+sum2 = |n accumulator| {
+    if accumulator == 0 {
+        ret;
+    } else {
+        n = n + accumulator;
+        sum2(n, accumulator - 1);
+    }
+};
+
+n = 0;
+
+sum2(n, 10);

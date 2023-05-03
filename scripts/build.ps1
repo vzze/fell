@@ -1,6 +1,7 @@
 param(
     [Parameter()]
-    [String]$Type = ""
+    [String]$Type = "",
+    [Boolean]$EnableDebug = $True
 )
 
 $check_dir = Test-Path ./build -PathType Container
@@ -25,9 +26,9 @@ if($check_dir -eq $false) {
 Write-Host "`n-------------- CMAKE --------------`n"
 
 if($Type -eq "mingw") {
-    Invoke-Expression "cmake -S . -B build -G `"MinGW Makefiles`""
+    Invoke-Expression "cmake -S . -B build -G `"MinGW Makefiles`" -DDEBUG=$EnableDebug"
 } elseif($Type -eq "msvc") {
-    Invoke-Expression "cmake -S . -B build -G `"Visual Studio 17 2022`""
+    Invoke-Expression "cmake -S . -B build -G `"Visual Studio 17 2022`" -DDEBUG=$EnableDebug"
 } else {
     Write-Host "No -Type selected: mingw, msvc"
 }

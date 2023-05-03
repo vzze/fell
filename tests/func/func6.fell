@@ -1,5 +1,9 @@
+x = nihil;
+y = nihil;
+
 c = |a| {
-    print(a, b);
+    x = a;
+    y = b;
 };
 
 c(12);

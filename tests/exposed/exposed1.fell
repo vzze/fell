@@ -1,0 +1,3 @@
+exposed a = 12;
+
+b = a + a;

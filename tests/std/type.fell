@@ -1,13 +1,7 @@
 a = 1;
-b = "";
+b = "s";
 c = {};
 d = || {};
 e = nihil;
 
-print(
-    type(a),
-    type(b),
-    type(c),
-    type(d),
-    type(e)
-);
+print(type(a), type(b), type(c), type(d), type(e));

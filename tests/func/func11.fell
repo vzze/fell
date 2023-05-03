@@ -1,5 +1,9 @@
 x = |a| {
-    ret = a;
+    ret a;
 };
 
-print(12, x(12));
+y = |a b| {
+    ret a + b;
+};
+
+z = y(12, x(12));

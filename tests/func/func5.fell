@@ -1,5 +1,11 @@
-c = |f| {
-    f(42, 42, 42);
+c = |func| {
+    func(42, 42, 42);
 };
 
-c(|a, b, c| { print(a, b, c); });
+x = nihil;
+y = nihil;
+z = nihil;
+
+fn = |a b c| { x = a; y = b; z = c; };
+
+c(fn);
