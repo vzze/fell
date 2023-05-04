@@ -74,7 +74,6 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                         instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
 
                         const auto index = static_cast<std::size_t>(ctx_solver.jump_table.top());
-                        std::cout << "here!!" << index << '\n';
                         ctx_solver.jump_table.pop();
 
                         (*instructions.top())[index - 1] = static_cast<std::int32_t>(instructions.top()->size() - index);
