@@ -65,19 +65,37 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                     contexts.rbegin()->second[static_cast<std::size_t>(slot)] = false;
 
                 switch(ctx_solver.contexts.top()) {
-                    case CONTEXT::IF:
-                        if(data.tokens[i + 1] != ELSE) {
-                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
-                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+                    case CONTEXT::ELSE_IF:
 
-                            const auto index = static_cast<std::size_t>(ctx_solver.jump_table.top());
-                            ctx_solver.jump_table.pop();
+                    break;
 
-                            (*instructions.top())[index - 1] = static_cast<std::int32_t>(instructions.top()->size() - index);
-                        }
+                    case CONTEXT::ELSE: {
+                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
+                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+
+                        const auto index = static_cast<std::size_t>(ctx_solver.jump_table.top());
+                        std::cout << "here!!" << index << '\n';
+                        ctx_solver.jump_table.pop();
+
+                        (*instructions.top())[index - 1] = static_cast<std::int32_t>(instructions.top()->size() - index);
 
                         contexts.rbegin()->first.pop_back();
-                    break;
+                    } break;
+
+                    case CONTEXT::IF: {
+                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
+                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+
+                        const auto index = static_cast<std::size_t>(ctx_solver.jump_table.top());
+                        ctx_solver.jump_table.pop();
+
+                        if(data.tokens[i + 1] != ELSE)
+                            (*instructions.top())[index - 1] = static_cast<std::int32_t>(instructions.top()->size() - index);
+                        else
+                            (*instructions.top())[index - 1] = static_cast<std::int32_t>(instructions.top()->size() - index + 2);
+
+                        contexts.rbegin()->first.pop_back();
+                    } break;
 
                     case CONTEXT::WHILE: {
                         instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
@@ -226,16 +244,19 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
             case ELSE:
                 if(!(data.tokens[i + 1] == LEFT_CURLY || data.tokens[i + 1] == IF)) ERR("Malformed else.");
 
-                if(!ctx_solver.jump_table.empty()) {
-                    const auto index = static_cast<std::size_t>(ctx_solver.jump_table.top());
-                    ctx_solver.jump_table.pop();
+                if(data.tokens[i - 1] == RIGHT_CURLY) {
+                    if(data.tokens[i + 1] == IF) {
+                        ERR("Shortened if else not implemented, yet.");
+                    } else {
+                        instructions.top(true, i)->push_back(0);
+                        ctx_solver.jump_table.push(static_cast<std::int32_t>(instructions.top()->size()));
+                        ctx_solver.contexts.push(CONTEXT::ELSE);
 
-                    instructions.top(true, i)->push_back(0);
-                    ctx_solver.jump_table.push(static_cast<std::int32_t>(instructions.top()->size()));
+                        contexts.rbegin()->first.emplace_back();
+                        ++i;
 
-                    instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::JMP));
-
-                    (*instructions.top())[index - 1] = static_cast<std::int32_t>(instructions.top()->size() - index);
+                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::JMP));
+                    }
                 } else {
                     ERR("Extraneous else.");
                 }

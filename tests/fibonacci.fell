@@ -5,10 +5,3 @@ fibo = |n| {
         ret fibo(n - 1) + fibo(n - 2);
     }
 };
-
-i = 0;
-
-while i < 30 {
-    print(fibo(i));
-    i = i + 1;
-}

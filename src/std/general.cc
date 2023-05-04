@@ -116,7 +116,9 @@ std::vector<std::pair<std::string, std::function<fell::var(fell::lib::params)>>>
         "assert",
         [](params params) -> fell::var {
             if(!(bool)(params[0])) {
-                throw err::common("Assertion failed: " + params[1].get<var::string>());
+                throw err::common(
+                    "Assertion failed: " + params[1].get<var::string>()
+                );
             }
 
             return fell::var{};
@@ -125,10 +127,13 @@ std::vector<std::pair<std::string, std::function<fell::var(fell::lib::params)>>>
     {
         "tonumber",
         [](params params) -> fell::var {
-            return fell::var{fell::var::number{std::stod(params[0].get<var::string>())}};
+            return fell::var{
+                fell::var::number{
+                    std::stod(params[0].get<var::string>())
+                }
+            };
         }
     },
-
     {
         "tointeger",
         [](params params) -> fell::var {

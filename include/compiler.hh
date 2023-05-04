@@ -20,6 +20,8 @@ namespace fell::compiler {
 
     enum class CONTEXT : std::int32_t {
         IF,
+        ELSE,
+        ELSE_IF,
         WHILE,
         FUNCTION,
         DO_WHILE,
