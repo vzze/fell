@@ -9,7 +9,7 @@ void fell::interpreter::register_function(const var::string name, std::function<
 }
 
 fell::var fell::interpreter::call_function(const var::string name, std::vector<var*> params) {
-    vm.call_info.top().push(params.size());
+    vm.call_info.push(params.size());
 
     vm.runtime.emplace(exposed[name], vm::holder::TYPE::EXPOSED);
 
@@ -25,7 +25,7 @@ fell::var fell::interpreter::call_function(const var::string name, std::vector<v
 }
 
 fell::var fell::interpreter::call_function(var & vr, std::vector<var*> params) {
-    vm.call_info.top().push(params.size());
+    vm.call_info.push(params.size());
 
     vm.runtime.emplace(vr, vm::holder::TYPE::VALUE);
 

@@ -232,7 +232,7 @@ found:
             break;
 
             case LEFT_SQUARE:
-                binary_operation(vm::INSTRUCTIONS::MAC, alternance, data, operators, i, instructions, func_call);
+                binary_operation(vm::INSTRUCTIONS::MAC, alternance, data, operators, i, instructions);
                 operators.push(vm::INSTRUCTIONS::PAR);
             break;
 
@@ -256,9 +256,11 @@ found:
                     else void_call.push(false);
 
                     if(i <= 1 || (i > 1 && (data.tokens[i - 2] == SEMICOLON || data.tokens[i - 2] == LEFT_CURLY)))
-                        binary_operation(vm::INSTRUCTIONS::CAN, alternance, data, operators, i, instructions, func_call);
+                        binary_operation(vm::INSTRUCTIONS::CAN, alternance, data, operators, i, instructions);
                     else
-                        binary_operation(vm::INSTRUCTIONS::CAL, alternance, data, operators, i, instructions, func_call);
+                        binary_operation(vm::INSTRUCTIONS::CAL, alternance, data, operators, i, instructions);
+
+                    instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::PRC));
                 }
 
                 operators.push(vm::INSTRUCTIONS::PAR);
@@ -283,7 +285,6 @@ found:
                         void_call.pop();
                     } else {
                         void_call.pop();
-                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(func_call.size()));
                         instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::PU));
                     }
 
@@ -294,32 +295,31 @@ found:
             case COMMA:
                 if(func_call.empty()) throw err::common(data.locations[i].line, data.locations[i].column, "Unexpected comma.");
 
-                binary_operation(vm::INSTRUCTIONS::PU, alternance, data, operators, i, instructions, func_call);
-                instructions.top(true, i)->insert(instructions.top()->end() - 1, static_cast<std::int32_t>(func_call.size()));
+                binary_operation(vm::INSTRUCTIONS::PU, alternance, data, operators, i, instructions);
             break;
 
-            case STAR:          binary_operation(vm::INSTRUCTIONS::MUL, alternance, data, operators, i, instructions, func_call); break;
-            case MODULO:        binary_operation(vm::INSTRUCTIONS::MOD, alternance, data, operators, i, instructions, func_call); break;
-            case SLASH:         binary_operation(vm::INSTRUCTIONS::DIV, alternance, data, operators, i, instructions, func_call); break;
+            case STAR:          binary_operation(vm::INSTRUCTIONS::MUL, alternance, data, operators, i, instructions); break;
+            case MODULO:        binary_operation(vm::INSTRUCTIONS::MOD, alternance, data, operators, i, instructions); break;
+            case SLASH:         binary_operation(vm::INSTRUCTIONS::DIV, alternance, data, operators, i, instructions); break;
 
-            case PLUS:          binary_operation(vm::INSTRUCTIONS::ADD, alternance, data, operators, i, instructions, func_call); break;
-            case MINUS:         binary_operation(vm::INSTRUCTIONS::SUB, alternance, data, operators, i, instructions, func_call); break;
+            case PLUS:          binary_operation(vm::INSTRUCTIONS::ADD, alternance, data, operators, i, instructions); break;
+            case MINUS:         binary_operation(vm::INSTRUCTIONS::SUB, alternance, data, operators, i, instructions); break;
 
-            case GREATER:       binary_operation(vm::INSTRUCTIONS::GR, alternance, data, operators, i, instructions, func_call);  break;
-            case GREATER_EQUAL: binary_operation(vm::INSTRUCTIONS::GE, alternance, data, operators, i, instructions, func_call);  break;
-            case LESS:          binary_operation(vm::INSTRUCTIONS::LR, alternance, data, operators, i, instructions, func_call);  break;
-            case LESS_EQUAL:    binary_operation(vm::INSTRUCTIONS::LE, alternance, data, operators, i, instructions, func_call);  break;
+            case GREATER:       binary_operation(vm::INSTRUCTIONS::GR, alternance, data, operators, i, instructions);  break;
+            case GREATER_EQUAL: binary_operation(vm::INSTRUCTIONS::GE, alternance, data, operators, i, instructions);  break;
+            case LESS:          binary_operation(vm::INSTRUCTIONS::LR, alternance, data, operators, i, instructions);  break;
+            case LESS_EQUAL:    binary_operation(vm::INSTRUCTIONS::LE, alternance, data, operators, i, instructions);  break;
 
-            case BANG_EQUAL:    binary_operation(vm::INSTRUCTIONS::NE, alternance, data, operators, i, instructions, func_call);  break;
-            case EQUAL_EQUAL:   binary_operation(vm::INSTRUCTIONS::EQ, alternance, data, operators, i, instructions, func_call);  break;
+            case BANG_EQUAL:    binary_operation(vm::INSTRUCTIONS::NE, alternance, data, operators, i, instructions);  break;
+            case EQUAL_EQUAL:   binary_operation(vm::INSTRUCTIONS::EQ, alternance, data, operators, i, instructions);  break;
 
-            case AND:           binary_operation(vm::INSTRUCTIONS::AN, alternance, data, operators, i, instructions, func_call);  break;
+            case AND:           binary_operation(vm::INSTRUCTIONS::AN, alternance, data, operators, i, instructions);  break;
 
-            case OR:            binary_operation(vm::INSTRUCTIONS::OR, alternance, data, operators, i, instructions, func_call);  break;
+            case OR:            binary_operation(vm::INSTRUCTIONS::OR, alternance, data, operators, i, instructions);  break;
 
-            case EQUAL:         binary_operation(vm::INSTRUCTIONS::MOV, alternance, data, operators, i, instructions, func_call); break;
+            case EQUAL:         binary_operation(vm::INSTRUCTIONS::MOV, alternance, data, operators, i, instructions); break;
 
-            case DOT:           binary_operation(vm::INSTRUCTIONS::MAC, alternance, data, operators, i, instructions, func_call); break;
+            case DOT:           binary_operation(vm::INSTRUCTIONS::MAC, alternance, data, operators, i, instructions); break;
 
             default:
                 throw err::common(data.locations[i].line, data.locations[i].column, "Unexpected expression.");

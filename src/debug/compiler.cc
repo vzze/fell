@@ -62,7 +62,12 @@ void fell::debug::compiler(const vm & vm) {
 
             case PU:
                 display(i);
-                std::clog << "PU   " << instructions[i - 1];
+                std::clog << "PU   ";
+            break;
+
+            case PRC:
+                display(i);
+                std::clog << "PRC  ";
             break;
 
             case CAL:
@@ -175,4 +180,6 @@ void fell::debug::compiler(const vm & vm) {
     for(std::size_t i = 0; i < vm.ins.second.size(); ++i) {
         output_instruction(i, vm.ins.second);
     }
+
+    std::clog << "\n\n";
 }

@@ -34,48 +34,50 @@ namespace fell {
         };
 
         enum class INSTRUCTIONS : std::int32_t {
-            ADD = -1, // +
-            SUB = -2, // -
-            DIV = -3, // /
-            MUL = -4, // *
-            MOD = -5, // %
-            MOV = -6, // =
-            MAC = -7, // [ member access
+            ADD = -1,   // +
+            SUB = -2,   // -
+            DIV = -3,   // /
+            MUL = -4,   // *
+            MOD = -5,   // %
+            MOV = -6,   // =
+            MAC = -7,   // member access
 
             PAR = -8,
 
-            LOC = -9, // load const
-            LOV = -10, // load var
-            LOE = -11, // load exposed
+            LOC = -9,   // load const
+            LOV = -10,  // load var
+            LOE = -11,  // load exposed
 
-            NE = -12, // !=
-            EQ = -13, // ==
-            GR = -14, // >
-            GE = -15, // >=
-            LR = -16, // <
-            LE = -17, // <=
+            NE = -12,   // !=
+            EQ = -13,   // ==
+            GR = -14,   // >
+            GE = -15,   // >=
+            LR = -16,   // <
+            LE = -17,   // <=
 
-            AN = -18, // &&
-            OR = -19, // ?
+            AN = -18,   // &&
+            OR = -19,   // ?
 
-            JMP = -20,
-            JE  = -21,
-            RJMP = -22,
+            JMP = -20,  // jump
+            JE  = -21,  // conditional jump
+            RJMP = -22, // reverse jump
 
-            RET = -23,
-            POP = -24,
-            RJE = -25,
+            RET = -23,  // return
+            POP = -24,  // resize memory
+            RJE = -25,  // reverse conditional jump
 
-            CAL = -26,
-            PU  = -27,
-            CAN = -28,
+            CAL = -26,  // call with needed return value
+            PU  = -27,  // push param
+            CAN = -28,  // call with unneeded return value
+            PRC = -29,  // pre call
 
-            TOP = -1602
+            TOP = -1602 // top of stack frame
         };
+
+        std::filesystem::path cwd;
 
         std::stack<holder> runtime;
         std::vector<std::int32_t> stack_frame = { 0 };
-        std::filesystem::path cwd;
 
         std::vector<holder> memory;
 
@@ -85,7 +87,7 @@ namespace fell {
 
         void call(const scan::location, INSTRUCTIONS);
 
-        std::stack<std::stack<std::size_t>> call_info;
+        std::stack<std::size_t> call_info;
 
         void run(const std::pair<std::vector<scan::location>, std::vector<std::int32_t>> &);
     };

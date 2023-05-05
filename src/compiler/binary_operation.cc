@@ -6,8 +6,7 @@ void fell::compiler::binary_operation(
     const scan::scanned & data,
     std::stack<vm::INSTRUCTIONS> & operators,
     std::size_t & i,
-    instructions & instructions,
-    [[maybe_unused]] std::stack<bool> & func_call
+    instructions & instructions
 ) {
     using enum fell::scan::TOKENS;
 
@@ -45,7 +44,6 @@ void fell::compiler::binary_operation(
     if(ins != vm::INSTRUCTIONS::PU)
         operators.push(ins);
     else {
-        instructions.top(true, i)->push_back(static_cast<std::int32_t>(func_call.size()));
         instructions.top(true, i)->push_back(static_cast<std::int32_t>(ins));
     }
 }

@@ -44,8 +44,7 @@ namespace fell::compiler {
         const scan::scanned &,
         std::stack<vm::INSTRUCTIONS> &,
         std::size_t &,
-        instructions &,
-        std::stack<bool> &
+        instructions &
     );
 
     void constant_integer(

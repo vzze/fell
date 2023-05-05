@@ -18,7 +18,7 @@ fell::var & fell::lib::params::operator [] (const std::size_t i) {
 }
 
 fell::var fell::lib::params::call_function(var & vr, std::vector<var*> params) {
-    vm->call_info.top().push(params.size());
+    vm->call_info.push(params.size());
 
     vm->runtime.emplace(vr, vm::holder::TYPE::VALUE);
 

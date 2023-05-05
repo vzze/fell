@@ -45,7 +45,7 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
     using enum INSTRUCTIONS;
     using enum holder::TYPE;
 
-    const auto sz = (call_info.top().empty()) ? 0 : call_info.top().top();
+    const auto sz = call_info.top();
 
     stack_frame.push_back(static_cast<std::int32_t>(memory.size() - sz));
 
@@ -56,24 +56,22 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
         const auto & value = labels[std::get<std::size_t>(get(runtime.top()).get<var::func>())];
         runtime.pop();
 
-        if(sz) call_info.top().pop();
-
         const auto stack_size = runtime.size();
 
         run(value);
 
         call_info.pop();
 
-        if(runtime.size() == stack_size) runtime.emplace(var::nihil{}, VALUE);
-
         if(call_type == CAL) {
-            if(runtime.top().type == REFERENCE) {
+            if(runtime.size() == stack_size)
+                runtime.emplace(var::nihil{}, VALUE);
+            else if(runtime.top().type == REFERENCE) {
                 var ne = get(runtime.top());
 
                 runtime.pop();
                 runtime.emplace(ne, VALUE);
             }
-        } else if(call_type == CAN)
+        } else if(call_type == CAN && runtime.size() != stack_size)
             runtime.pop();
 
         memory.resize(static_cast<std::size_t>(stack_frame.back()));
@@ -91,7 +89,7 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
             throw err::common(location.line, location.column, e.what());
         }
 
-        if(sz) call_info.top().pop();
+        call_info.pop();
 
         memory.resize(static_cast<std::size_t>(stack_frame.back()));
         stack_frame.pop_back();
@@ -156,8 +154,6 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
     using enum INSTRUCTIONS;
     using enum holder::TYPE;
 
-    call_info.emplace();
-
     for(std::size_t i = 0; i != instructions.second.size(); ++i) {
         switch(static_cast<INSTRUCTIONS>(instructions.second[i])) {
             case CAL:
@@ -165,14 +161,15 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
                 call(instructions.first[i], static_cast<INSTRUCTIONS>(instructions.second[i]));
             break;
 
+            case PRC:
+                call_info.push(0);
+            break;
+
             case PU:
                 memory.push_back(runtime.top());
                 runtime.pop();
 
-                if(mem_loc(i) > call_info.top().size())
-                    call_info.top().push(0);
-
-                ++call_info.top().top();
+                ++call_info.top();
             break;
 
             case RET:

@@ -3,7 +3,7 @@
 void fell::debug::vm_memory(vm & vm) {
     using enum fell::var::TYPE;
 
-    std::clog << "\n\nMEMORY DUMP:\n\n";
+    std::clog << "\nMEMORY DUMP:\n\n";
 
     for(auto & v : vm.memory) {
         const auto var = vm.get(v);
