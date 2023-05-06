@@ -84,7 +84,7 @@ namespace fell::scan {
     void number(scanned &, const std::string_view, const std::size_t, const std::size_t);
 
     std::optional<var::string> string(const std::string_view, std::size_t &);
-    void replace_string_codes(var::string &);
+    void replace_string_codes(var::string &, const std::size_t, const std::size_t);
 }
 
 #endif

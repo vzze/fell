@@ -11,7 +11,7 @@ if($Type -eq "") {
         Write-Host "Please generate a build type: mingw or msvc"
         return;
     } else {
-        Invoke-Expression "cmake --build"
+        Invoke-Expression "cmake --build ./build"
         return
     }
 }

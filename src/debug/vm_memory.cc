@@ -10,27 +10,27 @@ void fell::debug::vm_memory(vm & vm) {
 
         switch(var.get_type()) {
             case INTEGER:
-                std::clog << &var << ": INT " << var.get<var::integer>() << '\n';
+                std::clog << &v << ": INT " << var.get<var::integer>() << '\n';
             break;
 
             case NUMBER:
-                std::clog << &var << ": NUM " << var.get<var::number>() << '\n';
+                std::clog << &v << ": NUM " << var.get<var::number>() << '\n';
             break;
 
             case STRING:
-                std::clog << &var << ": STR " << std::quoted(var.get<var::string>()) << '\n';
+                std::clog << &v << ": STR " << std::quoted(var.get<var::string>()) << '\n';
             break;
 
             case OBJECT:
-                std::clog << &var << ": OBJ " << '\n';
+                std::clog << &v << ": OBJ " << '\n';
             break;
 
             case NIHIL:
-                std::clog << &var << ": NIL " << '\n';
+                std::clog << &v << ": NIL " << '\n';
             break;
 
             case FUNCTION:
-                std::clog << &var << ": FUN " << '\n';
+                std::clog << &v << ": FUN " << '\n';
             break;
         }
     }

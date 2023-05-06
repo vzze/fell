@@ -86,7 +86,7 @@ fell::scan::scanned fell::scan::file(const std::filesystem::path path) {
 
                     column += opt.value().length() + 1;
 
-                    replace_string_codes(opt.value());
+                    replace_string_codes(opt.value(), line, column);
                     data.push_constant(opt.value(), {line, column});
                 } break;
 
