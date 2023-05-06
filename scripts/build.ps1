@@ -11,7 +11,7 @@ if($Type -eq "") {
         Write-Host "Please generate a build type: mingw or msvc"
         return;
     } else {
-        Invoke-Expression "cmake --build ./build --config Release"
+        Invoke-Expression "cmake --build"
         return
     }
 }
@@ -25,12 +25,18 @@ if($check_dir -eq $false) {
 
 Write-Host "`n-------------- CMAKE --------------`n"
 
+$buildType = "Release"
+
+if($EnableDebug -eq $True) {
+    $buildType = "Debug"
+}
+
 if($Type -eq "mingw") {
-    Invoke-Expression "cmake -S . -B build -G `"MinGW Makefiles`" -DDEBUG=$EnableDebug"
+    Invoke-Expression "cmake -DCMAKE_BUILD_TYPE=$buildType -S . -B build -G `"MinGW Makefiles`""
 } elseif($Type -eq "msvc") {
-    Invoke-Expression "cmake -S . -B build -G `"Visual Studio 17 2022`" -DDEBUG=$EnableDebug"
+    Invoke-Expression "cmake -DCMAKE_BUILD_TYPE=$buildType -S . -B build -G `"Visual Studio 17 2022`""
 } else {
     Write-Host "No -Type selected: mingw, msvc"
 }
 
-Invoke-Expression "cmake --build ./build --config Release"
+Invoke-Expression "cmake --build ./build"
