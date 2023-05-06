@@ -93,7 +93,7 @@ fell::interpreter::interpreter(const std::filesystem::path path) {
         fell::debug::vm_memory(vm);
 #endif
 
-    } catch(const std::exception & e) {
-        fell::err::log(e);
+    } catch(const err::common & e) {
+        fell::err::log(e, path.stem().string());
     }
 }

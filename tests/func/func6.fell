@@ -1,9 +1,0 @@
-x = nihil;
-y = nihil;
-
-c = |a| {
-    x = a;
-    y = b;
-};
-
-c(12);

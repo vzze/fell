@@ -1,0 +1,8 @@
+throws = || {
+    a = 42 + nihil;
+};
+
+assert(
+    (protected_call(throws)).err,
+    "int + nil should throw."
+);

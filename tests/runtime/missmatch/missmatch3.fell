@@ -1,0 +1,10 @@
+throws = || {
+    x = {};
+
+    a = 12 + x;
+};
+
+assert(
+    (protected_call(throws)).err,
+    "int + obj should throw."
+);

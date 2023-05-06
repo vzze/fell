@@ -1,0 +1,3 @@
+x = "";
+
+assert(x == "", "Empty string is not empty.");

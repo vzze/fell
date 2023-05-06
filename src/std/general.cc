@@ -37,6 +37,14 @@ std::stack<fell::vm::holder> & fell::lib::params::get_stack() {
     return vm->runtime;
 }
 
+std::vector<fell::vm::holder> & fell::lib::params::get_memory() {
+    return vm->memory;
+}
+
+void fell::lib::params::pop_stack_frame() {
+    return vm->stack_frame.pop_back();
+}
+
 std::filesystem::path & fell::lib::params::cwd() {
     return vm->cwd;
 }
@@ -223,6 +231,8 @@ std::vector<std::pair<std::string, std::function<fell::var(fell::lib::params)>>>
             } catch(...) {
                 while(snapshot < params.get_stack().size())
                     params.get_stack().pop();
+
+                params.pop_stack_frame();
 
                 return var::object{
                     {

@@ -46,6 +46,7 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
     using enum holder::TYPE;
 
     const auto sz = call_info.top();
+    call_info.pop();
 
     stack_frame.push_back(static_cast<std::int32_t>(memory.size() - sz));
 
@@ -60,8 +61,6 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
 
         run(value);
 
-        call_info.pop();
-
         if(call_type == CAL) {
             if(runtime.size() == stack_size)
                 runtime.emplace(var::nihil{}, VALUE);
@@ -73,14 +72,11 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
             }
         } else if(call_type == CAN && runtime.size() != stack_size)
             runtime.pop();
-
-        memory.resize(static_cast<std::size_t>(stack_frame.back()));
-        stack_frame.pop_back();
     } else {
         try {
-            auto fn = std::get<std::function<fell::var(lib::params)>>(get(runtime.top()).get<var::func>());
+            const auto & fn = std::get<std::function<fell::var(lib::params)>>(get(runtime.top()).get<var::func>());
             runtime.pop();
-            var ret_value = fn({ this, memory.size() - sz, sz });
+            var ret_value = fn({ this, static_cast<std::size_t>(stack_frame.back()), sz });
 
             if(call_type == CAL)
                 runtime.emplace(ret_value, VALUE);
@@ -88,12 +84,10 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
         } catch(const std::exception & e) {
             throw err::common(location.line, location.column, e.what());
         }
-
-        call_info.pop();
-
-        memory.resize(static_cast<std::size_t>(stack_frame.back()));
-        stack_frame.pop_back();
     }
+
+    memory.resize(static_cast<std::size_t>(stack_frame.back()));
+    stack_frame.pop_back();
 }
 
 #define mem_loc(i) static_cast<std::size_t>(instructions.second[static_cast<std::size_t>(i) - 1])
@@ -247,11 +241,11 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
 
                         switch(runtime.top().type) {
                             case VALUE: {
-                                auto lhs = get(runtime.top());
+                                var lhs = get(runtime.top());
 
                                 runtime.pop();
 
-                                runtime.emplace(*lhs[rhs]);
+                                runtime.emplace(*lhs[rhs], VALUE);
                             } break;
 
                             default: {
@@ -269,11 +263,11 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
 
                         switch(runtime.top().type) {
                             case VALUE: {
-                                auto lhs = get(runtime.top());
+                                var lhs = get(runtime.top());
 
                                 runtime.pop();
 
-                                runtime.emplace(*lhs[rhs]);
+                                runtime.emplace(*lhs[rhs], VALUE);
                             } break;
 
                             default: {

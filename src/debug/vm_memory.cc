@@ -30,7 +30,13 @@ void fell::debug::vm_memory(vm & vm) {
             break;
 
             case FUNCTION:
-                std::clog << &v << ": FUN " << '\n';
+                std::clog << &v << ": FUN ";
+
+                if(std::holds_alternative<std::size_t>(var.get<var::func>())) {
+                    std::clog << std::get<std::size_t>(var.get<var::func>()) << '\n';
+                } else {
+                    std::clog << '\n';
+                }
             break;
         }
     }

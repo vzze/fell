@@ -1,0 +1,8 @@
+throws = || {
+    a = 42 + "i fell off";
+};
+
+assert(
+    (protected_call(throws)).err,
+    "int + str should throw."
+);

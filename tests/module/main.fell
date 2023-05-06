@@ -1,2 +1,0 @@
-x = require("hello.fell");
-print(x.greeting());

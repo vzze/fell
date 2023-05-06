@@ -1,0 +1,4 @@
+a = (12 + 10 - 1) * 2 + 3 - 3;
+b = a * a / a + a - (a - a);
+
+assert(a == 42 & b / 2 == a, "Calculations were not correct.");

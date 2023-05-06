@@ -155,7 +155,100 @@ LOGICAL_OP(>);
 LOGICAL_OP(<);
 LOGICAL_OP(<=);
 LOGICAL_OP(>=);
-LOGICAL_OP(==);
-LOGICAL_OP(!=);
+
+fell::var fell::var::operator == (const var & rhs) const {
+    using enum var::TYPE;
+
+    switch(type) {
+        case NIHIL:
+            switch(rhs.type) {
+                case NIHIL:
+                    return integer{1};
+                break;
+                default:
+                    return integer{0};
+                break;
+            }
+        break;
+
+        case INTEGER:
+            switch(rhs.type) {
+                case INTEGER:
+                    return var{
+                        integer{std::get<integer>(value) == std::get<integer>(rhs.value)}
+                    };
+                break;
+
+                case NUMBER:
+                    return var{
+                        integer{static_cast<number>(std::get<integer>(value)) == std::get<number>(rhs.value)}
+                    };
+                break;
+
+                default:
+                    return integer{0};
+                break;
+            }
+        break;
+
+        case NUMBER:
+            switch(rhs.type) {
+                case TYPE::INTEGER:
+                    return var{
+                        integer{std::get<number>(value) == static_cast<number>(std::get<integer>(rhs.value))}
+                    };
+                break;
+
+                case TYPE::NUMBER:
+                    return var{
+                        integer{std::get<number>(value) == std::get<number>(rhs.value)}
+                    };
+                break;
+
+                default:
+                    return integer{0};
+                break;
+            }
+        break;
+
+        case STRING:
+            switch(rhs.type) {
+                case STRING:
+                    return integer{std::get<string>(value) == std::get<string>(rhs.value)};
+                break;
+
+                default:
+                    return integer{0};
+                break;
+            }
+        break;
+
+        case OBJECT:
+            return integer{0};
+        break;
+
+        case FUNCTION:
+            switch(rhs.type) {
+                case FUNCTION:
+                    if(std::holds_alternative<std::size_t>(std::get<func>(value)) && std::holds_alternative<std::size_t>(std::get<func>(rhs.value))) {
+                        return integer{
+                            std::get<std::size_t>(std::get<func>(value)) == std::get<std::size_t>(std::get<func>(rhs.value))
+                        };
+                    } else {
+                        return integer{0};
+                    }
+                break;
+
+                default:
+                    return integer{0};
+                break;
+            }
+        break;
+    }
+
+    throw err::common("Poisoned variable.");
+}
+
+fell::var fell::var::operator != (const var & rhs) const { return integer{!(*this == rhs)}; }
 
 #undef LOGICAL_OP

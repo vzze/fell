@@ -84,10 +84,10 @@ fell::scan::scanned fell::scan::file(const std::filesystem::path path) {
                             file.substr(j - 1, file.find_first_of(" \n", j - 1))
                         };
 
-                    column += opt.value().length() + 1;
+                    column += opt->length() + 1;
 
-                    replace_string_codes(opt.value(), line, column);
-                    data.push_constant(opt.value(), {line, column});
+                    replace_string_codes(*opt, line, column);
+                    data.push_constant(*opt, {line, column});
                 } break;
 
                 default: {

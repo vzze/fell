@@ -1,0 +1,8 @@
+throws = || {
+    x = {} + 1;
+};
+
+assert(
+    (protected_call(throws)).err,
+    "obj + int should throw."
+);

@@ -214,24 +214,54 @@ found:
             case STRING:  constant_string(data, i, s_count, alternance, instructions, operators);  break;
 
             case FALSE:
+                if(alternance == true) throw err::common(
+                    data.locations[i].line,
+                    data.locations[i].column,
+                    "Unexpected identifier: " + data.identifiers[identifier_count]
+                );
+
+                alternance = true;
+
                 instructions.top(true, i)->push_back(static_cast<std::int32_t>(constants.size()));
                 constants.emplace_back(var::integer{0});
                 operators.push(vm::INSTRUCTIONS::LOC);
             break;
 
             case TRUE:
+                if(alternance == true) throw err::common(
+                    data.locations[i].line,
+                    data.locations[i].column,
+                    "Unexpected identifier: " + data.identifiers[identifier_count]
+                );
+
+                alternance = true;
+
                 instructions.top(true, i)->push_back(static_cast<std::int32_t>(constants.size()));
                 constants.emplace_back(var::integer{1});
                 operators.push(vm::INSTRUCTIONS::LOC);
             break;
 
             case NIHIL:
+                if(alternance == true) throw err::common(
+                    data.locations[i].line,
+                    data.locations[i].column,
+                    "Unexpected identifier: " + data.identifiers[identifier_count]
+                );
+
+                alternance = true;
+
                 instructions.top(true, i)->push_back(static_cast<std::int32_t>(constants.size()));
                 constants.emplace_back(var::nihil{0});
                 operators.push(vm::INSTRUCTIONS::LOC);
             break;
 
             case LEFT_SQUARE:
+                if(data.tokens[i + 1] == RIGHT_SQUARE) throw err::common(
+                    data.locations[i].line,
+                    data.locations[i].column,
+                    "Empty member access operator."
+                );
+
                 binary_operation(vm::INSTRUCTIONS::MAC, alternance, data, operators, i, instructions);
                 operators.push(vm::INSTRUCTIONS::PAR);
             break;
@@ -249,6 +279,7 @@ found:
 
             case LEFT_PAREN:
                 ++paren_counter;
+
                 if(alternance == true) {
                     func_call.push(true);
 
@@ -261,6 +292,8 @@ found:
                         binary_operation(vm::INSTRUCTIONS::CAL, alternance, data, operators, i, instructions);
 
                     instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::PRC));
+                } else {
+                    func_call.push(false);
                 }
 
                 operators.push(vm::INSTRUCTIONS::PAR);
@@ -278,7 +311,7 @@ found:
 
                 operators.pop();
 
-                if(!func_call.empty()) {
+                if(func_call.top()) {
                     alternance = true;
 
                     if(void_call.top()) {
@@ -288,8 +321,9 @@ found:
                         instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::PU));
                     }
 
-                    func_call.pop();
                 }
+
+                func_call.pop();
             break;
 
             case COMMA:

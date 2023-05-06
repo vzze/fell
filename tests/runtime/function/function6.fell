@@ -1,0 +1,11 @@
+x = nihil;
+y = nihil;
+
+c = |a| {
+    x = a;
+    y = b;
+};
+
+c(12);
+
+assert(x == 12 & y == nihil, "x == y & y == 12");

@@ -1,0 +1,15 @@
+ni = |a b c| {
+    a = c;
+    b = c;
+};
+
+two = 2;
+three = 3;
+four = 4;
+
+ni(two, three, four);
+
+assert(
+    two == 4 & three == 4 & four == 4,
+    "two == 4 & three == 4 & four == 4"
+);

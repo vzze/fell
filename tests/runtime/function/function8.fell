@@ -1,0 +1,12 @@
+cmp = |num| {
+    if num == 0 {
+        ret 42;
+    } else {
+        ret 84;
+    }
+};
+
+a = cmp(0);
+b = cmp(1);
+
+assert(b / 2 == a, "b / 2 == a");
