@@ -9,7 +9,7 @@ fell::err::common::common(
 }
 
 void fell::err::log(const err::common & e, const std::string_view extra) {
-    std::clog << e.start << extra << e.err;
+    std::clog << e.start << extra << e.err << '\n';
 }
 
 void fell::err::log(const std::exception & e) {

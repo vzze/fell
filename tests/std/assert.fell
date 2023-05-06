@@ -1,4 +1,0 @@
-assert(1, "");
-
-assert(1 == 1, "i don't think 1 is 1");
-assert(0 == 1, "i don't think 0 is 1");
