@@ -63,7 +63,7 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
 
         if(call_type == CAL) {
             if(runtime.size() == stack_size)
-                runtime.emplace(var::nihil{}, VALUE);
+                runtime.emplace(var{var::nihil{}}, VALUE);
             else if(runtime.top().type == REFERENCE) {
                 var ne = get(runtime.top());
 

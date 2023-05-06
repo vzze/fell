@@ -23,3 +23,9 @@ do {
         i = i + 1;
     }
 } while sorted == false;
+
+print_el = |e| {
+    print(e);
+};
+
+for_each(x, print_el);
