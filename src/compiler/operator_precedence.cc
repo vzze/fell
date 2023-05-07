@@ -7,6 +7,7 @@ std::int32_t fell::compiler::operator_precedence(const vm::INSTRUCTIONS ins) {
         case LOE:
         case LOV:
         case LOC:
+        case LOF:
             return 12;
         break;
 

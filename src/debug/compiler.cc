@@ -17,17 +17,14 @@ void fell::debug::compiler(const vm & vm) {
                 std::clog << "LOE  " << instructions[i - 1];
             break;
 
+            case LOF:
+                display(i);
+                std::clog << "LOF  " << instructions[i - 1];
+            break;
+
             case LOV:
                 display(i);
-                switch(static_cast<vm::INSTRUCTIONS>(instructions[i - 1])) {
-                    case TOP:
-                        std::clog << "LOV  TOP " << instructions[i - 2];
-                    break;
-
-                    default:
-                        std::clog << "LOV  " << instructions[i - 1] << ' ' << instructions[i - 2];
-                    break;
-                }
+                std::clog << "LOV  " << instructions[i - 1] << ' ' << instructions[i - 2];
             break;
 
             case LOC:

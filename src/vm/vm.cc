@@ -174,53 +174,48 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
                 runtime.emplace(mem_loc(i), CONSTANT);
             break;
 
-            case LOV:
-                switch(static_cast<vm::INSTRUCTIONS>(mem_loc(i))) {
-                    case TOP:
-                        if(memory.size() <= mem_loc(i - 1) + static_cast<std::size_t>(stack_frame.back()))
-                            memory.resize(mem_loc(i - 1) + static_cast<std::size_t>(stack_frame.back()) + 1);
+            case LOF:
+                if(memory.size() <= mem_loc(i) + static_cast<std::size_t>(stack_frame.back()))
+                    memory.resize(mem_loc(i) + static_cast<std::size_t>(stack_frame.back()) + 1);
 
-                        switch(memory[mem_loc(i - 1) + static_cast<std::size_t>(stack_frame.back())].type) {
-                            case VALUE:
-                                runtime.emplace(
-                                        std::get<var>(
-                                            memory[
-                                                mem_loc(i - 1) + static_cast<std::size_t>(stack_frame.back())
-                                            ].value
-                                        ),
-                                    VALUE
-                                );
-                            break;
-
-                            default:
-                                runtime.emplace(mem_loc(i - 1) + static_cast<std::size_t>(stack_frame.back()), REFERENCE);
-                            break;
-                        }
+                switch(memory[mem_loc(i) + static_cast<std::size_t>(stack_frame.back())].type) {
+                    case VALUE:
+                        runtime.emplace(
+                                std::get<var>(
+                                    memory[
+                                        mem_loc(i) + static_cast<std::size_t>(stack_frame.back())
+                                    ].value
+                                ),
+                            VALUE
+                        );
                     break;
 
                     default:
-                        if(mem_loc(i) >= stack_frame.size()) throw err::common(instructions.first[i].line, instructions.first[i].column, "Attempt to access expired variable.");
+                        runtime.emplace(mem_loc(i) + static_cast<std::size_t>(stack_frame.back()), REFERENCE);
+                    break;
+                }
+            break;
 
-                        if(memory.size() <= mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)]))
-                            memory.resize(mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)]) + 1);
+            case LOV:
+                if(mem_loc(i) >= stack_frame.size()) throw err::common(instructions.first[i].line, instructions.first[i].column, "Attempt to access expired variable.");
 
-                        switch(memory[mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)])].type) {
-                            case VALUE:
-                                runtime.emplace(
-                                        std::get<var>(
-                                            memory[
-                                                mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)])
-                                            ].value
-                                        ),
-                                    VALUE
-                                );
-                            break;
+                if(memory.size() <= mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)]))
+                    memory.resize(mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)]) + 1);
 
-                            default:
-                                runtime.emplace(mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)]), REFERENCE);
-                            break;
-                        }
+                switch(memory[mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)])].type) {
+                    case VALUE:
+                        runtime.emplace(
+                                std::get<var>(
+                                    memory[
+                                        mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)])
+                                    ].value
+                                ),
+                            VALUE
+                        );
+                    break;
 
+                    default:
+                        runtime.emplace(mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)]), REFERENCE);
                     break;
                 }
             break;

@@ -166,12 +166,14 @@ void fell::compiler::expression(
 
                     stack_frame = static_cast<std::int32_t>(contexts.size()) - 1;
 found:
+                    bool load_fast = true;
+
                     if(found_var) {
                         instructions.top(true, i)->push_back(it->second);
-                        if(stack_frame == static_cast<std::int32_t>(contexts.size()) - 1)
-                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::TOP));
-                        else
+                        if(stack_frame != static_cast<std::int32_t>(contexts.size()) - 1) {
+                            load_fast = false;
                             instructions.top(true, i)->push_back(stack_frame);
+                        }
                     } else {
                         bool found = false;
                         std::vector<bool> & memory_slots = contexts.rbegin()->second;
@@ -185,7 +187,6 @@ found:
                                 ] = static_cast<std::int32_t>(i);
 
                                 instructions.top(true, i)->push_back(static_cast<std::int32_t>(i));
-                                instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::TOP));
 
                                 memory_slots[i] = true;
                                 break;
@@ -199,11 +200,13 @@ found:
                             ] = static_cast<std::int32_t>(memory_slots.size()) - 1;
 
                             instructions.top(true, i)->push_back(static_cast<std::int32_t>(memory_slots.size()) - 1);
-                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::TOP));
                         }
                     }
 
-                    operators.push(vm::INSTRUCTIONS::LOV);
+                    if(load_fast)
+                        operators.push(vm::INSTRUCTIONS::LOF);
+                    else
+                        operators.push(vm::INSTRUCTIONS::LOV);
 
                     ++identifier_count;
                 }

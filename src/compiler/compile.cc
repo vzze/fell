@@ -44,8 +44,10 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
         switch(data.tokens[i]) {
             case EXPOSED:
                 if(data.tokens[i + 1] != IDENTIFIER) ERR("Malformed exposed variable declaration.");
+
                 if(exposed.end() != exposed.find(data.identifiers[identifier_count]))
                     ERR("Redefinition of an exposed variable " + data.identifiers[identifier_count] + ".");
+
                 exposed[data.identifiers[identifier_count]] = var::nihil{};
             break;
 

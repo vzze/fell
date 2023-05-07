@@ -28,9 +28,10 @@ namespace fell {
 
             TYPE type;
             std::variant<std::size_t, var, var*> value;
-            holder(const std::size_t, const TYPE);
-            holder(var *);
-            holder(const var = var::nihil{}, const TYPE = TYPE::UNINITIALIZED);
+
+            explicit holder(const std::size_t, const TYPE);
+            explicit holder(var *);
+            explicit holder(const var = var::nihil{}, const TYPE = TYPE::UNINITIALIZED);
         };
 
         enum class INSTRUCTIONS : std::int32_t {
@@ -71,7 +72,7 @@ namespace fell {
             CAN = -28,  // call with unneeded return value
             PRC = -29,  // pre call
 
-            TOP = -1602 // top of stack frame
+            LOF = -30   // load var fast
         };
 
         std::filesystem::path cwd;
