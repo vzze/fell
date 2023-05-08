@@ -1,8 +1,10 @@
 cmp = |num| {
     if num == 0 {
-        ret 42;
+        s = 42;
+        ret s;
     } else {
-        ret 84;
+        x = 84;
+        ret x;
     }
 };
 

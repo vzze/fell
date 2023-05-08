@@ -72,8 +72,10 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                     break;
 
                     case CONTEXT::ELSE: {
-                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
-                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+                        if(contexts.rbegin()->first.rbegin()->size() != 0) {
+                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
+                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+                        }
 
                         const auto index = static_cast<std::size_t>(ctx_solver.jump_table.top());
                         ctx_solver.jump_table.pop();
@@ -84,8 +86,10 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                     } break;
 
                     case CONTEXT::IF: {
-                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
-                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+                        if(contexts.rbegin()->first.rbegin()->size() != 0) {
+                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
+                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+                        }
 
                         const auto index = static_cast<std::size_t>(ctx_solver.jump_table.top());
                         ctx_solver.jump_table.pop();
@@ -99,8 +103,10 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                     } break;
 
                     case CONTEXT::WHILE: {
-                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
-                        instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+                        if(contexts.rbegin()->first.rbegin()->size() != 0) {
+                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
+                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+                        }
 
                         const auto index = static_cast<std::size_t>(ctx_solver.jump_table.top());
                         ctx_solver.jump_table.pop();
@@ -161,6 +167,11 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                     break;
 
                     case CONTEXT::BLOCK:
+                        if(contexts.rbegin()->first.rbegin()->size() != 0) {
+                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(contexts.rbegin()->first.rbegin()->size()));
+                            instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::POP));
+                        }
+
                         contexts.rbegin()->first.pop_back();
                     break;
                 }

@@ -225,7 +225,8 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
             break;
 
             case POP:
-                memory.resize(memory.size() - mem_loc(i));
+                for(std::size_t nillify = memory.size() - mem_loc(i); nillify < memory.size(); ++nillify)
+                    memory[nillify] = vm::holder{};
             break;
 
             case MAC: {
