@@ -14,7 +14,6 @@ namespace fell::lib {
             vm * vm;
         public:
             std::stack<fell::vm::holder> & get_stack();
-            std::vector<fell::vm::holder> & get_memory();
             void pop_stack_frame();
 
             std::filesystem::path & cwd();

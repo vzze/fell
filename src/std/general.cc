@@ -37,10 +37,6 @@ std::stack<fell::vm::holder> & fell::lib::params::get_stack() {
     return vm->runtime;
 }
 
-std::vector<fell::vm::holder> & fell::lib::params::get_memory() {
-    return vm->memory;
-}
-
 void fell::lib::params::pop_stack_frame() {
     return vm->stack_frame.pop_back();
 }
