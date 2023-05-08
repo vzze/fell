@@ -1,6 +1,11 @@
 " Vim syntax file
 " Language: Fell
 
+" Usage Instructions
+" Put this file in .vim/syntax/fell.vim
+" and add in your .vimrc file the next line:
+" autocmd BufRead,BufNewFile *.fell set filetype=fell
+
 if exists("b:current_syntax")
     finish
 endif
