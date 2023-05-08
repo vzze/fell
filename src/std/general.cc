@@ -276,5 +276,32 @@ std::vector<std::pair<std::string, std::function<fell::var(fell::lib::params)>>>
                 );
             }
         }
+    },
+    {
+        "read",
+        [](params params) -> fell::var {
+            if(params[0].get_type() != var::TYPE::STRING)
+                throw fell::err::common("Expected String.");
+
+            if(params[0].get<var::string>() == "int") {
+                var::integer x;
+                std::cin >> x;
+                return x;
+            } else if(params[0].get<var::string>() == "num") {
+                var::number x;
+                std::cin >> x;
+                return x;
+            } else if(params[0].get<var::string>() == "str") {
+                var::string x;
+                std::cin >> x;
+                return x;
+            } else if(params[0].get<var::string>() == "line") {
+                var::string x;
+                std::getline(std::cin, x);
+                return x;
+            } else {
+                throw fell::err::common("Unknown read method.");
+            }
+        }
     }
 };
