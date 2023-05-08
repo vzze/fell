@@ -45,10 +45,7 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
     using enum INSTRUCTIONS;
     using enum holder::TYPE;
 
-    const auto sz = call_info.top();
-    call_info.pop();
-
-    stack_frame.push_back(static_cast<std::int32_t>(memory.size() - sz));
+    current_stack_frame = stack_frame.back();
 
     if(get(runtime.top()).get_type() != var::TYPE::FUNCTION)
         throw err::common(location.line, location.column,  "Attempt to call a non-function variable.");
@@ -76,7 +73,11 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
         try {
             const auto & fn = std::get<std::function<fell::var(lib::params)>>(get(runtime.top()).get<var::func>());
             runtime.pop();
-            var ret_value = fn({ this, static_cast<std::size_t>(stack_frame.back()), sz });
+
+            var ret_value = fn({
+                this,
+                current_stack_frame, memory.size() - current_stack_frame
+            });
 
             if(call_type == CAL)
                 runtime.emplace(ret_value, VALUE);
@@ -86,8 +87,10 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
         }
     }
 
-    memory.resize(static_cast<std::size_t>(stack_frame.back()));
+    memory.resize(current_stack_frame);
     stack_frame.pop_back();
+
+    current_stack_frame = stack_frame.back();
 }
 
 #define mem_loc(i) static_cast<std::size_t>(instructions.second[static_cast<std::size_t>(i) - 1])
@@ -156,14 +159,12 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
             break;
 
             case PRC:
-                call_info.push(0);
+                stack_frame.push_back(memory.size());
             break;
 
             case PU:
                 memory.push_back(runtime.top());
                 runtime.pop();
-
-                ++call_info.top();
             break;
 
             case RET:
@@ -175,15 +176,15 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
             break;
 
             case LOF:
-                if(memory.size() <= mem_loc(i) + static_cast<std::size_t>(stack_frame.back()))
-                    memory.resize(mem_loc(i) + static_cast<std::size_t>(stack_frame.back()) + 1);
+                if(memory.size() <= mem_loc(i) + current_stack_frame)
+                    memory.resize(mem_loc(i) + current_stack_frame + 1);
 
-                switch(memory[mem_loc(i) + static_cast<std::size_t>(stack_frame.back())].type) {
+                switch(memory[mem_loc(i) + current_stack_frame].type) {
                     case VALUE:
                         runtime.emplace(
                                 std::get<var>(
                                     memory[
-                                        mem_loc(i) + static_cast<std::size_t>(stack_frame.back())
+                                        mem_loc(i) + current_stack_frame
                                     ].value
                                 ),
                             VALUE
@@ -191,7 +192,7 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
                     break;
 
                     default:
-                        runtime.emplace(mem_loc(i) + static_cast<std::size_t>(stack_frame.back()), REFERENCE);
+                        runtime.emplace(mem_loc(i) + current_stack_frame, REFERENCE);
                     break;
                 }
             break;
@@ -199,15 +200,15 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
             case LOV:
                 if(mem_loc(i) >= stack_frame.size()) throw err::common(instructions.first[i].line, instructions.first[i].column, "Attempt to access expired variable.");
 
-                if(memory.size() <= mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)]))
-                    memory.resize(mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)]) + 1);
+                if(memory.size() <= mem_loc(i - 1) + stack_frame[mem_loc(i)])
+                    memory.resize(mem_loc(i - 1) + stack_frame[mem_loc(i)] + 1);
 
-                switch(memory[mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)])].type) {
+                switch(memory[mem_loc(i - 1) + stack_frame[mem_loc(i)]].type) {
                     case VALUE:
                         runtime.emplace(
                                 std::get<var>(
                                     memory[
-                                        mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)])
+                                        mem_loc(i - 1) + stack_frame[mem_loc(i)]
                                     ].value
                                 ),
                             VALUE
@@ -215,7 +216,7 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
                     break;
 
                     default:
-                        runtime.emplace(mem_loc(i - 1) + static_cast<std::size_t>(stack_frame[mem_loc(i)]), REFERENCE);
+                        runtime.emplace(mem_loc(i - 1) + stack_frame[mem_loc(i)], REFERENCE);
                     break;
                 }
             break;

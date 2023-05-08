@@ -78,17 +78,16 @@ namespace fell {
         std::filesystem::path cwd;
 
         std::stack<holder> runtime;
-        std::vector<std::int32_t> stack_frame = { 0 };
-
         std::vector<holder> memory;
+        std::vector<std::size_t> stack_frame = { 0 };
+        std::size_t current_stack_frame = 0;
+
 
         std::pair<std::vector<scan::location>, std::vector<std::int32_t>> ins;
 
         var & get(holder &);
 
         void call(const scan::location, INSTRUCTIONS);
-
-        std::stack<std::size_t> call_info;
 
         void run(const std::pair<std::vector<scan::location>, std::vector<std::int32_t>> &);
     };

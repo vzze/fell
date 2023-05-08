@@ -13,12 +13,12 @@ void fell::lib::params::for_each(std::function<void (var &)> f, const std::size_
 }
 
 fell::var & fell::lib::params::operator [] (const std::size_t i) {
-    if(i >= size) throw err::common("Embbedded function expected at least " + std::to_string(i + 1) + " parameters.");
+    if(i >= size) throw err::common("Embedded function expected at least " + std::to_string(i + 1) + " parameters.");
     return vm->get(*(vm->memory.begin() + static_cast<std::int64_t>(i) + static_cast<std::int64_t>(offset)));
 }
 
 fell::var fell::lib::params::call_function(var & vr, std::vector<var*> params) {
-    vm->call_info.push(params.size());
+    vm->stack_frame.push_back(vm->memory.size());
 
     vm->runtime.emplace(vr, vm::holder::TYPE::VALUE);
 
