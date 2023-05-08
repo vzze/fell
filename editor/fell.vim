@@ -46,4 +46,4 @@ hi def link fellIdentifier Identifier
 
 hi def link fellEscaped SpecialChar
 
-let b:current_syn = "fell"
+let b:current_syntax = "fell"
