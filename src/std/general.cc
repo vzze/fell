@@ -18,22 +18,10 @@ fell::var & fell::lib::params::operator [] (const std::size_t i) {
 }
 
 fell::var fell::lib::params::call_function(var & vr, std::vector<var*> params) {
-    vm->stack_frame.push_back(vm->memory.size());
-
-    vm->runtime.emplace(vr, vm::holder::TYPE::VALUE);
-
-    for(var * param : params)
-        vm->memory.emplace_back(param);
-
-    vm->call({0, 0}, vm::INSTRUCTIONS::CAL);
-
-    fell::var v = vm->get(vm->runtime.top());
-    vm->runtime.pop();
-
-    return v;
+    return vm->call(vr, params);
 }
 
-std::stack<fell::vm::holder> & fell::lib::params::get_stack() {
+fell::vm::stack & fell::lib::params::get_stack() {
     return vm->runtime;
 }
 
@@ -245,30 +233,15 @@ std::vector<std::pair<std::string, std::function<fell::var(fell::lib::params)>>>
         [](params params) -> fell::var {
             try {
                 vm vm;
-                vm.cwd = params.cwd().parent_path();
+                const auto file = params.cwd() / params[0].get<var::string>();
+                vm.cwd = file.parent_path();
 
                 {
-                    auto data = scan::file(params.cwd() / params[0].get<var::string>());
-
-#ifdef DEBUG
-                    fell::debug::scanner(data);
-#endif
+                    const auto data = scan::file(file);
                     fell::compiler::process(data, vm);
-#ifdef DEBUG
-                    fell::debug::compiler(vm);
-#endif
                 }
 
-                vm.run(vm.ins);
-
-#ifdef DEBUG
-                fell::debug::vm_memory(vm);
-#endif
-                if(!vm.runtime.empty()) {
-                    return vm.get(vm.runtime.top());
-                } else {
-                    return var::nihil{};
-                }
+                return vm.main();
             } catch(const std::exception & e) {
                 throw err::common(
                     "In module " +

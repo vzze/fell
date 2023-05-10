@@ -22,4 +22,4 @@ fact = |n m| {
     ret cont;
 };
 
-print(factori(750, 490));
+print(fact(750, 490));

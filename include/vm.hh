@@ -77,19 +77,60 @@ namespace fell {
 
         std::filesystem::path cwd;
 
-        std::stack<holder> runtime;
+        struct stack {
+            private:
+                holder * data = new holder[10000];
+                std::size_t _size = 0;
+            public:
+                template<typename T>
+                void push(T && arg) {
+                    data[_size++] = arg;
+                }
+
+                template<typename ... Args>
+                void emplace(Args && ... args) {
+                    data[_size++] = holder{std::forward<Args>(args)...};
+                }
+
+                void pop() {
+                    --_size;
+                }
+
+                holder & top() {
+                    return data[_size - 1];
+                }
+
+                std::size_t size() const {
+                    return _size;
+                }
+
+                bool empty() const {
+                    return _size == 0;
+                }
+        } runtime;
+
         std::vector<holder> memory;
-        std::vector<std::size_t> stack_frame = { 0 };
-        std::size_t current_stack_frame = 0;
+        std::vector<std::size_t> stack_frame = {};
+        std::size_t current_stack_frame;
 
+        std::stack<std::tuple<
+            std::size_t,
+            std::pair<std::vector<scan::location>, std::vector<std::int32_t>> *,
+            vm::INSTRUCTIONS,
+            std::size_t
+        >> program;
 
-        std::pair<std::vector<scan::location>, std::vector<std::int32_t>> ins;
+        std::pair<std::vector<scan::location>, std::vector<std::int32_t>> main_program;
 
         var & get(holder &);
 
-        void call(const scan::location, INSTRUCTIONS);
+        var call(var &, std::vector<var*>);
 
-        void run(const std::pair<std::vector<scan::location>, std::vector<std::int32_t>> &);
+        void init();
+
+        var run(const std::size_t = 0);
+
+        var main();
     };
 }
 

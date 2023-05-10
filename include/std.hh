@@ -13,7 +13,7 @@ namespace fell::lib {
             std::size_t size;
             vm * vm;
         public:
-            std::stack<fell::vm::holder> & get_stack();
+            vm::stack & get_stack();
             void pop_stack_frame();
 
             std::filesystem::path & cwd();

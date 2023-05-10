@@ -41,60 +41,6 @@ fell::var & fell::vm::get(holder & h) {
     throw fell::err::common(0, 0, "Something really bad happened.");
 }
 
-void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
-    using enum INSTRUCTIONS;
-    using enum holder::TYPE;
-
-    current_stack_frame = stack_frame.back();
-
-    if(get(runtime.top()).get_type() != var::TYPE::FUNCTION)
-        throw err::common(location.line, location.column,  "Attempt to call a non-function variable.");
-
-    if(std::holds_alternative<std::size_t>(get(runtime.top()).get<var::func>())) {
-        const auto & value = labels[std::get<std::size_t>(get(runtime.top()).get<var::func>())];
-        runtime.pop();
-
-        const auto stack_size = runtime.size();
-
-        run(value);
-
-        if(call_type == CAL) {
-            if(runtime.size() == stack_size)
-                runtime.emplace(var{var::nihil{}}, VALUE);
-            else if(runtime.top().type == REFERENCE) {
-                var ne = get(runtime.top());
-
-                runtime.pop();
-                runtime.emplace(ne, VALUE);
-            }
-        } else if(call_type == CAN && runtime.size() != stack_size)
-            runtime.pop();
-    } else {
-        try {
-            const auto & fn = std::get<std::function<fell::var(lib::params)>>(get(runtime.top()).get<var::func>());
-            runtime.pop();
-
-            var ret_value = fn({
-                this,
-                current_stack_frame, memory.size() - current_stack_frame
-            });
-
-            if(call_type == CAL)
-                runtime.emplace(ret_value, VALUE);
-
-        } catch(const std::exception & e) {
-            throw err::common(location.line, location.column, e.what());
-        }
-    }
-
-    memory.resize(current_stack_frame);
-    stack_frame.pop_back();
-
-    current_stack_frame = stack_frame.back();
-}
-
-#define mem_loc(i) static_cast<std::size_t>(instructions.second[static_cast<std::size_t>(i) - 1])
-
 #define binary_op(op) \
     try {                                                      \
         switch(runtime.top().type) {                           \
@@ -144,18 +90,87 @@ void fell::vm::call(const scan::location location, INSTRUCTIONS call_type) {
             } break;                                           \
         }                                                      \
     } catch(const std::exception & e) {                        \
-        throw err::common(instructions.first[i].line, instructions.first[i].column, e.what()); \
+        throw err::common((*locations)[*index].line, (*locations)[*index].column, e.what()); \
     }                                                          \
 
-void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std::int32_t>> & instructions) {
+#define mem_loc(i) static_cast<std::size_t>((*instructions)[i - 1])
+
+fell::var fell::vm::main() {
+    init();
+    return run();
+}
+
+void fell::vm::init() {
+    program.push({0, &main_program, vm::INSTRUCTIONS::CAL, 0});
+
+    stack_frame.push_back(0);
+    current_stack_frame = 0;
+}
+
+fell::var fell::vm::call(fell::var & vr, std::vector<var*> params) {
+    stack_frame.push_back(memory.size());
+    current_stack_frame = stack_frame.back();
+
+    for(var * param : params)
+        memory.emplace_back(param);
+
+    program.push({0, &labels[std::get<std::size_t>(vr.get<var::func>())], vm::INSTRUCTIONS::CAL, runtime.size()});
+
+    return run(program.size() - 1);
+}
+
+fell::var fell::vm::run(const std::size_t stopping_point) {
     using enum INSTRUCTIONS;
     using enum holder::TYPE;
 
-    for(std::size_t i = 0; i != instructions.second.size(); ++i) {
-        switch(static_cast<INSTRUCTIONS>(instructions.second[i])) {
-            case CAL:
-            case CAN:
-                call(instructions.first[i], static_cast<INSTRUCTIONS>(instructions.second[i]));
+    auto * index              = &std::get<0>(program.top());
+    auto * instructions       = &std::get<1>(program.top())->second;
+    auto * locations          = &std::get<1>(program.top())->first;
+    auto * program_call_type  = &std::get<2>(program.top());
+    auto * program_stack_size = &std::get<3>(program.top());
+
+    while(*index < instructions->size()) {
+        switch(static_cast<INSTRUCTIONS>((*instructions)[*index])) {
+            case CAN: [[fallthrough]];
+            [[likely]] case CAL:
+                current_stack_frame = stack_frame.back();
+
+                if(get(runtime.top()).get_type() != var::TYPE::FUNCTION)
+                    throw err::common((*locations)[(*index)].line, (*locations)[*index].column,  "Attempt to call a non-function variable.");
+
+                if(std::holds_alternative<std::size_t>(get(runtime.top()).get<var::func>())) {
+                    auto & value = labels[std::get<std::size_t>(get(runtime.top()).get<var::func>())];
+                    runtime.pop();
+
+                    program.push({0, &value, static_cast<INSTRUCTIONS>((*instructions)[*index]), runtime.size()});
+
+                    index              = &std::get<0>(program.top());
+                    instructions       = &std::get<1>(program.top())->second;
+                    locations          = &std::get<1>(program.top())->first;
+                    program_call_type  = &std::get<2>(program.top());
+                    program_stack_size = &std::get<3>(program.top());
+                    continue;
+                } else {
+                    try {
+                        const auto & fn = std::get<std::function<fell::var(lib::params)>>(get(runtime.top()).get<var::func>());
+                        runtime.pop();
+
+                        var ret_value = fn({
+                            this,
+                            current_stack_frame, memory.size() - current_stack_frame
+                        });
+
+                        if(static_cast<INSTRUCTIONS>((*instructions)[*index]) == CAL)
+                            runtime.emplace(ret_value, VALUE);
+
+                        memory.resize(stack_frame.back());
+                        stack_frame.pop_back();
+
+                        current_stack_frame = stack_frame.back();
+                    } catch(const std::exception & e) {
+                        throw err::common((*locations)[*index].line, (*locations)[*index].column, e.what());
+                    }
+                }
             break;
 
             case PRC:
@@ -168,65 +183,66 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
             break;
 
             case RET:
-                return;
+                if(*program_call_type == CAL) {
+                    if(runtime.size() == *program_stack_size)
+                        runtime.emplace(var{var::nihil{}}, VALUE);
+                    else if(runtime.top().type == REFERENCE) {
+                        var ne = get(runtime.top());
+
+                        runtime.pop();
+                        runtime.emplace(ne, VALUE);
+                    }
+                } else if(*program_call_type == CAN && runtime.size() != *program_stack_size)
+                    runtime.pop();
+
+                memory.resize(current_stack_frame);
+                stack_frame.pop_back();
+
+                program.pop();
+
+                if(program.size() != 0) [[likely]]
+                    current_stack_frame = stack_frame.back();
+
+                if(program.size() == stopping_point) {
+                    var ret = get(runtime.top());
+                    runtime.pop();
+
+                    return ret;
+                }
+
+                index              = &std::get<0>(program.top());
+                instructions       = &std::get<1>(program.top())->second;
+                locations          = &std::get<1>(program.top())->first;
+                program_call_type  = &std::get<2>(program.top());
+                program_stack_size = &std::get<3>(program.top());
             break;
 
             case LOC:
-                runtime.emplace(mem_loc(i), CONSTANT);
+                runtime.emplace(mem_loc(*index), CONSTANT);
             break;
 
             case LOF:
-                if(memory.size() <= mem_loc(i) + current_stack_frame)
-                    memory.resize(mem_loc(i) + current_stack_frame + 1);
+                if(memory.size() <= mem_loc(*index) + current_stack_frame)
+                    memory.resize(mem_loc(*index) + current_stack_frame + 1);
 
-                switch(memory[mem_loc(i) + current_stack_frame].type) {
-                    case VALUE:
-                        runtime.emplace(
-                                std::get<var>(
-                                    memory[
-                                        mem_loc(i) + current_stack_frame
-                                    ].value
-                                ),
-                            VALUE
-                        );
-                    break;
-
-                    default:
-                        runtime.emplace(mem_loc(i) + current_stack_frame, REFERENCE);
-                    break;
-                }
+                runtime.emplace(mem_loc(*index) + current_stack_frame, REFERENCE);
             break;
 
             case LOV:
-                if(mem_loc(i) >= stack_frame.size()) throw err::common(instructions.first[i].line, instructions.first[i].column, "Attempt to access expired variable.");
+                if(mem_loc(*index) >= stack_frame.size()) throw err::common((*locations)[*index].line, (*locations)[*index].column, "Attempt to access expired variable.");
 
-                if(memory.size() <= mem_loc(i - 1) + stack_frame[mem_loc(i)])
-                    memory.resize(mem_loc(i - 1) + stack_frame[mem_loc(i)] + 1);
+                if(memory.size() <= mem_loc(*index - 1) + stack_frame[mem_loc(*index)])
+                    memory.resize(mem_loc(*index - 1) + stack_frame[mem_loc(*index)] + 1);
 
-                switch(memory[mem_loc(i - 1) + stack_frame[mem_loc(i)]].type) {
-                    case VALUE:
-                        runtime.emplace(
-                                std::get<var>(
-                                    memory[
-                                        mem_loc(i - 1) + stack_frame[mem_loc(i)]
-                                    ].value
-                                ),
-                            VALUE
-                        );
-                    break;
-
-                    default:
-                        runtime.emplace(mem_loc(i - 1) + stack_frame[mem_loc(i)], REFERENCE);
-                    break;
-                }
+                runtime.emplace(mem_loc(*index - 1) + stack_frame[mem_loc(*index)], REFERENCE);
             break;
 
             case LOE:
-                runtime.emplace(mem_loc(i), EXPOSED);
+                runtime.emplace(mem_loc(*index), EXPOSED);
             break;
 
             case POP:
-                for(std::size_t nillify = memory.size() - mem_loc(i); nillify < memory.size(); ++nillify)
+                for(std::size_t nillify = memory.size() - mem_loc(*index); nillify < memory.size(); ++nillify)
                     memory[nillify] = vm::holder{};
             break;
 
@@ -280,23 +296,27 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
             } break;
 
             case JE:
-                if(runtime.empty()) throw err::common(instructions.first[i].line, instructions.first[i].column, "Malformed statement.");
+                if(runtime.empty()) throw err::common((*locations)[*index].line, (*locations)[*index].column, "Malformed statement.");
 
-                if(!(bool)(get((runtime.top())))) i += mem_loc(i) - 1;
+                if(!(bool)(get(runtime.top())))
+                    *index = *index + mem_loc(*index) - 1;
 
                 runtime.pop();
             break;
 
             case JMP:
-                i += mem_loc(i) - 1;
+                *index = *index + mem_loc(*index) - 1;
             break;
 
             case RJMP:
-                i -= mem_loc(i);
+                *index = *index - mem_loc(*index);
             break;
 
             case RJE:
-                if((bool)(get(runtime.top()))) i -= mem_loc(i);
+                if(runtime.empty()) throw err::common((*locations)[*index].line, (*locations)[*index].column, "Malformed statement.");
+
+                if((bool)(get(runtime.top())))
+                    *index = *index - mem_loc(*index);
 
                 runtime.pop();
             break;
@@ -313,9 +333,9 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
             case NE: binary_op(!=); break;
             case EQ: binary_op(==); break;
 
-            case GR: binary_op(>); break;
+            case GR: binary_op(>);  break;
             case GE: binary_op(>=); break;
-            case LR: binary_op(<); break;
+            case LR: binary_op(<);  break;
             case LE: binary_op(<=); break;
 
             case MOV: {
@@ -326,11 +346,11 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
 
                         switch(runtime.top().type) {
                             case VALUE:
-                                throw err::common(instructions.first[i].line, instructions.first[i].column, "Attempt to initialize a temporary value.");
+                                throw err::common((*locations)[*index].line, (*locations)[*index].column, "Attempt to initialize a temporary value.");
                             break;
 
                             case CONSTANT:
-                                throw err::common(instructions.first[i].line, instructions.first[i].column, "Attempt to initialize a constant value");
+                                throw err::common((*locations)[*index].line, (*locations)[*index].column, "Attempt to initialize a constant value");
                             break;
 
                             default: {
@@ -348,11 +368,11 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
 
                         switch(runtime.top().type) {
                             case VALUE:
-                                throw err::common(instructions.first[i].line, instructions.first[i].column, "Attempt to initialize a temporary value.");
+                                throw err::common((*locations)[*index].line, (*locations)[*index].column, "Attempt to initialize a temporary value.");
                             break;
 
                             case CONSTANT:
-                                throw err::common(instructions.first[i].line, instructions.first[i].column, "Attempt to initialize a constant value");
+                                throw err::common((*locations)[*index].line, (*locations)[*index].column, "Attempt to initialize a constant value");
                             break;
 
                             default: {
@@ -369,9 +389,10 @@ void fell::vm::run(const std::pair<std::vector<scan::location>, std::vector<std:
 
             default: break;
         }
+        *index = *index + 1;
     }
 
-    throw err::common(instructions.first.back().line, instructions.first.back().column, "Malformed bytecode");
+    return var::integer{0};
 }
 
 #undef mem_loc

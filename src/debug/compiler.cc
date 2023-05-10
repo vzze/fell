@@ -174,8 +174,8 @@ void fell::debug::compiler(const vm & vm) {
 
     std::clog << "MAIN:\n";
 
-    for(std::size_t i = 0; i < vm.ins.second.size(); ++i) {
-        output_instruction(i, vm.ins.second);
+    for(std::size_t i = 0; i < vm.main_program.second.size(); ++i) {
+        output_instruction(i, vm.main_program.second);
     }
 
     std::clog << "\n\n";

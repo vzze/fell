@@ -8,38 +8,13 @@ void fell::interpreter::register_function(const var::string name, std::function<
     exposed[name] = var{var::func{func}};
 }
 
-fell::var fell::interpreter::call_function(const var::string name, std::vector<var*> params) {
-    vm.stack_frame.push_back(vm.memory.size());
-
-    vm.runtime.emplace(exposed[name], vm::holder::TYPE::EXPOSED);
-
-    for(var * param : params)
-        vm.memory.emplace_back(param);
-
-    vm.call({0, 0}, vm::INSTRUCTIONS::CAL);
-
-    var v = vm.get(vm.runtime.top());
-    vm.runtime.pop();
-
-    return v;
+fell::var fell::interpreter::call_exposed_function(const var::string name, std::vector<var*> params) {
+    return vm.call(exposed[name], params);
 }
 
 fell::var fell::interpreter::call_function(var & vr, std::vector<var*> params) {
-    vm.stack_frame.push_back(vm.memory.size());
-
-    vm.runtime.emplace(vr, vm::holder::TYPE::VALUE);
-
-    for(var * param : params)
-        vm.memory.emplace_back(param);
-
-    vm.call({0, 0}, vm::INSTRUCTIONS::CAL);
-
-    var v = vm.get(vm.runtime.top());
-    vm.runtime.pop();
-
-    return v;
+    return vm.call(vr, params);
 }
-
 
 fell::interpreter::interpreter(const std::filesystem::path path) {
     if(path == "version") {
@@ -87,7 +62,7 @@ fell::interpreter::interpreter(const std::filesystem::path path) {
 #endif
         }
 
-        vm.run(vm.ins);
+        return_value = vm.main();
 
 #ifdef DEBUG
         fell::debug::vm_memory(vm);
@@ -98,5 +73,33 @@ fell::interpreter::interpreter(const std::filesystem::path path) {
         fell::debug::vm_memory(vm);
 #endif
         fell::err::log(e, path.stem().string());
+
+        return_value = static_cast<var::integer>(var::string{e.what()}.length());
     }
+}
+
+fell::var fell::interpreter::main_return() {
+    return return_value;
+}
+
+int fell::interpreter::cpp_return() {
+    using enum var::TYPE;
+    switch(return_value.get_type()) {
+        case INTEGER:
+            return static_cast<int>(return_value.get<var::integer>());
+        break;
+
+        case NUMBER:
+            return static_cast<int>(return_value.get<var::number>());
+        break;
+
+        case NIHIL:  [[fallthrough]];
+        case STRING: [[fallthrough]];
+        case OBJECT: [[fallthrough]];
+        case FUNCTION:
+            return 0;
+        break;
+    }
+
+    return 1602;
 }

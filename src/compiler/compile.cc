@@ -3,9 +3,9 @@
 
 std::vector<std::int32_t> * fell::compiler::instructions::top([[maybe_unused]] const bool push, [[maybe_unused]] const std::size_t i) {
     if(ins.empty()) {
-        if(push) vm->ins.first.push_back(data->locations[i]);
+        if(push) vm->main_program.first.push_back(data->locations[i]);
 
-        return &vm->ins.second;
+        return &vm->main_program.second;
     } else {
         if(push) labels[std::get<std::size_t>(constants[ins.top()].get<var::func>())].first.push_back(data->locations[i]);
 
