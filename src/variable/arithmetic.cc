@@ -258,11 +258,12 @@ fell::var fell::var::operator % (const var & rhs) const {
 
                 case TYPE::NUMBER:
                     return var{
-                        static_cast<number>(std::get<integer>(value)) -
-                        std::floor(
-                            static_cast<number>(std::get<integer>(value)) /
-                            std::get<number>(rhs.value)
-                        ) * std::get<number>(rhs.value)
+                        static_cast<number>(
+                            std::fmod(
+                                static_cast<number>(std::get<integer>(value)),
+                                std::get<number>(rhs.value)
+                            )
+                        )
                     };
                 break;
 
@@ -288,21 +289,23 @@ fell::var fell::var::operator % (const var & rhs) const {
 
                 case TYPE::INTEGER:
                     return var{
-                        std::get<number>(value) -
-                        std::floor(
-                            std::get<number>(value) /
-                            static_cast<number>(std::get<integer>(rhs.value))
-                        ) * static_cast<number>(std::get<integer>(rhs.value))
+                        static_cast<number>(
+                            std::fmod(
+                                std::get<number>(value),
+                                static_cast<number>(std::get<integer>(rhs.value))
+                            )
+                        )
                     };
                 break;
 
                 case TYPE::NUMBER:
                     return var{
-                        std::get<number>(value) -
-                        std::floor(
-                            std::get<number>(value) /
-                            std::get<number>(rhs.value)
-                        ) * std::get<number>(rhs.value)
+                        static_cast<number>(
+                            std::fmod(
+                                std::get<number>(value),
+                                std::get<number>(rhs.value)
+                            )
+                        )
                     };
                 break;
 

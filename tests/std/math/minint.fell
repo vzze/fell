@@ -1,0 +1,1 @@
+assert(math.mininteger <= math.random(), "math.mininteger <= math.random()");

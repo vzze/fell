@@ -79,9 +79,13 @@ namespace fell {
 
         struct stack {
             private:
-                holder * data = new holder[10000];
+                std::vector<holder> data;
                 std::size_t _size = 0;
             public:
+                void init() {
+                    data.resize(10000);
+                }
+
                 template<typename T>
                 void push(T && arg) {
                     data[_size++] = arg;
@@ -111,7 +115,7 @@ namespace fell {
 
         std::vector<holder> memory;
         std::vector<std::size_t> stack_frame = {};
-        std::size_t current_stack_frame;
+        std::stack<std::size_t> call_info;
 
         std::stack<std::tuple<
             std::size_t,
@@ -125,6 +129,7 @@ namespace fell {
         var & get(holder &);
 
         var call(var &, std::vector<var*>);
+        var call(std::pair<std::vector<scan::location>, std::vector<std::int32_t>> &);
 
         void init();
 

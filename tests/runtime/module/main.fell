@@ -2,3 +2,4 @@ x = require("hello.fell");
 
 assert(type(x) == "obj", "required type should be obj");
 assert(type(x.greeting) == "fun", "member should be fun");
+assert(x.greeting() == "Hello World!", "result should be \"Hello World!\"");

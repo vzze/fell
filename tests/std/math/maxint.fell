@@ -1,0 +1,1 @@
+assert(math.random() <= math.maxinteger, "math.random() <= math.maxinteger");

@@ -2,6 +2,10 @@
 #define STD_HH
 
 #include <functional>
+#include <numeric>
+#include <numbers>
+#include <random>
+#include <cmath>
 
 #include <variable.hh>
 #include <vm.hh>
@@ -22,12 +26,14 @@ namespace fell::lib {
             void for_each(std::function<void(var &)>, const std::size_t = 0);
 
             var call_function(var &, std::vector<var*>);
+            var call_module(std::pair<std::vector<scan::location>, std::vector<std::int32_t>> &);
 
             std::size_t number() const;
             params(struct vm *, const std::size_t, const std::size_t);
     };
 
-    extern std::vector<std::pair<std::string, std::function<var(params)>>> general;
+    std::vector<std::pair<var::string, std::function<var(params)>>> general();
+    std::unordered_map<var::string, var> math();
 };
 
 #endif

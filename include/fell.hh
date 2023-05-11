@@ -18,7 +18,18 @@ namespace fell {
             vm vm;
             var return_value = var::integer{0};
         public:
-            interpreter(const std::filesystem::path);
+            enum class STD_MODULES : std::int32_t {
+                ALL,
+                GENERAL,
+                MATH
+            };
+        private:
+            void init_std_modules(std::vector<STD_MODULES>);
+            void init_std_general();
+            void init_std_math();
+        public:
+            interpreter(const std::filesystem::path, std::vector<STD_MODULES> = { STD_MODULES::ALL });
+
             var & get_exposed(const var::string);
             void register_function(const var::string, std::function<var(lib::params)>);
 

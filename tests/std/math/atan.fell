@@ -1,0 +1,3 @@
+print(math.atan(1));
+# 1.0 / math.tiny should be Inf
+print(math.atan(1.0 / math.tiny));

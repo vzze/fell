@@ -1,0 +1,2 @@
+print(math.acos(0 - 1));
+print(math.acos(0));

@@ -289,7 +289,12 @@ found:
                     if(data.tokens[i + 1] == RIGHT_PAREN) void_call.push(true);
                     else void_call.push(false);
 
-                    if(i <= 1 || (i > 1 && (data.tokens[i - 2] == SEMICOLON || data.tokens[i - 2] == LEFT_CURLY)))
+                    auto j = i - 1;
+
+                    while(j > 0 && (data.tokens[j] == IDENTIFIER || data.tokens[j] == STRING || data.tokens[j] == DOT))
+                        --j;
+
+                    if(j == 0 || (data.tokens[j] == SEMICOLON || data.tokens[j] == LEFT_CURLY))
                         binary_operation(vm::INSTRUCTIONS::CAN, alternance, data, operators, i, instructions);
                     else
                         binary_operation(vm::INSTRUCTIONS::CAL, alternance, data, operators, i, instructions);

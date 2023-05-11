@@ -1,0 +1,4 @@
+assert(math.floor(1.1) == 1, "math.floor(1.1) == 1");
+assert(math.floor(1.4) == 1, "math.floor(1.4) == 1");
+assert(math.floor(1.5) == 1, "math.floor(1.5) == 1");
+assert(math.floor(1.7) == 1, "math.floor(1.7) == 1");

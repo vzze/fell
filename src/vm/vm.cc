@@ -2,45 +2,6 @@
 #include <error.hh>
 #include <std.hh>
 
-fell::vm::holder::holder(const std::size_t v, const TYPE t) : type{t}, value{v} {}
-fell::vm::holder::holder(var * var) : type{TYPE::OBJ_PROP}, value{var} {}
-fell::vm::holder::holder(var var, TYPE t) : type{t}, value{var} {}
-
-std::unordered_map<std::string, fell::var> fell::exposed = {};
-std::vector<fell::var> fell::constants;
-std::vector<std::pair<std::vector<fell::scan::location>, std::vector<std::int32_t>>> fell::labels;
-
-fell::var & fell::vm::get(holder & h) {
-    switch(h.type) {
-        case holder::TYPE::REFERENCE:
-            while(memory[std::get<std::size_t>(h.value)].type == holder::TYPE::REFERENCE) {
-                h.value = std::get<std::size_t>(memory[std::get<std::size_t>(h.value)].value);
-            }
-
-            return get(memory[std::get<std::size_t>(h.value)]);
-        break;
-
-        case holder::TYPE::CONSTANT:
-            return constants[std::get<std::size_t>(h.value)];
-        break;
-
-        case holder::TYPE::EXPOSED:
-            return exposed[constants[std::get<std::size_t>(h.value)].get<var::string>()];
-        break;
-
-        case holder::TYPE::VALUE:
-        case holder::TYPE::UNINITIALIZED:
-            return std::get<var>(h.value);
-        break;
-
-        case holder::TYPE::OBJ_PROP:
-            return *std::get<var*>(h.value);
-        break;
-    }
-
-    throw fell::err::common(0, 0, "Something really bad happened.");
-}
-
 #define binary_op(op) \
     try {                                                      \
         switch(runtime.top().type) {                           \
@@ -101,22 +62,10 @@ fell::var fell::vm::main() {
 }
 
 void fell::vm::init() {
+    runtime.init();
     program.push({0, &main_program, vm::INSTRUCTIONS::CAL, 0});
 
     stack_frame.push_back(0);
-    current_stack_frame = 0;
-}
-
-fell::var fell::vm::call(fell::var & vr, std::vector<var*> params) {
-    stack_frame.push_back(memory.size());
-    current_stack_frame = stack_frame.back();
-
-    for(var * param : params)
-        memory.emplace_back(param);
-
-    program.push({0, &labels[std::get<std::size_t>(vr.get<var::func>())], vm::INSTRUCTIONS::CAL, runtime.size()});
-
-    return run(program.size() - 1);
 }
 
 fell::var fell::vm::run(const std::size_t stopping_point) {
@@ -132,8 +81,9 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
     while(*index < instructions->size()) {
         switch(static_cast<INSTRUCTIONS>((*instructions)[*index])) {
             case CAN: [[fallthrough]];
-            [[likely]] case CAL:
-                current_stack_frame = stack_frame.back();
+            case CAL:
+                stack_frame.push_back(memory.size() - call_info.top());
+                call_info.pop();
 
                 if(get(runtime.top()).get_type() != var::TYPE::FUNCTION)
                     throw err::common((*locations)[(*index)].line, (*locations)[*index].column,  "Attempt to call a non-function variable.");
@@ -157,7 +107,7 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
 
                         var ret_value = fn({
                             this,
-                            current_stack_frame, memory.size() - current_stack_frame
+                            stack_frame.back(), memory.size() - stack_frame.back()
                         });
 
                         if(static_cast<INSTRUCTIONS>((*instructions)[*index]) == CAL)
@@ -165,8 +115,6 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
 
                         memory.resize(stack_frame.back());
                         stack_frame.pop_back();
-
-                        current_stack_frame = stack_frame.back();
                     } catch(const std::exception & e) {
                         throw err::common((*locations)[*index].line, (*locations)[*index].column, e.what());
                     }
@@ -174,12 +122,14 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
             break;
 
             case PRC:
-                stack_frame.push_back(memory.size());
+                call_info.push(0);
             break;
 
             case PU:
                 memory.push_back(runtime.top());
                 runtime.pop();
+
+                ++call_info.top();
             break;
 
             case RET:
@@ -195,13 +145,10 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
                 } else if(*program_call_type == CAN && runtime.size() != *program_stack_size)
                     runtime.pop();
 
-                memory.resize(current_stack_frame);
+                memory.resize(stack_frame.back());
                 stack_frame.pop_back();
 
                 program.pop();
-
-                if(program.size() != 0) [[likely]]
-                    current_stack_frame = stack_frame.back();
 
                 if(program.size() == stopping_point) {
                     var ret = get(runtime.top());
@@ -222,10 +169,10 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
             break;
 
             case LOF:
-                if(memory.size() <= mem_loc(*index) + current_stack_frame)
-                    memory.resize(mem_loc(*index) + current_stack_frame + 1);
+                if(memory.size() <= mem_loc(*index) + stack_frame.back())
+                    memory.resize(mem_loc(*index) + stack_frame.back() + 1);
 
-                runtime.emplace(mem_loc(*index) + current_stack_frame, REFERENCE);
+                runtime.emplace(mem_loc(*index) + stack_frame.back(), REFERENCE);
             break;
 
             case LOV:

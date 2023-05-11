@@ -1,6 +1,5 @@
 x = 12;
 y = "12";
-z = 12.2;
 
 assert(tostring(x) == y, "string conversion went wrong.");
 assert(tointeger(y) == x, "integer conversion went wrong.");

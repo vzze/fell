@@ -1,0 +1,2 @@
+print(math.cos(math.pi / 2.0));
+print(math.cos(0));

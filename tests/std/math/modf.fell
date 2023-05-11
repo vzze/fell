@@ -1,0 +1,4 @@
+exposed x = math.modf(123.45);
+
+assert(x.integral == 123 , "x.integral   == 123");
+assert(type(x.fractional) == "num", "type(x.fractional) == \"num\"");

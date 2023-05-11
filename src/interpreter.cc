@@ -16,13 +16,42 @@ fell::var fell::interpreter::call_function(var & vr, std::vector<var*> params) {
     return vm.call(vr, params);
 }
 
-fell::interpreter::interpreter(const std::filesystem::path path) {
+void fell::interpreter::init_std_general() {
+    auto module = lib::general();
+
+    for(const auto & [name, func] : module)
+        register_function(name, func);
+}
+
+void fell::interpreter::init_std_math() {
+    get_exposed("math") = var::object{lib::math(), {}};
+}
+
+void fell::interpreter::init_std_modules(std::vector<STD_MODULES> modules) {
+    using enum STD_MODULES;
+
+    for(const auto module : modules) {
+        switch(module) {
+            case ALL:
+                init_std_general();
+                init_std_math();
+                return;
+            break;
+
+            case GENERAL: init_std_general(); break;
+
+            case MATH: init_std_math(); break;
+        }
+    }
+}
+
+fell::interpreter::interpreter(const std::filesystem::path path, std::vector<STD_MODULES> modules) {
     if(path == "version") {
         std::cout << "Fell Copyright (C) 2023 vzze\n";
         std::cout << "This program comes with ABSOLUTELY NO WARRANTY.\n";
         std::cout << "This is free software, and you are welcome to redistribute it\n";
         std::cout << "under certain conditions; type `fell conditions` for details.\n\n";
-        std::cout << "Version 0.2.5\n";
+        std::cout << "Version 0.3.4\n";
 
         return;
     } else if(path == "conditions") {
@@ -45,8 +74,7 @@ fell::interpreter::interpreter(const std::filesystem::path path) {
         return;
     }
 
-    for(const auto & [name, func] : lib::general)
-        register_function(name, func);
+    init_std_modules(modules);
 
     try {
         vm.cwd = path.parent_path();

@@ -1,0 +1,2 @@
+print(math.tanh(1));
+print(math.tanh(0 - 1));
