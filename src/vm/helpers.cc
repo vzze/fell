@@ -1,8 +1,9 @@
 #include <vm.hh>
 
-fell::vm::holder::holder(const std::size_t v, const TYPE t) : type{t}, value{v} {}
+fell::vm::holder::holder(std::size_t && v, TYPE && t) : type{std::move(t)}, value{std::move(v)} {}
 fell::vm::holder::holder(var * var) : type{TYPE::OBJ_PROP}, value{var} {}
-fell::vm::holder::holder(var var, TYPE t) : type{t}, value{var} {}
+fell::vm::holder::holder(var & var, TYPE && t) : type{std::move(t)}, value{var} {}
+fell::vm::holder::holder(var && var, TYPE && t) : type(std::move(t)), value{std::move(var)} {}
 
 std::unordered_map<std::string, fell::var> fell::exposed = {};
 std::vector<fell::var> fell::constants;

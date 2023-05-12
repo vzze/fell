@@ -29,9 +29,10 @@ namespace fell {
             TYPE type;
             std::variant<std::size_t, var, var*> value;
 
-            explicit holder(const std::size_t, const TYPE);
+            explicit holder(std::size_t &&, TYPE &&);
             explicit holder(var *);
-            explicit holder(const var = var::nihil{}, const TYPE = TYPE::UNINITIALIZED);
+            explicit holder(var &, TYPE && = TYPE::UNINITIALIZED);
+            explicit holder(var && = var::nihil{}, TYPE && = TYPE::UNINITIALIZED);
         };
 
         enum class INSTRUCTIONS : std::int32_t {
@@ -82,35 +83,18 @@ namespace fell {
                 std::vector<holder> data;
                 std::size_t _size = 0;
             public:
-                void init() {
-                    data.resize(10000);
-                }
+                void init();
+                void pop();
 
-                template<typename T>
-                void push(T && arg) {
-                    data[_size++] = arg;
-                }
+                void emplace(std::size_t &&, holder::TYPE &&);
+                void emplace(var &, holder::TYPE &&);
+                void emplace(var &&, holder::TYPE &&);
+                void emplace(var *);
 
-                template<typename ... Args>
-                void emplace(Args && ... args) {
-                    data[_size++] = holder{std::forward<Args>(args)...};
-                }
+                holder & top();
+                std::size_t size() const;
 
-                void pop() {
-                    --_size;
-                }
-
-                holder & top() {
-                    return data[_size - 1];
-                }
-
-                std::size_t size() const {
-                    return _size;
-                }
-
-                bool empty() const {
-                    return _size == 0;
-                }
+                bool empty() const;
         } runtime;
 
         std::vector<holder> memory;

@@ -94,11 +94,13 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
 
                     program.push({0, &value, static_cast<INSTRUCTIONS>((*instructions)[*index]), runtime.size()});
 
-                    index              = &std::get<0>(program.top());
-                    instructions       = &std::get<1>(program.top())->second;
-                    locations          = &std::get<1>(program.top())->first;
-                    program_call_type  = &std::get<2>(program.top());
-                    program_stack_size = &std::get<3>(program.top());
+                    auto & top = program.top();
+
+                    index              = &std::get<0>(top);
+                    instructions       = &std::get<1>(top)->second;
+                    locations          = &std::get<1>(top)->first;
+                    program_call_type  = &std::get<2>(top);
+                    program_stack_size = &std::get<3>(top);
                     continue;
                 } else {
                     try {
@@ -132,7 +134,7 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
                 ++call_info.top();
             break;
 
-            case RET:
+            case RET: {
                 if(*program_call_type == CAL) {
                     if(runtime.size() == *program_stack_size)
                         runtime.emplace(var{var::nihil{}}, VALUE);
@@ -157,12 +159,14 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
                     return ret;
                 }
 
-                index              = &std::get<0>(program.top());
-                instructions       = &std::get<1>(program.top())->second;
-                locations          = &std::get<1>(program.top())->first;
-                program_call_type  = &std::get<2>(program.top());
-                program_stack_size = &std::get<3>(program.top());
-            break;
+                auto & top = program.top();
+
+                index              = &std::get<0>(top);
+                instructions       = &std::get<1>(top)->second;
+                locations          = &std::get<1>(top)->first;
+                program_call_type  = &std::get<2>(top);
+                program_stack_size = &std::get<3>(top);
+            } break;
 
             case LOC:
                 runtime.emplace(mem_loc(*index), CONSTANT);
