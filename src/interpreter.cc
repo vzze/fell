@@ -51,7 +51,7 @@ fell::interpreter::interpreter(const std::filesystem::path path, std::vector<STD
         std::cout << "This program comes with ABSOLUTELY NO WARRANTY.\n";
         std::cout << "This is free software, and you are welcome to redistribute it\n";
         std::cout << "under certain conditions; type `fell conditions` for details.\n\n";
-        std::cout << "Version 0.3.4\n";
+        std::cout << "Version 0.3.5\n";
 
         return;
     } else if(path == "conditions") {
@@ -76,34 +76,39 @@ fell::interpreter::interpreter(const std::filesystem::path path, std::vector<STD
 
     init_std_modules(modules);
 
+#ifdef FELL_DEBUG
     try {
         vm.cwd = path.parent_path();
         {
             auto data = scan::file(path);
 
-#ifdef DEBUG
             fell::debug::scanner(data);
-#endif
             fell::compiler::process(data, vm);
-#ifdef DEBUG
             fell::debug::compiler(vm);
-#endif
         }
 
         return_value = vm.main();
-
-#ifdef DEBUG
         fell::debug::vm_memory(vm);
-#endif
-
     } catch(const err::common & e) {
-#ifdef DEBUG
         fell::debug::vm_memory(vm);
-#endif
         fell::err::log(e, path.stem().string());
 
         return_value = static_cast<var::integer>(var::string{e.what()}.length());
     }
+#else
+    try {
+        vm.cwd = path.parent_path();
+        {
+            auto data = scan::file(path);
+            fell::compiler::process(data, vm);
+        }
+
+        return_value = vm.main();
+    } catch(const err::common & e) {
+        fell::err::log(e, path.stem().string());
+        return_value = static_cast<var::integer>(var::string{e.what()}.length());
+    }
+#endif
 }
 
 fell::var fell::interpreter::main_return() {

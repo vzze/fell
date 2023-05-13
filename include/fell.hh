@@ -8,7 +8,7 @@
 #include <std.hh>
 #include <vm.hh>
 
-#ifdef DEBUG
+#ifdef FELL_DEBUG
 #include <debug.hh>
 #endif
 

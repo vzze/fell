@@ -1,35 +1,19 @@
 #include <variable.hh>
 #include <error.hh>
 
-fell::var::var(const integer i) {
-    value = i;
-    type = TYPE::INTEGER;
-}
+fell::var::var(const integer & i) : type{TYPE::INTEGER }, value{i} {}
+fell::var::var(const number  & n) : type{TYPE::NUMBER  }, value{n} {}
+fell::var::var(const string  & s) : type{TYPE::STRING  }, value{s} {}
+fell::var::var(const object  & o) : type{TYPE::OBJECT  }, value{o} {}
+fell::var::var(const func    & f) : type{TYPE::FUNCTION}, value{f} {}
+fell::var::var(const nihil   & n) : type{TYPE::NIHIL   }, value{n} {}
 
-fell::var::var(const number n) {
-    value = n;
-    type = TYPE::NUMBER;
-}
-
-fell::var::var(const string s) {
-    value = s;
-    type = TYPE::STRING;
-}
-
-fell::var::var(const object o) {
-    value = o;
-    type = TYPE::OBJECT;
-}
-
-fell::var::var(const func f) {
-    value = f;
-    type = TYPE::FUNCTION;
-}
-
-fell::var::var(const nihil n) {
-    value = n;
-    type = TYPE::NIHIL;
-}
+fell::var::var(integer && i) : type{TYPE::INTEGER }, value{std::move(i)} {}
+fell::var::var(number  && n) : type{TYPE::NUMBER  }, value{std::move(n)} {}
+fell::var::var(string  && s) : type{TYPE::STRING  }, value{std::move(s)} {}
+fell::var::var(object  && o) : type{TYPE::OBJECT  }, value{std::move(o)} {}
+fell::var::var(func    && f) : type{TYPE::FUNCTION}, value{std::move(f)} {}
+fell::var::var(nihil   && n) : type{TYPE::NIHIL   }, value{std::move(n)} {}
 
 fell::var::TYPE fell::var::get_type() const {
     return type;
@@ -102,5 +86,5 @@ fell::var * fell::var::operator [] (const var & var) {
         break;
     }
 
-    throw err::common("");
+    throw err::common("Poisoned variable.");
 }

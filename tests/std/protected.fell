@@ -1,5 +1,5 @@
-x = || {
-    print(12);
+x = |a| {
+    print(a);
     ret 1602;
 };
 
@@ -11,6 +11,8 @@ z = || {
     error("error-ing is funny");
 };
 
-exposed res1 = protected_call(x);
+a = 33;
+
+exposed res1 = protected_call(x, a);
 exposed res2 = protected_call(y, 12);
 exposed res3 = protected_call(z);

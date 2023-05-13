@@ -46,12 +46,19 @@ namespace fell {
             TYPE type;
             storage value;
         public:
-            var(const integer);
-            var(const number);
-            var(const string);
-            var(const object);
-            var(const func);
-            var(const nihil = nihil{});
+            var(const integer &);
+            var(const number &);
+            var(const string &);
+            var(const object &);
+            var(const func &);
+            var(const nihil &);
+
+            var(integer &&);
+            var(number &&);
+            var(string &&);
+            var(object &&);
+            var(func &&);
+            var(nihil && = nihil{});
 
             operator bool() const;
 
