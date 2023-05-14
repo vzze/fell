@@ -250,13 +250,13 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
                 if(runtime.empty()) throw err::common((*locations)[*index].line, (*locations)[*index].column, "Malformed statement.");
 
                 if(!(bool)(get(runtime.top())))
-                    *index = *index + mem_loc(*index) - 1;
+                    *index = *index + mem_loc(*index);
 
                 runtime.pop();
             break;
 
             case JMP:
-                *index = *index + mem_loc(*index) - 1;
+                *index = *index + mem_loc(*index);
             break;
 
             case RJMP:

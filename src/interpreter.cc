@@ -51,7 +51,7 @@ fell::interpreter::interpreter(const std::filesystem::path path, std::vector<STD
         std::cout << "This program comes with ABSOLUTELY NO WARRANTY.\n";
         std::cout << "This is free software, and you are welcome to redistribute it\n";
         std::cout << "under certain conditions; type `fell conditions` for details.\n\n";
-        std::cout << "Version 0.3.5\n";
+        std::cout << "Version 0.3.7\n";
 
         return;
     } else if(path == "conditions") {

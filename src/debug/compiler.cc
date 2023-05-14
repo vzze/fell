@@ -7,7 +7,7 @@ void fell::debug::compiler(const vm & vm) {
     std::clog << "\n\nBYTECODE:\n\n";
 
     const auto display = [&](const auto count) {
-        std::clog << '\n' << std::setfill('0') << std::setw(5) << std::hex << count << std::dec << ": " ;
+        std::clog << '\n' << std::setfill('0') << std::setw(5) << count << ": " ;
     };
 
     const auto output_instruction = [&](const auto i, const auto instructions) {
