@@ -19,7 +19,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-
+    - name: Configure Script
+      run: chmod +x ${{github.workspace}}/scripts/build.sh
     - name: Configure Build
       run: ${{github.workspace}}/scripts/build.sh ${{env.BUILD_TYPE}}
 
