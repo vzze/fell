@@ -55,9 +55,9 @@ jobs:
         # queries: security-extended,security-and-quality
 
     - name: Configure Script
-      run: chmod +x ${{github.workspace}}/scripts/build.sh
+      run: chmod +x scripts/build.sh
     - name: Configure Build
-      run: ${{github.workspace}}/scripts/build.sh ${{env.build_type}}
+      run: scripts/build.sh Release
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
