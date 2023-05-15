@@ -12,7 +12,7 @@ namespace fell::compiler {
     struct instructions {
         std::stack<std::size_t> ins;
         const scan::scanned * data;
-        vm * vm;
+        vm * ref;
 
         std::vector<std::int32_t> * top(const bool = false, const std::size_t i = 0);
         void pop();

@@ -9,11 +9,11 @@ void fell::interpreter::register_function(const var::string name, std::function<
 }
 
 fell::var fell::interpreter::call_exposed_function(const var::string name, std::vector<var*> params) {
-    return vm.call(exposed[name], params);
+    return virtual_machine.call(exposed[name], params);
 }
 
 fell::var fell::interpreter::call_function(var & vr, std::vector<var*> params) {
-    return vm.call(vr, params);
+    return virtual_machine.call(vr, params);
 }
 
 void fell::interpreter::init_std_general() {
@@ -78,32 +78,32 @@ fell::interpreter::interpreter(const std::filesystem::path path, std::vector<STD
 
 #ifdef FELL_DEBUG
     try {
-        vm.cwd = path.parent_path();
+        virtual_machine.cwd = path.parent_path();
         {
             auto data = scan::file(path);
 
             fell::debug::scanner(data);
-            fell::compiler::process(data, vm);
-            fell::debug::compiler(vm);
+            fell::compiler::process(data, virtual_machine);
+            fell::debug::compiler(virtual_machine);
         }
 
-        return_value = vm.main();
-        fell::debug::vm_memory(vm);
+        return_value = virtual_machine.main();
+        fell::debug::vm_memory(virtual_machine);
     } catch(const err::common & e) {
-        fell::debug::vm_memory(vm);
+        fell::debug::vm_memory(virtual_machine);
         fell::err::log(e, path.stem().string());
 
         return_value = static_cast<var::integer>(var::string{e.what()}.length());
     }
 #else
     try {
-        vm.cwd = path.parent_path();
+        virtual_machine.cwd = path.parent_path();
         {
             auto data = scan::file(path);
-            fell::compiler::process(data, vm);
+            fell::compiler::process(data, virtual_machine);
         }
 
-        return_value = vm.main();
+        return_value = virtual_machine.main();
     } catch(const err::common & e) {
         fell::err::log(e, path.stem().string());
         return_value = static_cast<var::integer>(var::string{e.what()}.length());

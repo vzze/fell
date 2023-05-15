@@ -15,7 +15,7 @@
 namespace fell {
     struct interpreter {
         private:
-            vm vm;
+            vm virtual_machine;
             var return_value = var::integer{0};
         public:
             enum class STD_MODULES : std::int32_t {

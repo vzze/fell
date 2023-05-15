@@ -15,7 +15,7 @@ namespace fell::lib {
         private:
             std::size_t offset;
             std::size_t size;
-            vm * vm;
+            vm * ref;
         public:
             vm::stack & get_stack();
             void pop_stack_frame();

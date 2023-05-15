@@ -17,7 +17,7 @@ print(fibo(9));
 ```
 
 ### Dependencies
-* `g++` 12.2.0 or later with C++20 support
+* `g++` 12.1.0 or later with C++20 support
 * `cmake` 3.2 or later
 
 ### Installation and Usage
