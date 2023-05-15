@@ -11,11 +11,11 @@ if exists("b:current_syntax")
 endif
 
 syn keyword fellConditionals if else
-syn keyword fellRepeats for in do while
-syn keyword fellKeywords ret assert nihil
+syn keyword fellRepeats for do while
+syn keyword fellKeywords ret assert nihil exposed
 syn keyword fellBoolean false true
 
-syn match fellOperators "[<>=!*/%+-]"
+syn match fellOperators "[<>=?&!*/%+-]"
 
 syn match fellNumber "\<\d\+\>"
 syn match fellNumber "\.\d\+\>"
