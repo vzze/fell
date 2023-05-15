@@ -4,6 +4,7 @@ project(fell)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(include)
 
@@ -19,9 +20,7 @@ if(MSVC)
     add_compile_options(
         /W3 /WX
     )
-elseif(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
+else()
     add_compile_options(
         -Wall -Wextra -Wpedantic -Wconversion -Werror
     )
