@@ -1,0 +1,27 @@
+generator = |n| {
+    a = 2;
+
+    found = false;
+
+    while a <= n / 2 {
+
+        b = 1;
+
+        while b <= n / a {
+            if a * b + a / b == n {
+                found = true;
+                print(a, "-", b);
+            }
+
+            b = b + 1;
+        }
+
+        a = a + 2;
+    }
+
+    if found == false {
+        print("nu exista");
+    }
+};
+
+generator(2020);

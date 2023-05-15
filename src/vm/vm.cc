@@ -249,25 +249,33 @@ fell::var fell::vm::run(const std::size_t stopping_point) {
             case JE:
                 if(runtime.empty()) throw err::common((*locations)[*index].line, (*locations)[*index].column, "Malformed statement.");
 
-                if(!(bool)(get(runtime.top())))
+                if(!(bool)(get(runtime.top()))) {
                     *index = *index + mem_loc(*index);
+                    runtime.pop();
+                    continue;
+                }
 
                 runtime.pop();
             break;
 
             case JMP:
                 *index = *index + mem_loc(*index);
+                continue;
             break;
 
             case RJMP:
                 *index = *index - mem_loc(*index);
+                continue;
             break;
 
             case RJE:
                 if(runtime.empty()) throw err::common((*locations)[*index].line, (*locations)[*index].column, "Malformed statement.");
 
-                if((bool)(get(runtime.top())))
+                if((bool)(get(runtime.top()))) {
                     *index = *index - mem_loc(*index);
+                    runtime.pop();
+                    continue;
+                }
 
                 runtime.pop();
             break;
