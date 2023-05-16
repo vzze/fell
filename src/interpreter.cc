@@ -80,7 +80,15 @@ fell::interpreter::interpreter(const std::filesystem::path path, std::vector<STD
     try {
         virtual_machine.cwd = path.parent_path();
         {
-            auto data = scan::file(path);
+            scan::scanned data;
+
+            try {
+                data = scan::file(path);
+            } catch(const std::exception & e) {
+                fell::err::log(e);
+                return_value = static_cast<var::integer>(var::string{e.what()}.length());
+                return;
+            }
 
             fell::debug::scanner(data);
             fell::compiler::process(data, virtual_machine);
@@ -99,7 +107,16 @@ fell::interpreter::interpreter(const std::filesystem::path path, std::vector<STD
     try {
         virtual_machine.cwd = path.parent_path();
         {
-            auto data = scan::file(path);
+            scan::scanned data;
+
+            try {
+                data = scan::file(path);
+            } catch(const std::exception & e) {
+                fell::err::log(e);
+                return_value = static_cast<var::integer>(var::string{e.what()}.length());
+                return;
+            }
+
             fell::compiler::process(data, virtual_machine);
         }
 

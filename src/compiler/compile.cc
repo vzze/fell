@@ -217,36 +217,6 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                 );
             break;
 
-            case BAR:           ERR("Unexpected expression."); break;
-            case AND:           ERR("Unexpected expression."); break;
-            case OR:            ERR("Unexpected expression."); break;
-            case INTEGER:       ERR("Unexpected expression."); break;
-            case NUMBER:        ERR("Unexpected expression."); break;
-            case STRING:        ERR("Unexpected expression."); break;
-            case NIHIL:         ERR("Unexpected expression."); break;
-            case FALSE:         ERR("Unexpected expression."); break;
-            case TRUE:          ERR("Unexpected expression."); break;
-            case DOT:           ERR("Unexpected expression."); break;
-            case STAR:          ERR("Unexpected expression."); break;
-            case SLASH:         ERR("Unexpected expression."); break;
-            case MODULO:        ERR("Unexpected expression."); break;
-            case PLUS:          ERR("Unexpected expression."); break;
-            case MINUS:         ERR("Unexpected expression."); break;
-            case COMMA:         ERR("Unexpected expression."); break;
-            case SEMICOLON:     ERR("Empty statement."      ); break;
-            case BANG:          ERR("Unexpected expression."); break;
-            case BANG_EQUAL:    ERR("Unexpected expression."); break;
-            case EQUAL:         ERR("Unexpected expression."); break;
-            case EQUAL_EQUAL:   ERR("Unexpected expression."); break;
-            case GREATER:       ERR("Unexpected expression."); break;
-            case GREATER_EQUAL: ERR("Unexpected expression."); break;
-            case LESS:          ERR("Unexpected expression."); break;
-            case LESS_EQUAL:    ERR("Unexpected expression."); break;
-            case LEFT_PAREN:    ERR("Unexpected expression."); break;
-            case RIGHT_PAREN:   ERR("Unexpected expression."); break;
-            case LEFT_SQUARE:   ERR("Unexpected expression."); break;
-            case RIGHT_SQUARE:  ERR("Unexpected expression."); break;
-
             case IF:
                 ++i;
                 if(data.tokens[i] == LEFT_CURLY) ERR("Empty if.");
@@ -342,8 +312,6 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                 instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::RET));
             break;
 
-            case FOR: ERR("Not implemented yet."); break;
-
             case WHILE: {
                 ++i;
                 if(data.tokens[i] == LEFT_CURLY) ERR("Empty while.");
@@ -394,6 +362,37 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
 
                 return;
             break;
+
+            case FOR:           ERR("Unexpected expression."); break;
+            case BAR:           ERR("Unexpected expression."); break;
+            case AND:           ERR("Unexpected expression."); break;
+            case OR:            ERR("Unexpected expression."); break;
+            case INTEGER:       ERR("Unexpected expression."); break;
+            case NUMBER:        ERR("Unexpected expression."); break;
+            case STRING:        ERR("Unexpected expression."); break;
+            case NIHIL:         ERR("Unexpected expression."); break;
+            case FALSE:         ERR("Unexpected expression."); break;
+            case TRUE:          ERR("Unexpected expression."); break;
+            case DOT:           ERR("Unexpected expression."); break;
+            case STAR:          ERR("Unexpected expression."); break;
+            case SLASH:         ERR("Unexpected expression."); break;
+            case MODULO:        ERR("Unexpected expression."); break;
+            case PLUS:          ERR("Unexpected expression."); break;
+            case MINUS:         ERR("Unexpected expression."); break;
+            case COMMA:         ERR("Unexpected expression."); break;
+            case SEMICOLON:     ERR("Empty statement."      ); break;
+            case BANG:          ERR("Unexpected expression."); break;
+            case BANG_EQUAL:    ERR("Unexpected expression."); break;
+            case EQUAL:         ERR("Unexpected expression."); break;
+            case EQUAL_EQUAL:   ERR("Unexpected expression."); break;
+            case GREATER:       ERR("Unexpected expression."); break;
+            case GREATER_EQUAL: ERR("Unexpected expression."); break;
+            case LESS:          ERR("Unexpected expression."); break;
+            case LESS_EQUAL:    ERR("Unexpected expression."); break;
+            case LEFT_PAREN:    ERR("Unexpected expression."); break;
+            case RIGHT_PAREN:   ERR("Unexpected expression."); break;
+            case LEFT_SQUARE:   ERR("Unexpected expression."); break;
+            case RIGHT_SQUARE:  ERR("Unexpected expression."); break;
         }
     }
 }
