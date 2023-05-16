@@ -6,6 +6,10 @@ on:
     paths:
       - src/**
       - tests/runtime/**
+      - .github/workflows/cmake.yml
+      - scripts/build.ps1
+      - scripts/build.sh
+      - CMakeLists.txt
   pull_request:
     branches: [ "main" ]
 
