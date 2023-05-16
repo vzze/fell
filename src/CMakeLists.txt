@@ -30,4 +30,11 @@ else()
         add_test(NAME "${no_extension}_${i}" COMMAND $<TARGET_FILE:fell> ${filename})
         math(EXPR i "${i} + 1")
     endforeach()
+
+    file(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/../tests/*.fell")
+
+    foreach(filename ${files})
+        get_filename_component(no_extension ${filename} NAME_WE)
+        add_test(NAME "${no_extension}" COMMAND $<TARGET_FILE:fell> ${filename})
+    endforeach()
 endif()
