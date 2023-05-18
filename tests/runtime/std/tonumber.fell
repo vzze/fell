@@ -1,0 +1,4 @@
+a = tointeger(tonumber(tointeger(tonumber("2"))) + tointeger("20"));
+
+assert(a == 22, "a == 22");
+assert(tostring(a) == "22", "a == \"22\"");

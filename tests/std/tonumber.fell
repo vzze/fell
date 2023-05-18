@@ -1,2 +1,0 @@
-a = tonumber("2") + 20;
-assert(a == 22, "a == 22");

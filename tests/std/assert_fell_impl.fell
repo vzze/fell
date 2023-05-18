@@ -1,8 +1,0 @@
-fell_assert = |expr str| {
-    if expr == false {
-        error("Assertion failed: " + str);
-    }
-};
-
-fell_assert(true, "i won't fail");
-fell_assert(false, "i will fail");

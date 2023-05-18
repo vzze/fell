@@ -62,6 +62,9 @@ void fell::compiler::expression(
             break;
 
             case BAR: {
+
+                bool is_mov = data.tokens[i - 1] != RETURN;
+
                 ctx_solver.contexts.push(CONTEXT::FUNCTION);
                 ++ctx_solver.in_func;
 
@@ -104,7 +107,11 @@ void fell::compiler::expression(
 
                 instructions.top(true, i)->push_back(static_cast<std::int32_t>(constants.size()));
                 instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::LOC));
-                instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::MOV));
+
+                if(is_mov)
+                    instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::MOV));
+                else
+                    instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::RET));
 
                 instructions.ins.push(constants.size());
 

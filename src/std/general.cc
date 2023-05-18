@@ -88,17 +88,53 @@ std::vector<std::pair<std::string, std::function<fell::var(fell::lib::params)>>>
         {
             "tonumber",
             [](params params) -> fell::var {
-                return fell::var{
-                    fell::var::number{
-                        std::stod(params[0].get<var::string>())
-                    }
-                };
+                switch(params[0].get_type()) {
+                    case var::TYPE::NUMBER:
+                        return params[0];
+                    break;
+
+                    case var::TYPE::INTEGER:
+                        return static_cast<var::number>(params[0].get<var::integer>());
+                    break;
+
+                    case var::TYPE::STRING:
+                        return fell::var{
+                            fell::var::number{
+                                std::stod(params[0].get<var::string>())
+                            }
+                        };
+                    break;
+
+                    default:
+                        throw err::common("Variable is not convertible to number.");
+                    break;
+                }
             }
         },
         {
             "tointeger",
             [](params params) -> fell::var {
-                return fell::var{fell::var::integer{std::stoi(params[0].get<var::string>())}};
+                switch(params[0].get_type()) {
+                    case var::TYPE::NUMBER:
+                        return static_cast<var::integer>(params[0].get<var::number>());
+                    break;
+
+                    case var::TYPE::INTEGER:
+                        return params[0];
+                    break;
+
+                    case var::TYPE::STRING:
+                        return fell::var{
+                            fell::var::integer{
+                                std::stoi(params[0].get<var::string>())
+                            }
+                        };
+                    break;
+
+                    default:
+                        throw err::common("Variable is not convertible to number.");
+                    break;
+                }
             }
         },
         {
@@ -202,11 +238,19 @@ std::vector<std::pair<std::string, std::function<fell::var(fell::lib::params)>>>
             [](params params) -> fell::var {
                 try {
                     vm vm;
-                    const auto file = params.cwd() / params[0].get<var::string>();
+                    const auto file = params.cwd() / (params[0].get<var::string>() + ".fell");
                     vm.cwd = file.parent_path();
 
                     {
-                        const auto data = scan::file(file);
+                        scan::scanned data;
+                        try {
+                            data = scan::file(file);
+                        } catch(std::exception & e) {
+                            fell::err::log(e);
+
+                            return var::nihil{};
+                        }
+
                         fell::compiler::process(data, vm);
                     }
 

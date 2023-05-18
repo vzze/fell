@@ -1,0 +1,31 @@
+x = |a| {
+    a = 2;
+    ret 1602;
+};
+
+y = |a| {
+    ret a + nihil;
+};
+
+z = || {
+    error("error-ing is funny");
+};
+
+a = 33;
+
+exposed res1 = protected_call(x, a);
+
+assert(res1.err == 0, "res.err == 0");
+assert(res1.ret == 1602, "res.ret == 1602");
+
+assert(a == 2, "a == 2");
+
+exposed res2 = protected_call(y, 12);
+
+assert(res2.err == 1, "res.err == 1");
+assert(res2.ret == nihil, "res.ret == nihil");
+
+exposed res3 = protected_call(z);
+
+assert(res3.err == 1, "res.err == 1");
+assert(res3.ret == nihil, "res.ret == nihil");

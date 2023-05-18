@@ -1,0 +1,13 @@
+a = 1;
+b = "s";
+c = {};
+d = || {};
+e = nihil;
+f = .1;
+
+assert(type(a) == "int", "type(a) == int");
+assert(type(b) == "str", "type(b) == str");
+assert(type(c) == "obj", "type(c) == obj");
+assert(type(d) == "fun", "type(d) == fun");
+assert(type(e) == "nil", "type(e) == nil");
+assert(type(f) == "num", "type(f) == num");

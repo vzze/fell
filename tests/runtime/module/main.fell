@@ -1,4 +1,7 @@
-x = require("hello.fell");
+x = require("hello");
+# y = require("mod");
+
+# y.fn();
 
 assert(type(x) == "obj", "required type should be obj");
 assert(type(x.greeting) == "fun", "member should be fun");

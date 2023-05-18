@@ -51,7 +51,13 @@ fell::scan::scanned fell::scan::file(const std::filesystem::path path) {
                 case '{': data.push_token(LEFT_CURLY, {line, column});   break;
                 case '}': data.push_token(RIGHT_CURLY, {line, column});  break;
 
-                case '.': data.push_token(DOT, {line, column});    break;
+                case '.':
+                    if('0' <= file[i + 1] && file[i + 1] <= '9') {
+                        goto num;
+                    } else {
+                        data.push_token(DOT, {line, column});
+                    }
+                break;
                 case '*': data.push_token(STAR, {line, column});   break;
                 case '/': data.push_token(SLASH, {line, column});  break;
                 case '%': data.push_token(MODULO, {line, column}); break;
@@ -98,10 +104,10 @@ fell::scan::scanned fell::scan::file(const std::filesystem::path path) {
                             "Unknown token: " +
                             file.substr(i, file.find_first_of(" \n", i))
                         };
-
+num:
                     const auto j = i;
 
-                    if('0' <= file[i] && file[i] <= '9')
+                    if(('0' <= file[i] && file[i] <= '9') || file[i] == '.')
                         while((std::isalnum(file[i]) || file[i] == '_' || file[i] == '.') && i < file.size())
                             ++i;
                     else
@@ -110,7 +116,7 @@ fell::scan::scanned fell::scan::file(const std::filesystem::path path) {
 
                     std::string_view candidate{file.data() + j, file.data() + i};
 
-                    if(token(data, candidate, line, column)) {
+                    if((data.tokens.empty() || data.tokens.back() != DOT) && token(data, candidate, line, column)) {
                     } else if(candidate[0] == '.' || ('0' <= candidate[0] && candidate[0] <= '9')) {
                         number(data, candidate, line, column);
                     } else {

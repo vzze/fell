@@ -1,0 +1,14 @@
+b = |a| {
+    if a {
+        ret || {
+            ret "true";
+        };
+    } else {
+        ret || {
+            ret "false";
+        };
+    }
+};
+
+assert(b(false)() == "false", "b(false)() == \"false\"");
+assert(b(true)() == "true", "b(true)() == \"true\"");

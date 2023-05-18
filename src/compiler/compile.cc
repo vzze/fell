@@ -292,8 +292,10 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                 }
             break;
 
-            case RETURN:
+            case RETURN: {
                 ++i;
+
+                bool ret_fn = (data.tokens[i] == BAR);
 
                 if(data.tokens[i] != SEMICOLON)
                     expression(
@@ -309,8 +311,9 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
                         SEMICOLON
                     );
 
-                instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::RET));
-            break;
+                if(!ret_fn)
+                    instructions.top(true, i)->push_back(static_cast<std::int32_t>(vm::INSTRUCTIONS::RET));
+            } break;
 
             case WHILE: {
                 ++i;
@@ -380,7 +383,7 @@ void fell::compiler::process(const scan::scanned & data, fell::vm & vm) {
             case PLUS:          ERR("Unexpected expression."); break;
             case MINUS:         ERR("Unexpected expression."); break;
             case COMMA:         ERR("Unexpected expression."); break;
-            case SEMICOLON:     ERR("Empty statement."      ); break;
+            case SEMICOLON:     ERR("Extra semicolon."      ); break;
             case BANG:          ERR("Unexpected expression."); break;
             case BANG_EQUAL:    ERR("Unexpected expression."); break;
             case EQUAL:         ERR("Unexpected expression."); break;
