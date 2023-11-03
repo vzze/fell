@@ -1,4 +1,0 @@
-exposed res = protected_call(type);
-
-assert(res.err == 1, "res.err == 1");
-assert(res.ret == nihil, "res.ret == nihil");

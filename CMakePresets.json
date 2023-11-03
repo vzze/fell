@@ -2,29 +2,31 @@
     "version": 3,
     "configurePresets": [
         {
-            "name": "base",
+            "name": "windows-base",
             "hidden": true,
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build"
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "${sourceDir}/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
         },
         {
             "name": "x64-debug",
             "displayName": "x64 Debug",
-            "inherits": "base",
+            "inherits": "windows-base",
             "architecture": {
                 "value": "x64",
                 "strategy": "external"
             },
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "x64-relwithdebinfo",
-            "displayName": "x64 RelWithDebInfo",
-            "inherits": "x64-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
             }
         },
         {
@@ -38,21 +40,13 @@
         {
             "name": "x86-debug",
             "displayName": "x86 Debug",
-            "inherits": "base",
+            "inherits": "windows-base",
             "architecture": {
                 "value": "x86",
                 "strategy": "external"
             },
             "cacheVariables": {
-              "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "x86-relwithdebinfo",
-            "displayName": "x86 RelWithDebInfo",
-            "inherits": "x86-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {

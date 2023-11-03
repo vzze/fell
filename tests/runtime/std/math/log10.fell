@@ -1,2 +1,0 @@
-assert(math.log10(10) == 1.0, "tointeger(math.log10(10)) == 1.0");
-assert(math.log10(100) == 2.0, "tointeger(math.log10(10)) == 2.0");

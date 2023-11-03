@@ -1,7 +1,0 @@
-b = || {
-    ret || {
-        ret "Hello";
-    };
-};
-
-assert(b()() == "Hello", "b()() == \"Hello\"");

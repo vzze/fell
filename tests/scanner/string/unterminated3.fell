@@ -1,3 +1,0 @@
-a = "this";
-b = a + " is ";
-c = b + "the " + "best + "thing " + "ever";

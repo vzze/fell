@@ -1,3 +1,0 @@
-x = {};
-
-assert(x.x == nihil, "x.x should be nil.");

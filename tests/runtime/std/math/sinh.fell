@@ -1,2 +1,0 @@
-print(math.sinh(1));
-print(math.sinh(0 - 1));

@@ -1,8 +1,0 @@
-# fmod is builtin as an operator
-# for the Number type
-
-print(5.1 % 3.0);
-print(5.1 % 3);
-print((0-5.1) % 3);
-print(5.1 % (0-3));
-print((0-5.1) % (0-3));

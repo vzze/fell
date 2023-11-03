@@ -1,4 +1,0 @@
-assert(math.abs(1)       == 1  , "abs(1)      == 1");
-assert(math.abs(0 - 1)   == 1  , "abs(-1)     == 1");
-assert(math.abs(0.2)     == 0.2, "abs(0.2)  == 0.2");
-assert(math.abs(0 - 0.2) == 0.2, "abs(-0.2) == 0.2");

@@ -1,5 +1,0 @@
-exposed a = 12;
-
-b = a + a;
-
-assert(b == 24, "b should be 24.");

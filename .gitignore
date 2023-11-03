@@ -1,4 +1,4 @@
-.cache
 build
+.cache
+.vim
 .vs
-Testing

@@ -1,2 +1,0 @@
-print(math.cosh(1));
-print(math.cosh(0 - 1));

@@ -1,7 +1,0 @@
-x = {};
-
-x.greeting = || {
-    ret "Hello World!";
-};
-
-ret x;

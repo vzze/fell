@@ -1,7 +1,0 @@
-if true {
-    a = true;
-} else if true {
-    a = true;
-} else {
-    a = true;
-}

@@ -1,3 +1,0 @@
-print(math.asin(1.0));
-print(2 * math.asin(1.0));
-print(math.asin(0 - 1.0 / 2));

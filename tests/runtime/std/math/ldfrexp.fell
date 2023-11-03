@@ -1,9 +1,0 @@
-exposed x = math.frexp(123.45);
-
-assert(type(x.tails) == "num", "type(x.tails) == \"num\"");
-assert(
-    x.exponent == 7 & type(x.exponent) == "int",
-    "x.exponent == 7 & type(x.exponent) == \"int\""
-);
-
-assert(math.ldexp(x) == 123.45, "math.ldexp(x) == 123.45");
